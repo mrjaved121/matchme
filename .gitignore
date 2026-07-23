@@ -1,0 +1,30 @@
+# dependencies
+node_modules/
+
+# Expo / React Native
+frontend/.expo/
+frontend/dist/
+frontend/web-build/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# Next.js
+dashboard/.next/
+dashboard/out/
+
+# Supabase
+backend/supabase/.branches/
+backend/supabase/.temp/
+
+# env
+.env
+.env.local
+.env.*.local
+
+# misc
+.DS_Store
+*.log
