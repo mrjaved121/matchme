@@ -12,6 +12,10 @@ interface CandidateProfile {
   interested_in: string[];
   birthdate: string;
   status: string;
+  min_age_pref: number;
+  max_age_pref: number;
+  city: string | null;
+  prefer_same_city: boolean;
 }
 
 Deno.serve(async (req) => {
@@ -31,7 +35,9 @@ Deno.serve(async (req) => {
 
   const { data: me, error: meError } = await admin
     .from("profiles")
-    .select("id, gender, interested_in, birthdate, min_age_pref, max_age_pref, status, onboarding_completed")
+    .select(
+      "id, gender, interested_in, birthdate, min_age_pref, max_age_pref, city, prefer_same_city, status, onboarding_completed",
+    )
     .eq("id", user.id)
     .single();
 
@@ -50,6 +56,23 @@ Deno.serve(async (req) => {
   }
 
   const myAge = ageFromBirthdate(me.birthdate);
+
+  // Rate limit: at most 5 queue-join attempts per rolling hour per user.
+  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+  const { count: recentJoinCount } = await admin
+    .from("queue_join_events")
+    .select("id", { count: "exact", head: true })
+    .eq("profile_id", user.id)
+    .gte("created_at", oneHourAgo);
+
+  if ((recentJoinCount ?? 0) >= 5) {
+    return new Response(
+      JSON.stringify({ error: "too many queue joins, try again later" }),
+      { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
+  }
+
+  await admin.from("queue_join_events").insert({ profile_id: user.id });
 
   // Ensure caller has a queue entry (idempotent).
   await admin
@@ -84,7 +107,7 @@ Deno.serve(async (req) => {
   if (candidateIds.length > 0) {
     const { data: candidates } = await admin
       .from("profiles")
-      .select("id, gender, interested_in, birthdate, status")
+      .select("id, gender, interested_in, birthdate, status, min_age_pref, max_age_pref, city, prefer_same_city")
       .in("id", candidateIds)
       .eq("status", "active");
 
@@ -98,8 +121,16 @@ Deno.serve(async (req) => {
       const iLikeThem = me.interested_in.includes(candidate.gender);
       const theyLikeMe = candidate.interested_in.includes(me.gender);
       const ageOkForMe = candidateAge >= me.min_age_pref && candidateAge <= me.max_age_pref;
+      const ageOkForThem = myAge >= candidate.min_age_pref && myAge <= candidate.max_age_pref;
 
-      if (iLikeThem && theyLikeMe && ageOkForMe) {
+      // Only exclude on city when one side has explicitly opted into
+      // same-city-only matching (prefer_same_city) and the cities differ or
+      // are unknown. Nobody opting in (the default) leaves behavior
+      // unchanged from before this preference existed.
+      const cityRequired = me.prefer_same_city || candidate.prefer_same_city;
+      const cityOk = !cityRequired || (!!me.city && !!candidate.city && me.city === candidate.city);
+
+      if (iLikeThem && theyLikeMe && ageOkForMe && ageOkForThem && cityOk) {
         match = candidate;
         break;
       }

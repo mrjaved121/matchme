@@ -33,7 +33,7 @@ export default function Home() {
         </View>
 
         <View style={{ gap: theme.spacing.sm }}>
-          <Button label="Start Speed Dating" onPress={() => router.push("/(app)/queue")} />
+          <Button label="Start Speed Dating" onPress={() => router.push("/(app)/preference-filter")} />
         </View>
       </View>
     </ScreenContainer>

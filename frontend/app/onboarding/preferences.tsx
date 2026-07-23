@@ -7,13 +7,7 @@ import { TextField } from "../../components/TextField";
 import { useTheme } from "../../theme/useTheme";
 import { supabase } from "../../lib/supabase";
 import { useAuthStore } from "../../store/authStore";
-
-const GENDER_OPTIONS = [
-  { label: "Women", value: "female" },
-  { label: "Men", value: "male" },
-  { label: "Non-binary", value: "nonbinary" },
-  { label: "Other", value: "other" },
-];
+import { GENDER_OPTIONS } from "../../lib/constants";
 
 export default function OnboardingPreferences() {
   const theme = useTheme();

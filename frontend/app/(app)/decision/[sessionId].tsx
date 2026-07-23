@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Text, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
+import * as Haptics from "expo-haptics";
 import { ScreenContainer } from "../../../components/ScreenContainer";
 import { Button } from "../../../components/Button";
 import { ErrorState } from "../../../components/StateViews";
@@ -15,6 +16,7 @@ export default function DateDecision() {
   const [error, setError] = useState<string | undefined>();
 
   async function submit(decision: "yes" | "no") {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     setError(undefined);
     setSubmitted(true);
 
@@ -34,6 +36,7 @@ export default function DateDecision() {
     }
 
     if (data?.matched && data.match?.id) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
       router.replace({
         pathname: "/(app)/match-confirmation/[matchId]",
         params: { matchId: data.match.id },

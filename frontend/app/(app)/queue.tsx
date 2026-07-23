@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
 import { router } from "expo-router";
+import * as Haptics from "expo-haptics";
 import { ScreenContainer } from "../../components/ScreenContainer";
 import { Button } from "../../components/Button";
 import { LoadingState, ErrorState } from "../../components/StateViews";
@@ -37,6 +38,7 @@ export default function Queue() {
 
       if (data?.status === "matched" && data.session) {
         matchedRef.current = true;
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
         router.replace({ pathname: "/(app)/date/[sessionId]", params: { sessionId: data.session.id } });
         return;
       }
@@ -53,6 +55,7 @@ export default function Queue() {
         { event: "INSERT", schema: "public", table: "date_sessions", filter: `user_a_id=eq.${userId}` },
         (payload) => {
           matchedRef.current = true;
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
           router.replace({ pathname: "/(app)/date/[sessionId]", params: { sessionId: payload.new.id } });
         },
       )
@@ -61,6 +64,7 @@ export default function Queue() {
         { event: "INSERT", schema: "public", table: "date_sessions", filter: `user_b_id=eq.${userId}` },
         (payload) => {
           matchedRef.current = true;
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
           router.replace({ pathname: "/(app)/date/[sessionId]", params: { sessionId: payload.new.id } });
         },
       )

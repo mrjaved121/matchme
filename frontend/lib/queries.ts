@@ -8,6 +8,7 @@ export type MatchListItem = {
   lastMessage: string | null;
   lastMessageAt: string | null;
   unread: boolean;
+  otherLastActiveAt: string | null;
 };
 
 export async function fetchMatches(myId: string): Promise<MatchListItem[]> {
@@ -25,7 +26,7 @@ export async function fetchMatches(myId: string): Promise<MatchListItem[]> {
   const matchIds = matches.map((m) => m.id);
 
   const [{ data: profiles }, { data: photos }, { data: messages }] = await Promise.all([
-    supabase.from("profiles").select("id, first_name").in("id", otherIds),
+    supabase.from("profiles").select("id, first_name, last_active_at").in("id", otherIds),
     supabase
       .from("profile_photos")
       .select("profile_id, storage_path")
@@ -60,6 +61,7 @@ export async function fetchMatches(myId: string): Promise<MatchListItem[]> {
       lastMessage: lastMessage?.content ?? null,
       lastMessageAt: lastMessage?.created_at ?? m.matched_at,
       unread: !!lastMessage && lastMessage.sender_id !== myId && !lastMessage.read_at,
+      otherLastActiveAt: profileById.get(otherId)?.last_active_at ?? null,
     };
   });
 }

@@ -1,4 +1,4 @@
-import { FlatList, Image, Pressable, Text, View } from "react-native";
+import { FlatList, Image, Pressable, RefreshControl, Text, View } from "react-native";
 import { router } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { ScreenContainer } from "../../../components/ScreenContainer";
@@ -7,12 +7,13 @@ import { useTheme } from "../../../theme/useTheme";
 import { useAuthStore } from "../../../store/authStore";
 import { fetchMatches, type MatchListItem } from "../../../lib/queries";
 import { publicPhotoUrl } from "../../../lib/photoUrl";
+import { formatRelativeActive } from "../../../lib/formatRelativeActive";
 
 export default function MatchesList() {
   const theme = useTheme();
   const myId = useAuthStore((s) => s.session!.user.id);
 
-  const { data, isLoading, isError, refetch } = useQuery({
+  const { data, isLoading, isError, isRefetching, refetch } = useQuery({
     queryKey: ["matches", myId],
     queryFn: () => fetchMatches(myId),
   });
@@ -61,6 +62,9 @@ export default function MatchesList() {
         keyExtractor={(item) => item.matchId}
         contentContainerStyle={{ gap: theme.spacing.sm, paddingBottom: theme.spacing.lg }}
         renderItem={({ item }) => <MatchRow item={item} />}
+        refreshControl={
+          <RefreshControl refreshing={isRefetching} onRefresh={refetch} tintColor={theme.color.primary} />
+        }
       />
     </ScreenContainer>
   );
@@ -68,6 +72,7 @@ export default function MatchesList() {
 
 function MatchRow({ item }: { item: MatchListItem }) {
   const theme = useTheme();
+  const activeLabel = formatRelativeActive(item.otherLastActiveAt);
 
   return (
     <Pressable
@@ -106,9 +111,21 @@ function MatchRow({ item }: { item: MatchListItem }) {
       )}
 
       <View style={{ flex: 1, gap: 2 }}>
-        <Text style={[theme.typography.body, { color: theme.color.textPrimary, fontWeight: "700" }]}>
-          {item.otherName ?? "MatchMe user"}
-        </Text>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+          <Text style={[theme.typography.body, { color: theme.color.textPrimary, fontWeight: "700" }]}>
+            {item.otherName ?? "MatchMe user"}
+          </Text>
+          {activeLabel ? (
+            <Text
+              style={[
+                theme.typography.caption,
+                { color: activeLabel === "Active now" ? theme.color.success : theme.color.textSecondary },
+              ]}
+            >
+              {activeLabel}
+            </Text>
+          ) : null}
+        </View>
         <Text
           numberOfLines={1}
           style={[theme.typography.subtext, { color: theme.color.textSecondary }]}

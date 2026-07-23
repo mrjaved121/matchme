@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { FlatList, KeyboardAvoidingView, Platform, Pressable, Text, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
+import * as Haptics from "expo-haptics";
 import { ScreenContainer } from "../../../components/ScreenContainer";
 import { TextField } from "../../../components/TextField";
 import { ErrorState, LoadingState } from "../../../components/StateViews";
@@ -28,7 +29,11 @@ export default function Chat() {
   const [draft, setDraft] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | undefined>();
+  const [otherTyping, setOtherTyping] = useState(false);
   const listRef = useRef<FlatList<Message>>(null);
+  const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
+  const typingClearTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const typingSendTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -88,18 +93,41 @@ export default function Chat() {
           setMessages((prev) => [...prev, payload.new as Message]);
         },
       )
+      .on("broadcast", { event: "typing" }, ({ payload }) => {
+        if (payload?.userId === myId) return;
+        setOtherTyping(true);
+        if (typingClearTimer.current) clearTimeout(typingClearTimer.current);
+        typingClearTimer.current = setTimeout(() => setOtherTyping(false), 3000);
+      })
       .subscribe();
+
+    channelRef.current = channel;
 
     return () => {
       cancelled = true;
       supabase.removeChannel(channel);
+      channelRef.current = null;
+      if (typingClearTimer.current) clearTimeout(typingClearTimer.current);
+      if (typingSendTimer.current) clearTimeout(typingSendTimer.current);
     };
   }, [matchId, myId]);
+
+  // Throttled to at most one broadcast per 1.5s while typing, rather than
+  // one per keystroke.
+  function handleDraftChange(text: string) {
+    setDraft(text);
+    if (typingSendTimer.current) return;
+    channelRef.current?.send({ type: "broadcast", event: "typing", payload: { userId: myId } });
+    typingSendTimer.current = setTimeout(() => {
+      typingSendTimer.current = null;
+    }, 1500);
+  }
 
   async function handleSend() {
     const content = draft.trim();
     if (!content) return;
     setDraft("");
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
 
     const { error: sendError } = await supabase
       .from("messages")
@@ -136,9 +164,16 @@ export default function Chat() {
           borderBottomColor: theme.color.border,
         }}
       >
-        <Text style={[theme.typography.title, { color: theme.color.textPrimary }]}>
-          {otherName ?? "Chat"}
-        </Text>
+        <View>
+          <Text style={[theme.typography.title, { color: theme.color.textPrimary }]}>
+            {otherName ?? "Chat"}
+          </Text>
+          {otherTyping ? (
+            <Text style={[theme.typography.caption, { color: theme.color.textSecondary }]}>
+              typing…
+            </Text>
+          ) : null}
+        </View>
         <Pressable
           onPress={() => otherId && router.push({ pathname: "/(app)/report/[targetUserId]", params: { targetUserId: otherId } })}
         >
@@ -182,7 +217,7 @@ export default function Chat() {
 
         <View style={{ flexDirection: "row", gap: theme.spacing.sm, paddingVertical: theme.spacing.sm }}>
           <View style={{ flex: 1 }}>
-            <TextField placeholder="Message" value={draft} onChangeText={setDraft} onSubmitEditing={handleSend} />
+            <TextField placeholder="Message" value={draft} onChangeText={handleDraftChange} onSubmitEditing={handleSend} />
           </View>
           <Pressable
             onPress={handleSend}

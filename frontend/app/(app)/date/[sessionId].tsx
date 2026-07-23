@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { FlatList, Image, KeyboardAvoidingView, Platform, Text, View } from "react-native";
+import { FlatList, Image, KeyboardAvoidingView, Platform, Pressable, Text, View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { ScreenContainer } from "../../../components/ScreenContainer";
 import { TextField } from "../../../components/TextField";
@@ -10,6 +10,7 @@ import { supabase } from "../../../lib/supabase";
 import { useAuthStore } from "../../../store/authStore";
 import { publicPhotoUrl } from "../../../lib/photoUrl";
 import { formatTimer, useDateSession } from "../../../lib/useDateSession";
+import { ICEBREAKER_PROMPTS } from "../../../lib/constants";
 
 type SessionMessage = {
   id: string;
@@ -28,6 +29,13 @@ export default function DateSession() {
   const [messages, setMessages] = useState<SessionMessage[]>([]);
   const [draft, setDraft] = useState("");
   const listRef = useRef<FlatList<SessionMessage>>(null);
+  const [icebreaker] = useState(
+    () => ICEBREAKER_PROMPTS[Math.floor(Math.random() * ICEBREAKER_PROMPTS.length)],
+  );
+  const [icebreakerDismissed, setIcebreakerDismissed] = useState(false);
+
+  const elapsedSeconds = session ? session.duration_seconds - (secondsLeft ?? session.duration_seconds) : 0;
+  const showIcebreaker = !icebreakerDismissed && messages.length === 0 && elapsedSeconds < 120;
 
   useEffect(() => {
     if (!session) return;
@@ -142,6 +150,34 @@ export default function DateSession() {
       >
         This chat ends when the timer runs out — say hello!
       </Text>
+
+      {showIcebreaker ? (
+        <Pressable
+          onPress={() => {
+            setDraft(icebreaker);
+            setIcebreakerDismissed(true);
+          }}
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: theme.spacing.sm,
+            backgroundColor: theme.color.surface,
+            borderWidth: 1,
+            borderColor: theme.color.border,
+            borderRadius: theme.radius.card,
+            padding: theme.spacing.sm,
+            marginBottom: theme.spacing.xs,
+          }}
+        >
+          <Text style={[theme.typography.subtext, { color: theme.color.textPrimary, flex: 1 }]}>
+            💡 {icebreaker}
+          </Text>
+          <Pressable onPress={() => setIcebreakerDismissed(true)} hitSlop={8}>
+            <Text style={[theme.typography.caption, { color: theme.color.textSecondary }]}>✕</Text>
+          </Pressable>
+        </Pressable>
+      ) : null}
 
       <KeyboardAvoidingView
         style={{ flex: 1 }}
