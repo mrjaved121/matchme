@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { router } from "expo-router";
 import { supabase } from "./supabase";
 import { useAuthStore } from "../store/authStore";
@@ -33,6 +33,7 @@ export function useDateSession(sessionId: string) {
   const [other, setOther] = useState<OtherProfile | null>(null);
   const [error, setError] = useState<string | undefined>();
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
+  const navigatedRef = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -92,6 +93,14 @@ export function useDateSession(sessionId: string) {
   }, [secondsLeft]);
 
   function goToDecision() {
+    // Guards against a stray navigation firing again later: on web, screens
+    // in a Tabs/Stack navigator can stay mounted in the background after
+    // the user moves on, so this countdown's setTimeout chain keeps
+    // ticking and would otherwise call router.replace a second time
+    // (e.g. once the original 4-minute duration elapses) and yank the user
+    // out of whatever they've since navigated to, including a live chat.
+    if (navigatedRef.current) return;
+    navigatedRef.current = true;
     router.replace({ pathname: "/(app)/decision/[sessionId]", params: { sessionId } });
   }
 
