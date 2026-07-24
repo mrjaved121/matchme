@@ -3,6 +3,7 @@ import { router } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { ScreenContainer } from "../../../components/ScreenContainer";
 import { Button } from "../../../components/Button";
+import { Tag } from "../../../components/Tag";
 import { LoadingState } from "../../../components/StateViews";
 import { useTheme } from "../../../theme/useTheme";
 import { supabase } from "../../../lib/supabase";
@@ -23,6 +24,14 @@ export default function MyProfile() {
         .eq("profile_id", myId)
         .order("position", { ascending: true });
       return data ?? [];
+    },
+  });
+
+  const { data: interestTags } = useQuery({
+    queryKey: ["my-interest-tags", myId],
+    queryFn: async () => {
+      const { data } = await supabase.from("profiles").select("interest_tags").eq("id", myId).single();
+      return data?.interest_tags ?? [];
     },
   });
 
@@ -61,6 +70,14 @@ export default function MyProfile() {
       <Text style={[theme.typography.title, { color: theme.color.textPrimary, marginTop: theme.spacing.md }]}>
         {profile?.first_name}
       </Text>
+
+      {interestTags && interestTags.length > 0 ? (
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginTop: theme.spacing.sm }}>
+          {interestTags.map((tag: string, index: number) => (
+            <Tag key={tag} label={tag.charAt(0).toUpperCase() + tag.slice(1)} index={index} />
+          ))}
+        </View>
+      ) : null}
 
       <Button
         label="Edit profile"

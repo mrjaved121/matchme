@@ -6,14 +6,16 @@ import { useTheme } from "../theme/useTheme";
 type Props = PropsWithChildren<{
   style?: ViewStyle;
   padded?: boolean;
+  /** Override the safe-area background — for a screen that goes full-bleed with its own color/gradient. */
+  backgroundColor?: string;
 }>;
 
-export function ScreenContainer({ children, style, padded = true }: Props) {
+export function ScreenContainer({ children, style, padded = true, backgroundColor }: Props) {
   const theme = useTheme();
 
   return (
     <SafeAreaView
-      style={[styles.flex, { backgroundColor: theme.color.background }]}
+      style={[styles.flex, { backgroundColor: backgroundColor ?? theme.color.background }]}
       edges={["top", "bottom"]}
     >
       <View

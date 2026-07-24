@@ -1,4 +1,5 @@
 import { ActivityIndicator, Pressable, StyleSheet, Text, ViewStyle } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "../theme/useTheme";
 
 type Variant = "primary" | "secondary" | "ghost" | "danger";
@@ -10,25 +11,58 @@ type Props = {
   disabled?: boolean;
   loading?: boolean;
   style?: ViewStyle;
+  /** Override the label/border color — for a ghost/secondary button sitting on a colored background. */
+  textColor?: string;
 };
 
-export function Button({ label, onPress, variant = "primary", disabled, loading, style }: Props) {
+export function Button({ label, onPress, variant = "primary", disabled, loading, style, textColor: textColorOverride }: Props) {
   const theme = useTheme();
   const isDisabled = disabled || loading;
 
   const backgroundColor =
-    variant === "primary"
-      ? theme.color.primary
-      : variant === "danger"
-        ? theme.color.error
-        : variant === "secondary"
-          ? theme.color.surface
-          : "transparent";
+    variant === "danger"
+      ? theme.color.error
+      : variant === "secondary"
+        ? theme.color.surface
+        : "transparent";
 
   const textColor =
-    variant === "primary" || variant === "danger" ? "#FFFFFF" : theme.color.primary;
+    textColorOverride ?? (variant === "primary" || variant === "danger" ? "#FFFFFF" : theme.color.primary);
 
   const borderWidth = variant === "secondary" || variant === "ghost" ? 1 : 0;
+
+  const content = loading ? (
+    <ActivityIndicator color={textColor} />
+  ) : (
+    <Text style={[theme.typography.button, { color: textColor }]}>{label}</Text>
+  );
+
+  // The one action that matters per screen gets the brand gradient; every
+  // other variant stays a flat fill so the gradient doesn't get diluted.
+  if (variant === "primary") {
+    return (
+      <Pressable
+        accessibilityRole="button"
+        accessibilityState={{ disabled: isDisabled }}
+        onPress={onPress}
+        disabled={isDisabled}
+        style={({ pressed }) => [
+          styles.glow,
+          { borderRadius: theme.radius.pill, shadowColor: theme.color.primary, opacity: isDisabled ? 0.5 : pressed ? 0.85 : 1 },
+          style,
+        ]}
+      >
+        <LinearGradient
+          colors={theme.color.primaryGradient}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={[styles.base, { borderRadius: theme.radius.pill }]}
+        >
+          {content}
+        </LinearGradient>
+      </Pressable>
+    );
+  }
 
   return (
     <Pressable
@@ -41,18 +75,14 @@ export function Button({ label, onPress, variant = "primary", disabled, loading,
         {
           backgroundColor,
           borderWidth,
-          borderColor: theme.color.primary,
+          borderColor: textColorOverride ?? theme.color.primary,
           borderRadius: theme.radius.pill,
           opacity: isDisabled ? 0.5 : pressed ? 0.85 : 1,
         },
         style,
       ]}
     >
-      {loading ? (
-        <ActivityIndicator color={textColor} />
-      ) : (
-        <Text style={[theme.typography.button, { color: textColor }]}>{label}</Text>
-      )}
+      {content}
     </Pressable>
   );
 }
@@ -63,5 +93,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 24,
+  },
+  glow: {
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.35,
+    shadowRadius: 18,
+    elevation: 6,
   },
 });

@@ -1,30 +1,43 @@
 // Design tokens per docs/product-prompt.md §2. Keep this the single source
 // of truth for color/spacing/type so every screen stays visually consistent.
 
+// "Warm Signal" — same structure as the original spec, warmer skin: a warm
+// blush ground instead of stark white/near-black, a coral→peach gradient on
+// the one action that matters per screen, and a warmer success green.
 export const palette = {
   light: {
-    background: "#FAFAFA",
+    background: "#FBF3EE",
     surface: "#FFFFFF",
-    textPrimary: "#1A1A1A",
-    textSecondary: "#6B6B6B",
-    border: "#E5E5E5",
+    textPrimary: "#2B1B1F",
+    textSecondary: "#8C7178",
+    border: "#F0DDD5",
   },
   dark: {
-    background: "#121212",
-    surface: "#1E1E1E",
-    textPrimary: "#F5F5F5",
-    textSecondary: "#A0A0A0",
-    border: "#2C2C2C",
+    background: "#1C1210",
+    surface: "#241815",
+    textPrimary: "#F5ECE8",
+    textSecondary: "#B5A29C",
+    border: "#3A2A24",
   },
   brand: {
     primary: "#FF4D6D",
     primaryDark: "#E63E5C",
+    gradientEnd: "#FF8A5B",
   },
   status: {
-    success: "#2ECC71",
+    success: "#2E9C7B",
     warning: "#F5A623",
     error: "#E74C3C",
   },
+  // Read-only tag chips (e.g. interest tags on a profile) cycle through
+  // these — distinct from the single brand accent used for actions.
+  tags: [
+    { bg: "#FFE0D6", fg: "#C2402F" },
+    { bg: "#E4F5EE", fg: "#2E9C7B" },
+    { bg: "#FDE8C9", fg: "#A66A0B" },
+    { bg: "#F1E3FA", fg: "#7A44B3" },
+    { bg: "#DCEBFB", fg: "#2B6CB0" },
+  ],
 };
 
 export const spacing = {
@@ -38,7 +51,7 @@ export const spacing = {
 
 export const radius = {
   input: 12,
-  card: 16,
+  card: 20,
   pill: 999,
 };
 

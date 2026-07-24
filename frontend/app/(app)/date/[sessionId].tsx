@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { FlatList, Image, KeyboardAvoidingView, Platform, Pressable, Text, View } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams } from "expo-router";
 import { ScreenContainer } from "../../../components/ScreenContainer";
 import { TextField } from "../../../components/TextField";
@@ -96,60 +97,60 @@ export default function DateSession() {
         style={{
           flexDirection: "row",
           alignItems: "center",
-          justifyContent: "space-between",
           paddingVertical: theme.spacing.sm,
-          borderBottomWidth: 1,
-          borderBottomColor: theme.color.border,
           gap: theme.spacing.sm,
         }}
       >
-        <View style={{ flexDirection: "row", alignItems: "center", gap: theme.spacing.sm, flex: 1 }}>
-          {other.photoPath ? (
-            <Image
-              source={{ uri: publicPhotoUrl(other.photoPath) }}
-              style={{ width: 40, height: 40, borderRadius: 20 }}
-            />
-          ) : (
-            <View
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 20,
-                backgroundColor: theme.color.border,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Text style={{ fontSize: 16 }}>{other.first_name?.[0]?.toUpperCase() ?? "?"}</Text>
-            </View>
-          )}
-          <Text style={[theme.typography.title, { color: theme.color.textPrimary }]}>
-            {other.first_name ?? "Your date"}
-          </Text>
-        </View>
-
-        <View
-          style={{
-            backgroundColor: theme.color.primary,
-            paddingHorizontal: theme.spacing.md,
-            paddingVertical: theme.spacing.xs,
-            borderRadius: theme.radius.pill,
-          }}
-        >
-          <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15 }}>
-            {formatTimer(secondsLeft)}
-          </Text>
-        </View>
+        {other.photoPath ? (
+          <Image
+            source={{ uri: publicPhotoUrl(other.photoPath) }}
+            style={{ width: 36, height: 36, borderRadius: 18 }}
+          />
+        ) : (
+          <View
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 18,
+              backgroundColor: theme.color.border,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text style={{ fontSize: 15 }}>{other.first_name?.[0]?.toUpperCase() ?? "?"}</Text>
+          </View>
+        )}
+        <Text style={[theme.typography.body, { color: theme.color.textPrimary, fontWeight: "700" }]}>
+          {other.first_name ?? "Your date"}
+        </Text>
       </View>
 
-      <Text
-        style={[
-          theme.typography.caption,
-          { color: theme.color.textSecondary, textAlign: "center", paddingVertical: theme.spacing.xs },
-        ]}
+      {/* The clock is the whole point of a timed date — give it the visual
+          weight of a hero element, not a corner badge, and let it read as
+          urgent once the round is nearly over. */}
+      <LinearGradient
+        colors={secondsLeft <= 30 ? [theme.color.error, "#FF7A5C"] : theme.color.primaryGradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={{
+          borderRadius: theme.radius.card,
+          paddingVertical: theme.spacing.md,
+          alignItems: "center",
+          marginBottom: theme.spacing.sm,
+          shadowColor: secondsLeft <= 30 ? theme.color.error : theme.color.primary,
+          shadowOffset: { width: 0, height: 8 },
+          shadowOpacity: 0.3,
+          shadowRadius: 16,
+          elevation: 5,
+        }}
       >
-        This chat ends when the timer runs out — say hello!
-      </Text>
+        <Text style={{ color: "#FFFFFF", fontWeight: "800", fontSize: 36, letterSpacing: 1, fontVariant: ["tabular-nums"] }}>
+          {formatTimer(secondsLeft)}
+        </Text>
+        <Text style={{ color: "rgba(255,255,255,0.85)", fontSize: 12.5, marginTop: 2 }}>
+          This chat ends when the timer runs out — say hello!
+        </Text>
+      </LinearGradient>
 
       {showIcebreaker ? (
         <Pressable
