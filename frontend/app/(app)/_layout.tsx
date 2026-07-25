@@ -66,6 +66,7 @@ function AppTabs({ userId, theme }: { userId: string; theme: ReturnType<typeof u
       <Tabs.Screen name="settings/index" options={{ href: null }} />
       <Tabs.Screen name="settings/notifications" options={{ href: null }} />
       <Tabs.Screen name="settings/privacy" options={{ href: null }} />
+      <Tabs.Screen name="settings/verification" options={{ href: null }} />
       <Tabs.Screen name="report/[targetUserId]" options={{ href: null }} />
     </Tabs>
   );

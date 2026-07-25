@@ -67,9 +67,26 @@ export default function MyProfile() {
         />
       )}
 
-      <Text style={[theme.typography.title, { color: theme.color.textPrimary, marginTop: theme.spacing.md }]}>
-        {profile?.first_name}
-      </Text>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginTop: theme.spacing.md }}>
+        <Text style={[theme.typography.title, { color: theme.color.textPrimary }]}>
+          {profile?.first_name}
+        </Text>
+        {profile?.is_verified ? (
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 4,
+              backgroundColor: theme.color.success + "22",
+              paddingHorizontal: 10,
+              paddingVertical: 4,
+              borderRadius: theme.radius.pill,
+            }}
+          >
+            <Text style={{ color: theme.color.success, fontWeight: "700", fontSize: 12 }}>✓ Verified</Text>
+          </View>
+        ) : null}
+      </View>
 
       {interestTags && interestTags.length > 0 ? (
         <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginTop: theme.spacing.sm }}>

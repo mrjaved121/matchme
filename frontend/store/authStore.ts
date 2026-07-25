@@ -7,6 +7,7 @@ export type Profile = {
   first_name: string | null;
   onboarding_completed: boolean;
   is_admin: boolean;
+  is_verified: boolean;
   status: string;
 };
 
@@ -31,7 +32,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
     const { data } = await supabase
       .from("profiles")
-      .select("id, first_name, onboarding_completed, is_admin, status")
+      .select("id, first_name, onboarding_completed, is_admin, is_verified, status")
       .eq("id", session.user.id)
       .single();
     set({ profile: data ?? null });

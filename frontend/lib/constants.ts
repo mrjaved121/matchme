@@ -5,6 +5,17 @@ export const GENDER_OPTIONS = [
   { label: "Other", value: "other" },
 ];
 
+export const LOOKING_FOR_OPTIONS = [
+  { label: "Casual", value: "casual" },
+  { label: "Long-term", value: "long_term" },
+  { label: "Friends", value: "friends" },
+  { label: "Not sure yet", value: "not_sure" },
+];
+
+export const ORIENTATION_OPTIONS = [
+  "Straight", "Gay", "Lesbian", "Bisexual", "Pansexual", "Asexual", "Other",
+].map((label) => ({ label, value: label.toLowerCase() }));
+
 export const ICEBREAKER_PROMPTS = [
   "What's your most controversial food opinion?",
   "Window seat or aisle seat, and why does it matter so much to you?",

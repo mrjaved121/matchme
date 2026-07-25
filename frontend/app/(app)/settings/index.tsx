@@ -5,7 +5,11 @@ import { Button } from "../../../components/Button";
 import { useTheme } from "../../../theme/useTheme";
 import { supabase } from "../../../lib/supabase";
 
-const ROWS: { label: string; href: "/(app)/settings/notifications" | "/(app)/settings/privacy" }[] = [
+const ROWS: {
+  label: string;
+  href: "/(app)/settings/notifications" | "/(app)/settings/privacy" | "/(app)/settings/verification";
+}[] = [
+  { label: "Get verified", href: "/(app)/settings/verification" },
   { label: "Notifications", href: "/(app)/settings/notifications" },
   { label: "Privacy & account", href: "/(app)/settings/privacy" },
 ];

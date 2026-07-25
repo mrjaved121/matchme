@@ -24,6 +24,7 @@ backend/supabase/.temp/
 .env
 .env.local
 .env.*.local
+backend/.env
 
 # misc
 .DS_Store

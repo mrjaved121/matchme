@@ -7,7 +7,7 @@ import { TextField } from "../../components/TextField";
 import { useTheme } from "../../theme/useTheme";
 import { supabase } from "../../lib/supabase";
 import { useAuthStore } from "../../store/authStore";
-import { GENDER_OPTIONS } from "../../lib/constants";
+import { GENDER_OPTIONS, LOOKING_FOR_OPTIONS } from "../../lib/constants";
 
 export default function OnboardingPreferences() {
   const theme = useTheme();
@@ -15,6 +15,7 @@ export default function OnboardingPreferences() {
   const [interestedIn, setInterestedIn] = useState<string[]>([]);
   const [minAge, setMinAge] = useState("18");
   const [maxAge, setMaxAge] = useState("45");
+  const [lookingFor, setLookingFor] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
 
@@ -36,13 +37,22 @@ export default function OnboardingPreferences() {
       setError("Enter a valid age range (18+).");
       return;
     }
+    if (!lookingFor) {
+      setError("Let us know what you're looking for.");
+      return;
+    }
 
     setError(undefined);
     setLoading(true);
 
     const { error: updateError } = await supabase
       .from("profiles")
-      .update({ interested_in: interestedIn, min_age_pref: min, max_age_pref: max })
+      .update({
+        interested_in: interestedIn,
+        min_age_pref: min,
+        max_age_pref: max,
+        looking_for: lookingFor,
+      })
       .eq("id", session!.user.id);
 
     setLoading(false);
@@ -92,6 +102,17 @@ export default function OnboardingPreferences() {
               />
             </View>
           </View>
+        </View>
+
+        <View style={{ gap: 8 }}>
+          <Text style={[theme.typography.subtext, { color: theme.color.textSecondary }]}>
+            Looking for
+          </Text>
+          <ChipSelect
+            options={LOOKING_FOR_OPTIONS}
+            selected={lookingFor ? [lookingFor] : []}
+            onToggle={setLookingFor}
+          />
         </View>
 
         {error ? (

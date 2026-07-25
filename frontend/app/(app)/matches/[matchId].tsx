@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { FlatList, KeyboardAvoidingView, Platform, Pressable, Text, View } from "react-native";
+import { Alert, FlatList, KeyboardAvoidingView, Platform, Pressable, Text, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import * as Haptics from "expo-haptics";
 import { ScreenContainer } from "../../../components/ScreenContainer";
@@ -123,6 +123,31 @@ export default function Chat() {
     }, 1500);
   }
 
+  function confirmUnmatch() {
+    Alert.alert(
+      `Unmatch ${otherName ?? "this person"}?`,
+      "You'll no longer see each other in matches, and this conversation will disappear. This can't be undone.",
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Unmatch", style: "destructive", onPress: handleUnmatch },
+      ],
+    );
+  }
+
+  async function handleUnmatch() {
+    const { error: unmatchError } = await supabase
+      .from("matches")
+      .update({ status: "unmatched" })
+      .eq("id", matchId);
+
+    if (unmatchError) {
+      Alert.alert("Couldn't unmatch", unmatchError.message);
+      return;
+    }
+
+    router.replace("/(app)/matches");
+  }
+
   async function handleSend() {
     const content = draft.trim();
     if (!content) return;
@@ -174,11 +199,16 @@ export default function Chat() {
             </Text>
           ) : null}
         </View>
-        <Pressable
-          onPress={() => otherId && router.push({ pathname: "/(app)/report/[targetUserId]", params: { targetUserId: otherId } })}
-        >
-          <Text style={[theme.typography.subtext, { color: theme.color.textSecondary }]}>Report</Text>
-        </Pressable>
+        <View style={{ flexDirection: "row", gap: theme.spacing.md }}>
+          <Pressable onPress={confirmUnmatch}>
+            <Text style={[theme.typography.subtext, { color: theme.color.textSecondary }]}>Unmatch</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => otherId && router.push({ pathname: "/(app)/report/[targetUserId]", params: { targetUserId: otherId } })}
+          >
+            <Text style={[theme.typography.subtext, { color: theme.color.error }]}>Report</Text>
+          </Pressable>
+        </View>
       </View>
 
       <KeyboardAvoidingView

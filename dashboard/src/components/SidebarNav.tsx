@@ -8,6 +8,7 @@ const LINKS = [
   { href: "/", label: "Overview" },
   { href: "/users", label: "Users" },
   { href: "/reports", label: "Reports" },
+  { href: "/verification", label: "Verification" },
 ];
 
 export function SidebarNav({ adminName }: { adminName: string }) {

@@ -9,11 +9,18 @@ import { LoadingState } from "../../../components/StateViews";
 import { useTheme } from "../../../theme/useTheme";
 import { supabase } from "../../../lib/supabase";
 import { useAuthStore } from "../../../store/authStore";
+import { LOOKING_FOR_OPTIONS, ORIENTATION_OPTIONS } from "../../../lib/constants";
 
 const INTEREST_OPTIONS = [
   "Travel", "Music", "Fitness", "Foodie", "Movies", "Reading",
   "Gaming", "Outdoors", "Art", "Dancing", "Coffee", "Pets",
 ].map((label) => ({ label, value: label.toLowerCase() }));
+
+const YES_NO_SOMETIMES = [
+  { label: "Yes", value: "yes" },
+  { label: "No", value: "no" },
+  { label: "Sometimes", value: "sometimes" },
+];
 
 type EditableProfile = {
   first_name: string;
@@ -22,6 +29,13 @@ type EditableProfile = {
   interest_tags: string[];
   min_age_pref: number;
   max_age_pref: number;
+  looking_for: string | null;
+  orientation: string | null;
+  height_cm: string;
+  job_title: string;
+  education: string;
+  smokes: string | null;
+  drinks: string | null;
 };
 
 export default function EditProfile() {
@@ -36,7 +50,9 @@ export default function EditProfile() {
   useEffect(() => {
     supabase
       .from("profiles")
-      .select("first_name, city, bio, interest_tags, min_age_pref, max_age_pref")
+      .select(
+        "first_name, city, bio, interest_tags, min_age_pref, max_age_pref, looking_for, orientation, height_cm, job_title, education, smokes, drinks",
+      )
       .eq("id", myId)
       .single()
       .then(({ data }) => {
@@ -48,6 +64,13 @@ export default function EditProfile() {
             interest_tags: data.interest_tags ?? [],
             min_age_pref: data.min_age_pref,
             max_age_pref: data.max_age_pref,
+            looking_for: data.looking_for,
+            orientation: data.orientation,
+            height_cm: data.height_cm ? String(data.height_cm) : "",
+            job_title: data.job_title ?? "",
+            education: data.education ?? "",
+            smokes: data.smokes,
+            drinks: data.drinks,
           });
         }
       });
@@ -71,6 +94,8 @@ export default function EditProfile() {
     setSaving(true);
     setError(undefined);
 
+    const height = parseInt(form.height_cm, 10);
+
     const { error: updateError } = await supabase
       .from("profiles")
       .update({
@@ -80,6 +105,13 @@ export default function EditProfile() {
         interest_tags: form.interest_tags,
         min_age_pref: form.min_age_pref,
         max_age_pref: form.max_age_pref,
+        looking_for: form.looking_for,
+        orientation: form.orientation,
+        height_cm: Number.isFinite(height) && height > 0 ? height : null,
+        job_title: form.job_title.trim() || null,
+        education: form.education.trim() || null,
+        smokes: form.smokes,
+        drinks: form.drinks,
       })
       .eq("id", myId);
 
@@ -154,6 +186,77 @@ export default function EditProfile() {
               onChangeText={(v) => setForm({ ...form, max_age_pref: parseInt(v, 10) || 99 })}
             />
           </View>
+        </View>
+
+        <View style={{ gap: theme.spacing.sm }}>
+          <Text style={[theme.typography.subtext, { color: theme.color.textSecondary }]}>
+            Looking for
+          </Text>
+          <ChipSelect
+            options={LOOKING_FOR_OPTIONS}
+            selected={form.looking_for ? [form.looking_for] : []}
+            onToggle={(value) => setForm({ ...form, looking_for: value })}
+          />
+        </View>
+
+        <View style={{ gap: theme.spacing.sm }}>
+          <Text style={[theme.typography.subtext, { color: theme.color.textSecondary }]}>
+            Orientation (optional)
+          </Text>
+          <ChipSelect
+            options={ORIENTATION_OPTIONS}
+            selected={form.orientation ? [form.orientation] : []}
+            onToggle={(value) => setForm({ ...form, orientation: value })}
+          />
+        </View>
+
+        <Text style={[theme.typography.subtext, { color: theme.color.textSecondary, marginTop: theme.spacing.sm }]}>
+          About you (all optional)
+        </Text>
+
+        <View style={{ flexDirection: "row", gap: 12 }}>
+          <View style={{ flex: 1 }}>
+            <TextField
+              label="Height (cm)"
+              placeholder="175"
+              keyboardType="number-pad"
+              value={form.height_cm}
+              onChangeText={(v) => setForm({ ...form, height_cm: v })}
+            />
+          </View>
+          <View style={{ flex: 1.4 }}>
+            <TextField
+              label="Job title"
+              placeholder="Product designer"
+              value={form.job_title}
+              onChangeText={(v) => setForm({ ...form, job_title: v })}
+            />
+          </View>
+        </View>
+
+        <TextField
+          label="Education"
+          placeholder="UC Berkeley"
+          value={form.education}
+          onChangeText={(v) => setForm({ ...form, education: v })}
+        />
+
+        <View style={{ gap: theme.spacing.sm }}>
+          <Text style={[theme.typography.subtext, { color: theme.color.textSecondary }]}>Smokes</Text>
+          <ChipSelect
+            options={YES_NO_SOMETIMES}
+            selected={form.smokes ? [form.smokes] : []}
+            onToggle={(value) => setForm({ ...form, smokes: value })}
+          />
+        </View>
+
+        <View style={{ gap: theme.spacing.sm }}>
+          <Text style={[theme.typography.subtext, { color: theme.color.textSecondary }]}>Drinks</Text>
+          <ChipSelect
+            options={YES_NO_SOMETIMES}
+            selected={form.drinks ? [form.drinks] : []}
+            onToggle={(value) => setForm({ ...form, drinks: value })}
+          />
         </View>
 
         {error ? (
