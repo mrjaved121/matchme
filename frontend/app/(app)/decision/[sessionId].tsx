@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import * as Haptics from "expo-haptics";
@@ -14,6 +14,17 @@ export default function DateDecision() {
   const [submitted, setSubmitted] = useState(false);
   const [waitingOnOther, setWaitingOnOther] = useState(false);
   const [error, setError] = useState<string | undefined>();
+
+  // Expo Router can reuse this screen's mounted instance across two
+  // different speed dates back to back (same route pattern, new
+  // sessionId), rather than unmounting it. Without this, a stale
+  // `submitted=true` from a previous date leaves both buttons stuck on
+  // their loading spinner forever for the new one.
+  useEffect(() => {
+    setSubmitted(false);
+    setWaitingOnOther(false);
+    setError(undefined);
+  }, [sessionId]);
 
   async function submit(decision: "yes" | "no") {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
