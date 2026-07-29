@@ -65,8 +65,15 @@ export default function SignIn() {
         <Button label="Continue" onPress={handleContinue} loading={loading} />
 
         <Text style={[theme.typography.caption, { color: theme.color.textSecondary, textAlign: "center" }]}>
-          By continuing you agree to MatchMe's community guidelines. You must be 18+ to use
-          MatchMe.
+          By continuing you agree to MatchMe's community guidelines, our{" "}
+          <Text style={{ textDecorationLine: "underline" }} onPress={() => router.push("/legal/terms")}>
+            Terms of Service
+          </Text>{" "}
+          and{" "}
+          <Text style={{ textDecorationLine: "underline" }} onPress={() => router.push("/legal/privacy")}>
+            Privacy Policy
+          </Text>
+          . You must be 18+ to use MatchMe.
         </Text>
       </View>
     </ScreenContainer>

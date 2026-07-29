@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Alert, Text, View } from "react-native";
+import { router } from "expo-router";
 import { ScreenContainer } from "../../../components/ScreenContainer";
 import { Button } from "../../../components/Button";
 import { useTheme } from "../../../theme/useTheme";
@@ -68,6 +69,11 @@ export default function PrivacySettings() {
             Permanently deletes your profile, matches, and messages.
           </Text>
           <Button label="Delete my account" variant="danger" onPress={confirmDelete} loading={deleting} />
+        </View>
+
+        <View style={{ gap: theme.spacing.xs, marginTop: theme.spacing.lg }}>
+          <Button label="Privacy Policy" variant="ghost" onPress={() => router.push("/legal/privacy")} />
+          <Button label="Terms of Service" variant="ghost" onPress={() => router.push("/legal/terms")} />
         </View>
       </View>
     </ScreenContainer>
