@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Alert, FlatList, KeyboardAvoidingView, Platform, Pressable, Text, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import * as Haptics from "expo-haptics";
+import { useQueryClient } from "@tanstack/react-query";
 import { ScreenContainer } from "../../../components/ScreenContainer";
 import { TextField } from "../../../components/TextField";
 import { ErrorState, LoadingState } from "../../../components/StateViews";
@@ -22,6 +23,7 @@ export default function Chat() {
   const theme = useTheme();
   const { matchId } = useLocalSearchParams<{ matchId: string }>();
   const myId = useAuthStore((s) => s.session!.user.id);
+  const queryClient = useQueryClient();
 
   const [otherName, setOtherName] = useState<string | null>(null);
   const [otherId, setOtherId] = useState<string | null>(null);
@@ -78,7 +80,7 @@ export default function Chat() {
           .from("messages")
           .update({ read_at: new Date().toISOString() })
           .in("id", unreadIds)
-          .then(() => {});
+          .then(() => queryClient.invalidateQueries({ queryKey: ["matches", myId] }));
       }
     }
 
@@ -145,6 +147,7 @@ export default function Chat() {
       return;
     }
 
+    queryClient.invalidateQueries({ queryKey: ["matches", myId] });
     router.replace("/(app)/matches");
   }
 

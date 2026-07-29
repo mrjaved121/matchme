@@ -96,12 +96,20 @@ export default function MyProfile() {
         </View>
       ) : null}
 
-      <Button
-        label="Edit profile"
-        variant="secondary"
-        onPress={() => router.push("/(app)/profile/edit")}
-        style={{ marginTop: theme.spacing.lg }}
-      />
+      <View style={{ flexDirection: "row", gap: theme.spacing.sm, marginTop: theme.spacing.lg }}>
+        <Button
+          label="Manage photos"
+          variant="secondary"
+          onPress={() => router.push("/(app)/profile/photos")}
+          style={{ flex: 1 }}
+        />
+        <Button
+          label="Edit profile"
+          variant="secondary"
+          onPress={() => router.push("/(app)/profile/edit")}
+          style={{ flex: 1 }}
+        />
+      </View>
     </ScreenContainer>
   );
 }

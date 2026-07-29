@@ -7,10 +7,15 @@ import { supabase } from "../../../lib/supabase";
 
 const ROWS: {
   label: string;
-  href: "/(app)/settings/notifications" | "/(app)/settings/privacy" | "/(app)/settings/verification";
+  href:
+    | "/(app)/settings/notifications"
+    | "/(app)/settings/privacy"
+    | "/(app)/settings/verification"
+    | "/(app)/settings/blocked";
 }[] = [
   { label: "Get verified", href: "/(app)/settings/verification" },
   { label: "Notifications", href: "/(app)/settings/notifications" },
+  { label: "Blocked users", href: "/(app)/settings/blocked" },
   { label: "Privacy & account", href: "/(app)/settings/privacy" },
 ];
 
