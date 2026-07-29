@@ -77,7 +77,7 @@ export function ReportsTable({ reports }: { reports: ReportRowWithPhotos[] }) {
                 Reason: {report.reason.replace(/_/g, " ")}
               </p>
               {report.details ? (
-                <p className="text-sm text-foreground-secondary">"{report.details}"</p>
+                <p className="text-sm text-foreground-secondary">&quot;{report.details}&quot;</p>
               ) : null}
               <p className="text-xs text-foreground-secondary">
                 {new Date(report.created_at).toLocaleString()}
