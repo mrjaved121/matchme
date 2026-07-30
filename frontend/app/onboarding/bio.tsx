@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { router } from "expo-router";
 import { OnboardingStepLayout } from "../../components/OnboardingStepLayout";
@@ -20,6 +20,18 @@ export default function OnboardingBio() {
   const [interests, setInterests] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
+
+  useEffect(() => {
+    supabase
+      .from("profiles")
+      .select("bio, interest_tags")
+      .eq("id", session!.user.id)
+      .single()
+      .then(({ data }) => {
+        if (data?.bio) setBio(data.bio);
+        if (data?.interest_tags?.length) setInterests(data.interest_tags);
+      });
+  }, [session]);
 
   function toggleInterest(value: string) {
     setInterests((prev) =>

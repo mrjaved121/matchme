@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { router } from "expo-router";
 import { OnboardingStepLayout } from "../../components/OnboardingStepLayout";
@@ -26,6 +26,22 @@ export default function OnboardingBirthdate() {
   const [year, setYear] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
+
+  useEffect(() => {
+    supabase
+      .from("profiles")
+      .select("birthdate")
+      .eq("id", session!.user.id)
+      .single()
+      .then(({ data }) => {
+        if (data?.birthdate) {
+          const [y, m, d] = data.birthdate.split("-");
+          setYear(y);
+          setMonth(m);
+          setDay(d);
+        }
+      });
+  }, [session]);
 
   async function handleNext() {
     const d = parseInt(day, 10);

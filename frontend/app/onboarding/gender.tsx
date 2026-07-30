@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { router } from "expo-router";
 import { OnboardingStepLayout } from "../../components/OnboardingStepLayout";
@@ -22,6 +22,18 @@ export default function OnboardingGender() {
   const [orientation, setOrientation] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
+
+  useEffect(() => {
+    supabase
+      .from("profiles")
+      .select("gender, orientation")
+      .eq("id", session!.user.id)
+      .single()
+      .then(({ data }) => {
+        if (data?.gender) setGender(data.gender);
+        if (data?.orientation) setOrientation(data.orientation);
+      });
+  }, [session]);
 
   async function handleNext() {
     if (!gender) {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Image, Pressable, Text, View } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { decode as decodeBase64 } from "base64-arraybuffer";
@@ -7,19 +7,37 @@ import { OnboardingStepLayout } from "../../components/OnboardingStepLayout";
 import { useTheme } from "../../theme/useTheme";
 import { supabase } from "../../lib/supabase";
 import { useAuthStore } from "../../store/authStore";
+import { publicPhotoUrl } from "../../lib/photoUrl";
 
 const MAX_PHOTOS = 6;
 
 type LocalPhoto = { uri: string; base64: string; mimeType: string };
+type ExistingPhoto = { storage_path: string; position: number };
 
 export default function OnboardingPhotos() {
   const theme = useTheme();
   const session = useAuthStore((s) => s.session);
+  const [existing, setExisting] = useState<ExistingPhoto[]>([]);
   const [photos, setPhotos] = useState<LocalPhoto[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
 
+  const remainingSlots = MAX_PHOTOS - existing.length - photos.length;
+
+  useEffect(() => {
+    supabase
+      .from("profile_photos")
+      .select("storage_path, position")
+      .eq("profile_id", session!.user.id)
+      .order("position", { ascending: true })
+      .then(({ data }) => {
+        if (data) setExisting(data);
+      });
+  }, [session]);
+
   async function pickImage() {
+    if (remainingSlots <= 0) return;
+
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
       setError("Photo library access is needed to add photos.");
@@ -37,12 +55,10 @@ export default function OnboardingPhotos() {
     if (result.canceled || !result.assets[0].base64) return;
 
     const asset = result.assets[0];
-    setPhotos((prev) =>
-      [...prev, { uri: asset.uri, base64: asset.base64!, mimeType: asset.mimeType ?? "image/jpeg" }].slice(
-        0,
-        MAX_PHOTOS,
-      ),
-    );
+    setPhotos((prev) => [
+      ...prev,
+      { uri: asset.uri, base64: asset.base64!, mimeType: asset.mimeType ?? "image/jpeg" },
+    ]);
   }
 
   function removePhoto(index: number) {
@@ -50,7 +66,7 @@ export default function OnboardingPhotos() {
   }
 
   async function handleNext() {
-    if (photos.length === 0) {
+    if (existing.length === 0 && photos.length === 0) {
       setError("Add at least one photo.");
       return;
     }
@@ -58,6 +74,8 @@ export default function OnboardingPhotos() {
     setLoading(true);
 
     try {
+      const startPosition = existing.length === 0 ? 0 : Math.max(...existing.map((p) => p.position)) + 1;
+
       for (let i = 0; i < photos.length; i++) {
         const photo = photos[i];
         const ext = photo.mimeType.split("/")[1] ?? "jpg";
@@ -71,7 +89,7 @@ export default function OnboardingPhotos() {
 
         const { error: rowError } = await supabase
           .from("profile_photos")
-          .insert({ profile_id: session!.user.id, storage_path: path, position: i });
+          .insert({ profile_id: session!.user.id, storage_path: path, position: startPosition + i });
 
         if (rowError) throw rowError;
       }
@@ -95,6 +113,13 @@ export default function OnboardingPhotos() {
       nextLoading={loading}
     >
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12 }}>
+        {existing.map((photo) => (
+          <Image
+            key={photo.storage_path}
+            source={{ uri: publicPhotoUrl(photo.storage_path) }}
+            style={{ width: 96, height: 128, borderRadius: theme.radius.card }}
+          />
+        ))}
         {photos.map((photo, index) => (
           <Pressable key={photo.uri} onPress={() => removePhoto(index)}>
             <Image
@@ -103,7 +128,7 @@ export default function OnboardingPhotos() {
             />
           </Pressable>
         ))}
-        {photos.length < MAX_PHOTOS ? (
+        {remainingSlots > 0 ? (
           <Pressable
             onPress={pickImage}
             style={{

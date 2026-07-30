@@ -95,6 +95,14 @@ export default function Chat() {
           setMessages((prev) => [...prev, payload.new as Message]);
         },
       )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "messages", filter: `match_id=eq.${matchId}` },
+        (payload) => {
+          const updated = payload.new as Message;
+          setMessages((prev) => prev.map((m) => (m.id === updated.id ? updated : m)));
+        },
+      )
       .on("broadcast", { event: "typing" }, ({ payload }) => {
         if (payload?.userId === myId) return;
         setOtherTyping(true);
@@ -225,6 +233,20 @@ export default function Chat() {
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ gap: theme.spacing.xs, paddingVertical: theme.spacing.md }}
           onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: true })}
+          ListFooterComponent={
+            messages.length > 0 &&
+            messages[messages.length - 1].sender_id === myId &&
+            messages[messages.length - 1].read_at ? (
+              <Text
+                style={[
+                  theme.typography.caption,
+                  { color: theme.color.textSecondary, textAlign: "right", marginTop: 2 },
+                ]}
+              >
+                Seen
+              </Text>
+            ) : null
+          }
           renderItem={({ item }) => {
             const mine = item.sender_id === myId;
             return (

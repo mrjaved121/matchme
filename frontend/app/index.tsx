@@ -10,7 +10,7 @@ export default function RootIndex() {
   }
 
   if (!profile?.onboarding_completed) {
-    return <Redirect href="/onboarding/name" />;
+    return <Redirect href="/onboarding" />;
   }
 
   return <Redirect href="/(app)/home" />;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { router } from "expo-router";
 import { OnboardingStepLayout } from "../../components/OnboardingStepLayout";
@@ -18,6 +18,20 @@ export default function OnboardingPreferences() {
   const [lookingFor, setLookingFor] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
+
+  useEffect(() => {
+    supabase
+      .from("profiles")
+      .select("interested_in, min_age_pref, max_age_pref, looking_for")
+      .eq("id", session!.user.id)
+      .single()
+      .then(({ data }) => {
+        if (data?.interested_in?.length) setInterestedIn(data.interested_in);
+        if (data?.min_age_pref) setMinAge(String(data.min_age_pref));
+        if (data?.max_age_pref) setMaxAge(String(data.max_age_pref));
+        if (data?.looking_for) setLookingFor(data.looking_for);
+      });
+  }, [session]);
 
   function toggle(value: string) {
     setInterestedIn((prev) =>

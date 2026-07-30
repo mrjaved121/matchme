@@ -16,7 +16,7 @@ type User = {
   created_at: string;
 };
 
-export function UsersTable({ users }: { users: User[] }) {
+export function UsersTable({ users, currentUserId }: { users: User[]; currentUserId?: string }) {
   const router = useRouter();
   const [pendingId, setPendingId] = useState<string | null>(null);
 
@@ -24,6 +24,17 @@ export function UsersTable({ users }: { users: User[] }) {
     setPendingId(userId);
     const supabase = createClient();
     await supabase.from("profiles").update({ status }).eq("id", userId);
+    setPendingId(null);
+    router.refresh();
+  }
+
+  async function setAdmin(userId: string, isAdmin: boolean) {
+    const verb = isAdmin ? "grant admin access to" : "remove admin access from";
+    if (!window.confirm(`Are you sure you want to ${verb} this user?`)) return;
+
+    setPendingId(userId);
+    const supabase = createClient();
+    await supabase.from("profiles").update({ is_admin: isAdmin }).eq("id", userId);
     setPendingId(null);
     router.refresh();
   }
@@ -95,6 +106,22 @@ export function UsersTable({ users }: { users: User[] }) {
                       pending={pendingId === user.id}
                     />
                   ) : null}
+                  {user.is_admin ? (
+                    user.id !== currentUserId ? (
+                      <ActionButton
+                        label="Remove admin"
+                        danger
+                        onClick={() => setAdmin(user.id, false)}
+                        pending={pendingId === user.id}
+                      />
+                    ) : null
+                  ) : (
+                    <ActionButton
+                      label="Make admin"
+                      onClick={() => setAdmin(user.id, true)}
+                      pending={pendingId === user.id}
+                    />
+                  )}
                 </div>
               </td>
             </tr>

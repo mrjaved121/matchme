@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { router } from "expo-router";
 import { OnboardingStepLayout } from "../../components/OnboardingStepLayout";
@@ -12,6 +12,18 @@ export default function OnboardingName() {
   const [city, setCity] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
+
+  useEffect(() => {
+    supabase
+      .from("profiles")
+      .select("first_name, city")
+      .eq("id", session!.user.id)
+      .single()
+      .then(({ data }) => {
+        if (data?.first_name) setFirstName(data.first_name);
+        if (data?.city) setCity(data.city);
+      });
+  }, [session]);
 
   async function handleNext() {
     if (firstName.trim().length < 2) {

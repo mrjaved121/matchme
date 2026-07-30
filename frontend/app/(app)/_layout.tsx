@@ -21,7 +21,7 @@ export default function AppLayout() {
   }
 
   if (!profile?.onboarding_completed) {
-    return <Redirect href="/onboarding/name" />;
+    return <Redirect href="/onboarding" />;
   }
 
   return <AppTabs userId={session.user.id} theme={theme} />;
