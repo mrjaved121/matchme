@@ -1,4 +1,3 @@
-import { useColorScheme } from "react-native";
 import { palette, radius, shadow, spacing, typography, motion } from "./tokens";
 
 export type Theme = ReturnType<typeof buildTheme>;
@@ -12,11 +11,14 @@ function buildTheme(scheme: "light" | "dark") {
       primary: palette.brand.primary,
       primaryDark: palette.brand.primaryDark,
       primaryGradient: [palette.brand.primary, palette.brand.gradientEnd] as const,
+      gold: palette.brand.gold,
+      goldGradient: [palette.brand.gold, palette.brand.goldGradientEnd] as const,
       success: palette.status.success,
       warning: palette.status.warning,
       error: palette.status.error,
     },
     tags: palette.tags,
+    swipe: palette.swipe,
     spacing,
     radius,
     typography,
@@ -25,7 +27,10 @@ function buildTheme(scheme: "light" | "dark") {
   };
 }
 
+// The swipe/discovery UI (card stack, Gold, Boosts) is designed as an
+// always-dark experience — same reasoning real swipe apps use: photos read
+// better against black, and it's a deliberate brand choice, not a
+// light/dark-adaptive one. Light stays in tokens.ts if that ever changes.
 export function useTheme(): Theme {
-  const scheme = useColorScheme();
-  return buildTheme(scheme === "dark" ? "dark" : "light");
+  return buildTheme("dark");
 }

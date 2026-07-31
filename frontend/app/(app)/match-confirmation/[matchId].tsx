@@ -130,10 +130,10 @@ export default function MatchConfirmation() {
             }
           />
           <Button
-            label="Back to home"
+            label="Keep discovering"
             variant="ghost"
             textColor="#FFFFFF"
-            onPress={() => router.replace("/(app)/home")}
+            onPress={() => router.replace("/(app)/discover")}
           />
         </View>
       </LinearGradient>

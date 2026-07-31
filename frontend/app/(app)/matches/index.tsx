@@ -6,6 +6,7 @@ import { EmptyState, ErrorState, LoadingState } from "../../../components/StateV
 import { useTheme } from "../../../theme/useTheme";
 import { useAuthStore } from "../../../store/authStore";
 import { fetchMatches, type MatchListItem } from "../../../lib/queries";
+import { fetchWhoLikedMe } from "../../../lib/discover";
 import { publicPhotoUrl } from "../../../lib/photoUrl";
 import { formatRelativeActive } from "../../../lib/formatRelativeActive";
 
@@ -16,6 +17,11 @@ export default function MatchesList() {
   const { data, isLoading, isError, isRefetching, refetch } = useQuery({
     queryKey: ["matches", myId],
     queryFn: () => fetchMatches(myId),
+  });
+
+  const { data: likers } = useQuery({
+    queryKey: ["liked-you", myId],
+    queryFn: () => fetchWhoLikedMe(myId),
   });
 
   if (isLoading) {
@@ -34,21 +40,8 @@ export default function MatchesList() {
     );
   }
 
-  if (!data || data.length === 0) {
-    return (
-      <ScreenContainer>
-        <EmptyState
-          title="No matches yet"
-          description="Start a speed date and your mutual matches will show up here."
-          actionLabel="Start Speed Dating"
-          onAction={() => router.push("/(app)/queue")}
-        />
-      </ScreenContainer>
-    );
-  }
-
-  return (
-    <ScreenContainer>
+  const header = (
+    <View>
       <Text
         style={[
           theme.typography.title,
@@ -57,9 +50,76 @@ export default function MatchesList() {
       >
         Matches
       </Text>
+      {likers && likers.length > 0 ? (
+        <Pressable
+          onPress={() => router.push("/(app)/liked-you")}
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            backgroundColor: theme.color.surface,
+            borderRadius: theme.radius.card,
+            borderWidth: 1,
+            borderColor: theme.color.gold,
+            padding: theme.spacing.sm,
+            marginBottom: theme.spacing.md,
+          }}
+        >
+          <View style={{ flex: 1 }}>
+            <Text style={[theme.typography.body, { color: theme.color.textPrimary, fontWeight: "700" }]}>
+              Who Liked You
+            </Text>
+            <Text style={[theme.typography.caption, { color: theme.color.textSecondary }]}>
+              {likers.length} {likers.length === 1 ? "person" : "people"} liked your profile
+            </Text>
+          </View>
+          <View style={{ flexDirection: "row" }}>
+            {likers.slice(0, 3).map((liker, index) => (
+              <View
+                key={liker.id}
+                style={{
+                  marginLeft: index === 0 ? 0 : -12,
+                  width: 40,
+                  height: 40,
+                  borderRadius: 20,
+                  overflow: "hidden",
+                  borderWidth: 2,
+                  borderColor: theme.color.surface,
+                }}
+              >
+                {liker.photoPath ? (
+                  <Image source={{ uri: publicPhotoUrl(liker.photoPath) }} blurRadius={12} style={{ width: "100%", height: "100%" }} />
+                ) : (
+                  <View style={{ width: "100%", height: "100%", backgroundColor: theme.color.border }} />
+                )}
+              </View>
+            ))}
+          </View>
+        </Pressable>
+      ) : null}
+    </View>
+  );
+
+  if (!data || data.length === 0) {
+    return (
+      <ScreenContainer>
+        {header}
+        <EmptyState
+          title="No matches yet"
+          description="Start discovering people, or jump into a speed date."
+          actionLabel="Go to Discover"
+          onAction={() => router.push("/(app)/discover")}
+        />
+      </ScreenContainer>
+    );
+  }
+
+  return (
+    <ScreenContainer>
       <FlatList
         data={data}
         keyExtractor={(item) => item.matchId}
+        ListHeaderComponent={header}
         contentContainerStyle={{ gap: theme.spacing.sm, paddingBottom: theme.spacing.lg }}
         renderItem={({ item }) => <MatchRow item={item} />}
         refreshControl={

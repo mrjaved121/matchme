@@ -11,10 +11,16 @@ const ROWS: {
     | "/(app)/settings/notifications"
     | "/(app)/settings/privacy"
     | "/(app)/settings/verification"
-    | "/(app)/settings/blocked";
+    | "/(app)/settings/blocked"
+    | "/(app)/settings/safety"
+    | "/(app)/settings/subscription"
+    | "/(app)/settings/help";
 }[] = [
   { label: "Get verified", href: "/(app)/settings/verification" },
-  { label: "Notifications", href: "/(app)/settings/notifications" },
+  { label: "🔔  Notifications", href: "/(app)/settings/notifications" },
+  { label: "🛡️  Safety Center", href: "/(app)/settings/safety" },
+  { label: "💳  Manage Subscription", href: "/(app)/settings/subscription" },
+  { label: "❓  Help & Support", href: "/(app)/settings/help" },
   { label: "Blocked users", href: "/(app)/settings/blocked" },
   { label: "Privacy & account", href: "/(app)/settings/privacy" },
 ];

@@ -10,7 +10,7 @@ export default function OnboardingLayout() {
   }
 
   if (profile?.onboarding_completed) {
-    return <Redirect href="/(app)/home" />;
+    return <Redirect href="/(app)/discover" />;
   }
 
   return <Stack screenOptions={{ headerShown: false }} />;

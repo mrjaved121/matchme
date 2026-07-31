@@ -13,21 +13,32 @@ export const palette = {
     border: "#F0DDD5",
   },
   dark: {
-    background: "#1C1210",
-    surface: "#241815",
-    textPrimary: "#F5ECE8",
-    textSecondary: "#B5A29C",
-    border: "#3A2A24",
+    background: "#0C0C10",
+    surface: "#18181E",
+    textPrimary: "#F5F3F2",
+    textSecondary: "#9C98A3",
+    border: "#2A2A32",
   },
   brand: {
     primary: "#FF4D6D",
     primaryDark: "#E63E5C",
     gradientEnd: "#FF8A5B",
+    gold: "#F0B429",
+    goldGradientEnd: "#F7D774",
   },
   status: {
     success: "#2E9C7B",
     warning: "#F5A623",
     error: "#E74C3C",
+  },
+  // Swipe-card action buttons — kept distinct from the single brand accent
+  // used elsewhere so Like/Pass/Superlike/Boost stay instantly recognizable.
+  swipe: {
+    rewind: "#F0B429",
+    pass: "#E74C3C",
+    superlike: "#3B82F6",
+    like: "#2E9C7B",
+    boost: "#A855F7",
   },
   // Read-only tag chips (e.g. interest tags on a profile) cycle through
   // these — distinct from the single brand accent used for actions.

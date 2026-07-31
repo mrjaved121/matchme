@@ -13,9 +13,20 @@ type Props = {
   style?: ViewStyle;
   /** Override the label/border color — for a ghost/secondary button sitting on a colored background. */
   textColor?: string;
+  /** Override the primary variant's gradient — e.g. Gold's yellow gradient instead of the brand one. */
+  gradientColors?: readonly [string, string];
 };
 
-export function Button({ label, onPress, variant = "primary", disabled, loading, style, textColor: textColorOverride }: Props) {
+export function Button({
+  label,
+  onPress,
+  variant = "primary",
+  disabled,
+  loading,
+  style,
+  textColor: textColorOverride,
+  gradientColors,
+}: Props) {
   const theme = useTheme();
   const isDisabled = disabled || loading;
 
@@ -53,7 +64,7 @@ export function Button({ label, onPress, variant = "primary", disabled, loading,
         ]}
       >
         <LinearGradient
-          colors={theme.color.primaryGradient}
+          colors={gradientColors ?? theme.color.primaryGradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={[styles.base, { borderRadius: theme.radius.pill }]}

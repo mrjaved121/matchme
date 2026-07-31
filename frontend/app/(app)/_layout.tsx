@@ -54,8 +54,8 @@ function AppTabs({ userId, theme }: { userId: string; theme: ReturnType<typeof u
       }}
     >
       <Tabs.Screen
-        name="home"
-        options={{ title: "Home", tabBarIcon: (p) => <TabIcon symbol="●" {...p} /> }}
+        name="discover"
+        options={{ title: "Discover", tabBarIcon: (p) => <TabIcon symbol="◈" {...p} /> }}
       />
       <Tabs.Screen
         name="matches/index"
@@ -72,6 +72,7 @@ function AppTabs({ userId, theme }: { userId: string; theme: ReturnType<typeof u
       />
 
       {/* Reachable via router.push, hidden from the tab bar */}
+      <Tabs.Screen name="home" options={{ href: null }} />
       <Tabs.Screen name="queue" options={{ href: null }} />
       <Tabs.Screen name="preference-filter" options={{ href: null }} />
       <Tabs.Screen name="date/[sessionId]" options={{ href: null }} />
@@ -85,7 +86,14 @@ function AppTabs({ userId, theme }: { userId: string; theme: ReturnType<typeof u
       <Tabs.Screen name="settings/privacy" options={{ href: null }} />
       <Tabs.Screen name="settings/verification" options={{ href: null }} />
       <Tabs.Screen name="settings/blocked" options={{ href: null }} />
+      <Tabs.Screen name="settings/safety" options={{ href: null }} />
+      <Tabs.Screen name="settings/subscription" options={{ href: null }} />
+      <Tabs.Screen name="settings/help" options={{ href: null }} />
       <Tabs.Screen name="report/[targetUserId]" options={{ href: null }} />
+      <Tabs.Screen name="gold" options={{ href: null }} />
+      <Tabs.Screen name="boost" options={{ href: null }} />
+      <Tabs.Screen name="liked-you" options={{ href: null }} />
+      <Tabs.Screen name="discovery-preferences" options={{ href: null }} />
     </Tabs>
   );
 }

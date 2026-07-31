@@ -13,5 +13,5 @@ export default function RootIndex() {
     return <Redirect href="/onboarding" />;
   }
 
-  return <Redirect href="/(app)/home" />;
+  return <Redirect href="/(app)/discover" />;
 }

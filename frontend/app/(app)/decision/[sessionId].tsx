@@ -53,7 +53,7 @@ export default function DateDecision() {
         params: { matchId: data.match.id },
       });
     } else {
-      router.replace("/(app)/home");
+      router.replace("/(app)/discover");
     }
   }
 
@@ -77,7 +77,7 @@ export default function DateDecision() {
           >
             We'll let you know if it's a match.
           </Text>
-          <Button label="Back to home" onPress={() => router.replace("/(app)/home")} />
+          <Button label="Back to Discover" onPress={() => router.replace("/(app)/discover")} />
         </View>
       </ScreenContainer>
     );

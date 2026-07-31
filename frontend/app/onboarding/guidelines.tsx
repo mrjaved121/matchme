@@ -37,7 +37,7 @@ export default function OnboardingGuidelines() {
 
     await refreshProfile();
     setLoading(false);
-    router.replace("/(app)/home");
+    router.replace("/(app)/discover");
   }
 
   return (
