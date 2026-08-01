@@ -1,4 +1,4 @@
-import { Image, Pressable, ScrollView, Text, View } from "react-native";
+import { Dimensions, Image, Pressable, ScrollView, Text, View } from "react-native";
 import { router } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { ScreenContainer } from "../../../components/ScreenContainer";
@@ -84,6 +84,7 @@ export default function MyProfile() {
 
   const photoCount = photos?.length ?? 0;
   const strength = computeStrength(photoCount, extra);
+  const photoTileWidth = (Dimensions.get("window").width - theme.spacing.md * 2 - theme.spacing.sm * 2) / 3;
 
   return (
     <ScreenContainer>
@@ -108,7 +109,7 @@ export default function MyProfile() {
               <Image
                 key={photo.storage_path}
                 source={{ uri: publicPhotoUrl(photo.storage_path) }}
-                style={{ width: "31%", aspectRatio: 3 / 4, borderRadius: theme.radius.card }}
+                style={{ width: photoTileWidth, height: (photoTileWidth * 4) / 3, borderRadius: theme.radius.card }}
               />
             ))}
           </View>
