@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { ScreenContainer } from "../components/ScreenContainer";
 import { TextField } from "../components/TextField";
@@ -57,6 +57,11 @@ export default function Verify() {
           <Text style={[theme.typography.body, { color: theme.color.textSecondary }]}>
             We sent a 6-digit code to {email}.
           </Text>
+          <Pressable onPress={() => router.back()}>
+            <Text style={[theme.typography.caption, { color: theme.color.primary, fontWeight: "700" }]}>
+              Wrong email? Change it
+            </Text>
+          </Pressable>
         </View>
 
         <TextField
