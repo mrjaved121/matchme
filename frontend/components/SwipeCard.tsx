@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useRef } from "react";
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { Animated, Dimensions, Image, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useTheme } from "../theme/useTheme";
@@ -18,11 +18,13 @@ export type SwipeCardProfile = {
   first_name: string | null;
   bio: string;
   age: number | null;
-  city: string | null;
+  distanceLabel: string | null;
   job_title: string | null;
   interest_tags: string[];
   is_verified: boolean;
-  photoUrl: string | null;
+  isOnline: boolean;
+  matchScore: number;
+  photoUrls: string[];
 };
 
 type Props = {
@@ -37,7 +39,7 @@ export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
 ) {
   const theme = useTheme();
   const position = useRef(new Animated.ValueXY()).current;
-  const startPosition = useRef({ x: 0, y: 0 }).current;
+  const [photoIndex, setPhotoIndex] = useState(0);
 
   function flingOut(action: SwipeAction) {
     const target =
@@ -60,10 +62,6 @@ export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
 
   const pan = Gesture.Pan()
     .enabled(isTop)
-    .onBegin(() => {
-      startPosition.x = 0;
-      startPosition.y = 0;
-    })
     .onUpdate((e) => {
       position.setValue({ x: e.translationX, y: e.translationY });
     })
@@ -79,6 +77,18 @@ export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
       }
     });
 
+  const tap = Gesture.Tap()
+    .enabled(isTop && profile.photoUrls.length > 1)
+    .onEnd((e) => {
+      setPhotoIndex((prev) => {
+        const goingBack = e.x < SCREEN_WIDTH / 2;
+        const next = goingBack ? prev - 1 : prev + 1;
+        return Math.max(0, Math.min(profile.photoUrls.length - 1, next));
+      });
+    });
+
+  const composed = Gesture.Race(pan, tap);
+
   const rotate = position.x.interpolate({
     inputRange: [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
     outputRange: ["-12deg", "0deg", "12deg"],
@@ -93,10 +103,14 @@ export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
       }
     : { transform: [{ scale: 0.96 }], top: 10 };
 
+  const currentPhoto = profile.photoUrls[photoIndex];
+  const matchColor =
+    profile.matchScore >= 75 ? theme.swipe.like : profile.matchScore >= 45 ? theme.color.gold : theme.color.textSecondary;
+
   const content = (
     <Animated.View style={[styles.card, { backgroundColor: theme.color.surface }, cardStyle]}>
-      {profile.photoUrl ? (
-        <Image source={{ uri: profile.photoUrl }} style={styles.photo} />
+      {currentPhoto ? (
+        <Image source={{ uri: currentPhoto }} style={styles.photo} />
       ) : (
         <View style={[styles.photo, { alignItems: "center", justifyContent: "center", backgroundColor: theme.color.border }]}>
           <Text style={{ fontSize: 64, color: theme.color.textSecondary }}>
@@ -104,6 +118,31 @@ export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
           </Text>
         </View>
       )}
+
+      {profile.photoUrls.length > 1 ? (
+        <View style={styles.photoProgressRow}>
+          {profile.photoUrls.map((_, i) => (
+            <View
+              key={i}
+              style={[
+                styles.photoProgressSegment,
+                { backgroundColor: i === photoIndex ? "#FFFFFF" : "rgba(255,255,255,0.35)" },
+              ]}
+            />
+          ))}
+        </View>
+      ) : null}
+
+      <View style={[styles.badge, styles.matchBadge, { backgroundColor: matchColor + "CC" }]}>
+        <Text style={styles.badgeText}>{profile.matchScore}% match</Text>
+      </View>
+
+      {profile.isOnline ? (
+        <View style={[styles.badge, styles.onlineBadge, { backgroundColor: theme.swipe.like + "CC" }]}>
+          <View style={styles.onlineDot} />
+          <Text style={styles.badgeText}>Online</Text>
+        </View>
+      ) : null}
 
       {isTop ? (
         <>
@@ -126,9 +165,9 @@ export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
           </Text>
           {profile.is_verified ? <Text style={{ fontSize: 18 }}>✓</Text> : null}
         </View>
-        {profile.job_title || profile.city ? (
+        {profile.job_title || profile.distanceLabel ? (
           <Text style={styles.subline}>
-            {[profile.job_title, profile.city].filter(Boolean).join(" · ")}
+            {[profile.distanceLabel, profile.job_title].filter(Boolean).join(" · ")}
           </Text>
         ) : null}
         {profile.bio ? (
@@ -151,7 +190,7 @@ export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
     return content;
   }
 
-  return <GestureDetector gesture={pan}>{content}</GestureDetector>;
+  return <GestureDetector gesture={composed}>{content}</GestureDetector>;
 });
 
 const styles = StyleSheet.create({
@@ -166,6 +205,33 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
+  photoProgressRow: {
+    position: "absolute",
+    top: 10,
+    left: 10,
+    right: 10,
+    flexDirection: "row",
+    gap: 4,
+  },
+  photoProgressSegment: {
+    flex: 1,
+    height: 3,
+    borderRadius: 2,
+  },
+  badge: {
+    position: "absolute",
+    top: 22,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 999,
+  },
+  matchBadge: { left: 12 },
+  onlineBadge: { right: 12 },
+  onlineDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: "#FFFFFF" },
+  badgeText: { color: "#FFFFFF", fontWeight: "800", fontSize: 12 },
   infoOverlay: {
     position: "absolute",
     left: 0,

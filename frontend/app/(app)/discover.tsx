@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
 import { ScreenContainer } from "../../components/ScreenContainer";
@@ -9,28 +9,46 @@ import { useTheme } from "../../theme/useTheme";
 import { supabase } from "../../lib/supabase";
 import { useAuthStore } from "../../store/authStore";
 import { publicPhotoUrl } from "../../lib/photoUrl";
-import { calculateAge, captureAndSaveLocation, fetchDiscoverCandidates, recordSwipe, type SwipeAction } from "../../lib/discover";
+import {
+  calculateAge,
+  captureAndSaveLocation,
+  computeCompatibility,
+  fetchDiscoverCandidates,
+  fetchMySnapshot,
+  formatDistance,
+  isRecentlyOnline,
+  recordSwipe,
+  type SwipeAction,
+} from "../../lib/discover";
 
 export default function Discover() {
   const theme = useTheme();
   const myId = useAuthStore((s) => s.session!.user.id);
+  const profile = useAuthStore((s) => s.profile);
 
   const [deck, setDeck] = useState<SwipeCardProfile[] | null>(null);
   const [error, setError] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [topPicksActive, setTopPicksActive] = useState(false);
   const topCardRef = useRef<SwipeCardHandle>(null);
 
   const load = useCallback(async () => {
     setError(false);
     setDeck(null);
     try {
-      const candidates = await fetchDiscoverCandidates(15);
+      const [candidates, me] = await Promise.all([fetchDiscoverCandidates(20), fetchMySnapshot(myId)]);
       const ids = candidates.map((c) => c.id);
       const { data: photos } =
         ids.length > 0
-          ? await supabase.from("profile_photos").select("profile_id, storage_path").in("profile_id", ids).eq("position", 0)
+          ? await supabase.from("profile_photos").select("profile_id, storage_path").in("profile_id", ids).order("position", { ascending: true })
           : { data: [] };
-      const photoById = new Map((photos ?? []).map((p) => [p.profile_id, p.storage_path]));
+
+      const photosByProfile = new Map<string, string[]>();
+      for (const p of photos ?? []) {
+        const list = photosByProfile.get(p.profile_id) ?? [];
+        list.push(publicPhotoUrl(p.storage_path));
+        photosByProfile.set(p.profile_id, list);
+      }
 
       setDeck(
         candidates.map((c) => ({
@@ -38,17 +56,19 @@ export default function Discover() {
           first_name: c.first_name,
           bio: c.bio,
           age: c.birthdate ? calculateAge(c.birthdate) : null,
-          city: c.city,
+          distanceLabel: formatDistance(me, c),
           job_title: c.job_title,
           interest_tags: c.interest_tags ?? [],
           is_verified: c.is_verified,
-          photoUrl: photoById.has(c.id) ? publicPhotoUrl(photoById.get(c.id)!) : null,
+          isOnline: isRecentlyOnline(c.last_active_at),
+          matchScore: computeCompatibility(me, c),
+          photoUrls: photosByProfile.get(c.id) ?? [],
         })),
       );
     } catch {
       setError(true);
     }
-  }, []);
+  }, [myId]);
 
   useEffect(() => {
     load();
@@ -75,6 +95,23 @@ export default function Discover() {
     }
   }
 
+  function bringToFront(profileId: string) {
+    setDeck((prev) => {
+      if (!prev) return prev;
+      const target = prev.find((p) => p.id === profileId);
+      if (!target) return prev;
+      return [target, ...prev.filter((p) => p.id !== profileId)];
+    });
+  }
+
+  function openPassport() {
+    if (!profile?.is_gold) {
+      router.push("/(app)/gold");
+      return;
+    }
+    router.push("/(app)/discovery-preferences");
+  }
+
   if (error) {
     return (
       <ScreenContainer>
@@ -91,7 +128,9 @@ export default function Discover() {
     );
   }
 
-  const visible = deck.slice(0, 3);
+  const orderedDeck = topPicksActive ? [...deck].sort((a, b) => b.matchScore - a.matchScore) : deck;
+  const visible = orderedDeck.slice(0, 3);
+  const stripCandidates = orderedDeck.slice(0, 8);
 
   return (
     <ScreenContainer>
@@ -125,6 +164,50 @@ export default function Discover() {
             </Text>
           </Pressable>
         </View>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ gap: 12, paddingBottom: theme.spacing.sm, alignItems: "center" }}
+        >
+          <QuickAccessCircle
+            label="Top Picks"
+            icon="★"
+            iconColor={theme.color.gold}
+            active={topPicksActive}
+            onPress={() => setTopPicksActive((v) => !v)}
+          />
+          <QuickAccessCircle label="Passport" icon="🌐" iconColor={theme.swipe.superlike} onPress={openPassport} />
+          {stripCandidates.map((c) => (
+            <Pressable key={c.id} onPress={() => bringToFront(c.id)} style={{ alignItems: "center", gap: 4, width: 64 }}>
+              <View
+                style={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: 28,
+                  borderWidth: 2,
+                  borderColor: c.isOnline ? theme.swipe.like : theme.color.border,
+                  overflow: "hidden",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: theme.color.surface,
+                }}
+              >
+                {c.photoUrls[0] ? (
+                  <Image source={{ uri: c.photoUrls[0] }} style={{ width: "100%", height: "100%" }} />
+                ) : (
+                  <Text style={{ color: theme.color.textSecondary, fontWeight: "700" }}>
+                    {c.first_name?.[0]?.toUpperCase() ?? "?"}
+                  </Text>
+                )}
+              </View>
+              <Text numberOfLines={1} style={[theme.typography.caption, { color: theme.color.textSecondary }]}>
+                {c.first_name ?? "—"}
+              </Text>
+            </Pressable>
+          ))}
+        </ScrollView>
+
         <View style={{ flex: 1 }}>
           {visible.length === 0 ? (
             <EmptyState
@@ -134,15 +217,15 @@ export default function Discover() {
               onAction={load}
             />
           ) : (
-            [...visible].reverse().map((profile, i) => {
+            [...visible].reverse().map((p, i) => {
               const isTop = i === visible.length - 1;
               return (
                 <SwipeCard
-                  key={profile.id}
+                  key={p.id}
                   ref={isTop ? topCardRef : undefined}
-                  profile={profile}
+                  profile={p}
                   isTop={isTop}
-                  onSwiped={(action) => handleSwiped(profile.id, action)}
+                  onSwiped={(action) => handleSwiped(p.id, action)}
                 />
               );
             })
@@ -160,6 +243,43 @@ export default function Discover() {
         ) : null}
       </View>
     </ScreenContainer>
+  );
+}
+
+function QuickAccessCircle({
+  label,
+  icon,
+  iconColor,
+  active,
+  onPress,
+}: {
+  label: string;
+  icon: string;
+  iconColor: string;
+  active?: boolean;
+  onPress: () => void;
+}) {
+  const theme = useTheme();
+  return (
+    <Pressable onPress={onPress} style={{ alignItems: "center", gap: 4, width: 64 }}>
+      <View
+        style={{
+          width: 56,
+          height: 56,
+          borderRadius: 28,
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: active ? iconColor + "33" : theme.color.surface,
+          borderWidth: active ? 2 : 0,
+          borderColor: iconColor,
+        }}
+      >
+        <Text style={{ fontSize: 22, color: iconColor }}>{icon}</Text>
+      </View>
+      <Text numberOfLines={1} style={[theme.typography.caption, { color: theme.color.textSecondary, fontWeight: "700" }]}>
+        {label}
+      </Text>
+    </Pressable>
   );
 }
 
