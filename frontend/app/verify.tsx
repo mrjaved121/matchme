@@ -52,7 +52,10 @@ export default function Verify() {
 
   async function handleResend() {
     setResending(true);
-    await supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
+    await supabase.auth.signInWithOtp({
+      email,
+      options: { shouldCreateUser: true, emailRedirectTo: "matchme://auth-callback" },
+    });
     setResending(false);
     setCooldown(RESEND_COOLDOWN_SECONDS);
   }
@@ -65,7 +68,8 @@ export default function Verify() {
             Check your email
           </Text>
           <Text style={[theme.typography.body, { color: theme.color.textSecondary }]}>
-            We sent a 6-digit code to {email}.
+            We sent a code to {email}. Type it below, or just tap the "Sign in" link in that email — either one
+            works.
           </Text>
           <Pressable onPress={() => router.back()}>
             <Text style={[theme.typography.caption, { color: theme.color.primary, fontWeight: "700" }]}>

@@ -34,7 +34,7 @@ export default function SignIn() {
 
     const { error: otpError } = await supabase.auth.signInWithOtp({
       email: email.trim(),
-      options: { shouldCreateUser: true },
+      options: { shouldCreateUser: true, emailRedirectTo: "matchme://auth-callback" },
     });
 
     setLoading(false);

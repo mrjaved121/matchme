@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { AppState } from "react-native";
-import { Stack } from "expo-router";
+import { Stack, router } from "expo-router";
+import * as Linking from "expo-linking";
 import * as SplashScreen from "expo-splash-screen";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -10,6 +11,7 @@ import { useAuthStore } from "../store/authStore";
 import { useTheme } from "../theme/useTheme";
 import { ErrorBoundary } from "../components/ErrorBoundary";
 import { supabase } from "../lib/supabase";
+import { handleAuthDeepLink } from "../lib/authDeepLink";
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -44,6 +46,17 @@ export default function RootLayout() {
     return () => subscription.remove();
   }, [userId]);
 
+  useEffect(() => {
+    async function tryUrl(url: string | null) {
+      const handled = await handleAuthDeepLink(url);
+      if (handled) router.replace("/");
+    }
+
+    Linking.getInitialURL().then(tryUrl);
+    const subscription = Linking.addEventListener("url", (e) => tryUrl(e.url));
+    return () => subscription.remove();
+  }, []);
+
   if (initializing) {
     return null;
   }
@@ -60,6 +73,7 @@ export default function RootLayout() {
               <Stack.Screen name="welcome" />
               <Stack.Screen name="sign-in" />
               <Stack.Screen name="verify" />
+              <Stack.Screen name="auth-callback" />
               <Stack.Screen name="onboarding" />
               <Stack.Screen name="account-created" />
               <Stack.Screen name="permissions-location" />
