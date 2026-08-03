@@ -48,8 +48,12 @@ export default function RootLayout() {
 
   useEffect(() => {
     async function tryUrl(url: string | null) {
+      if (!url || !url.includes("auth-callback")) return;
       const handled = await handleAuthDeepLink(url);
-      if (handled) router.replace("/");
+      // Whether it succeeded or the link was expired/invalid, always leave
+      // auth-callback's "Signing you in…" screen — a failed attempt must
+      // never strand the user on an infinite spinner with no way out.
+      router.replace(handled ? "/" : "/welcome");
     }
 
     Linking.getInitialURL().then(tryUrl);
