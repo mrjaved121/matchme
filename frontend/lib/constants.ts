@@ -16,6 +16,21 @@ export const ORIENTATION_OPTIONS = [
   "Straight", "Gay", "Lesbian", "Bisexual", "Pansexual", "Asexual", "Other",
 ].map((label) => ({ label, value: label.toLowerCase() }));
 
+export const RELIGION_OPTIONS = [
+  "Agnostic", "Atheist", "Buddhist", "Christian", "Hindu", "Jewish",
+  "Muslim", "Sikh", "Spiritual", "Other", "Prefer not to say",
+].map((label) => ({ label, value: label.toLowerCase().replace(/\s+/g, "_") }));
+
+export const LANGUAGE_OPTIONS = [
+  "English", "Spanish", "French", "German", "Portuguese", "Mandarin",
+  "Arabic", "Hindi", "Urdu", "Japanese", "Korean", "Italian",
+].map((label) => ({ label, value: label.toLowerCase() }));
+
+export const INTEREST_OPTIONS = [
+  "Travel", "Music", "Fitness", "Foodie", "Movies", "Reading",
+  "Gaming", "Outdoors", "Art", "Dancing", "Coffee", "Pets",
+].map((label) => ({ label, value: label.toLowerCase() }));
+
 export const ICEBREAKER_PROMPTS = [
   "What's your most controversial food opinion?",
   "Window seat or aisle seat, and why does it matter so much to you?",

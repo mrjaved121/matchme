@@ -104,8 +104,8 @@ export default function OnboardingPhotos() {
 
   return (
     <OnboardingStepLayout
-      step={5}
-      totalSteps={7}
+      step={9}
+      totalSteps={11}
       title="Add your photos"
       subtitle={`Add 1-${MAX_PHOTOS} photos. Your first photo is your main profile photo.`}
       onNext={handleNext}

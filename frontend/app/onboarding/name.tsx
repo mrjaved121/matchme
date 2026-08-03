@@ -5,6 +5,7 @@ import { OnboardingStepLayout } from "../../components/OnboardingStepLayout";
 import { TextField } from "../../components/TextField";
 import { supabase } from "../../lib/supabase";
 import { useAuthStore } from "../../store/authStore";
+import { applyPendingReferralCode } from "../../lib/referral";
 
 export default function OnboardingName() {
   const session = useAuthStore((s) => s.session);
@@ -45,13 +46,14 @@ export default function OnboardingName() {
       return;
     }
 
+    await applyPendingReferralCode(session!.user.id).catch(() => {});
     router.push("/onboarding/birthdate");
   }
 
   return (
     <OnboardingStepLayout
       step={1}
-      totalSteps={7}
+      totalSteps={11}
       title="What's your name?"
       subtitle="This is how you'll appear to other people on MatchMe."
       onNext={handleNext}

@@ -57,9 +57,13 @@ export default function RootLayout() {
             <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: theme.color.background } }}>
               <Stack.Screen name="index" />
               <Stack.Screen name="intro" />
+              <Stack.Screen name="welcome" />
               <Stack.Screen name="sign-in" />
               <Stack.Screen name="verify" />
               <Stack.Screen name="onboarding" />
+              <Stack.Screen name="account-created" />
+              <Stack.Screen name="permissions-location" />
+              <Stack.Screen name="permissions-notifications" />
               <Stack.Screen name="(app)" />
             </Stack>
           </QueryClientProvider>

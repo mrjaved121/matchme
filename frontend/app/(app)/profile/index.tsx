@@ -1,4 +1,4 @@
-import { Dimensions, Image, Pressable, ScrollView, Text, View } from "react-native";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import { router } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { ScreenContainer } from "../../../components/ScreenContainer";
@@ -15,6 +15,7 @@ type ProfileExtra = {
   job_title: string | null;
   education: string | null;
   interest_tags: string[];
+  city: string | null;
 };
 
 function computeStrength(photoCount: number, extra: ProfileExtra | undefined): number {
@@ -49,7 +50,7 @@ export default function MyProfile() {
     queryFn: async (): Promise<ProfileExtra> => {
       const { data } = await supabase
         .from("profiles")
-        .select("bio, job_title, education, interest_tags")
+        .select("bio, job_title, education, interest_tags, city")
         .eq("id", myId)
         .single();
       return {
@@ -57,6 +58,7 @@ export default function MyProfile() {
         job_title: data?.job_title ?? null,
         education: data?.education ?? null,
         interest_tags: data?.interest_tags ?? [],
+        city: data?.city ?? null,
       };
     },
   });
@@ -84,34 +86,61 @@ export default function MyProfile() {
 
   const photoCount = photos?.length ?? 0;
   const strength = computeStrength(photoCount, extra);
-  const photoTileWidth = (Dimensions.get("window").width - theme.spacing.md * 2 - theme.spacing.sm * 2) / 3;
 
   return (
     <ScreenContainer>
       <ScrollView contentContainerStyle={{ paddingBottom: theme.spacing.xl }} showsVerticalScrollIndicator={false}>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginTop: theme.spacing.md,
-          }}
-        >
-          <Text style={[theme.typography.title, { color: theme.color.textPrimary }]}>Profile</Text>
-          <Button label="Settings" variant="ghost" onPress={() => router.push("/(app)/settings")} />
-        </View>
-
         {isLoading ? (
           <LoadingState />
         ) : (
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: theme.spacing.sm, marginTop: theme.spacing.md }}>
-            {(photos ?? []).map((photo) => (
+          <View style={{ marginTop: theme.spacing.md, borderRadius: theme.radius.card, overflow: "hidden" }}>
+            {photos && photos.length > 0 ? (
               <Image
-                key={photo.storage_path}
-                source={{ uri: publicPhotoUrl(photo.storage_path) }}
-                style={{ width: photoTileWidth, height: (photoTileWidth * 4) / 3, borderRadius: theme.radius.card }}
+                source={{ uri: publicPhotoUrl(photos[0].storage_path) }}
+                style={{ width: "100%", aspectRatio: 4 / 5 }}
               />
-            ))}
+            ) : (
+              <View
+                style={{
+                  width: "100%",
+                  aspectRatio: 4 / 5,
+                  backgroundColor: theme.color.surface,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text style={{ color: theme.color.textSecondary }}>Add a photo</Text>
+              </View>
+            )}
+            <View
+              style={{
+                position: "absolute",
+                top: theme.spacing.sm,
+                left: theme.spacing.sm,
+                right: theme.spacing.sm,
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <View style={{ flexDirection: "row", gap: 8 }}>
+                <HeaderPill icon="👁" label="Preview" onPress={() => router.push("/(app)/profile/preview")} />
+                <HeaderPill icon="↗" label="Share" onPress={() => router.push("/(app)/profile/share")} />
+              </View>
+              <Pressable
+                onPress={() => router.push("/(app)/settings")}
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: 18,
+                  backgroundColor: "rgba(0,0,0,0.5)",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text style={{ fontSize: 16 }}>⚙️</Text>
+              </Pressable>
+            </View>
           </View>
         )}
 
@@ -150,6 +179,12 @@ export default function MyProfile() {
             </View>
           ) : null}
         </View>
+
+        {extra?.city || extra?.job_title || extra?.education ? (
+          <Text style={[theme.typography.subtext, { color: theme.color.textSecondary, marginTop: 2 }]}>
+            {[extra?.city, extra?.job_title, extra?.education].filter(Boolean).join(" · ")}
+          </Text>
+        ) : null}
 
         {extra && extra.interest_tags.length > 0 ? (
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginTop: theme.spacing.sm }}>
@@ -248,6 +283,26 @@ export default function MyProfile() {
         </Pressable>
       </ScrollView>
     </ScreenContainer>
+  );
+}
+
+function HeaderPill({ icon, label, onPress }: { icon: string; label: string; onPress: () => void }) {
+  return (
+    <Pressable
+      onPress={onPress}
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 6,
+        backgroundColor: "rgba(0,0,0,0.5)",
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        borderRadius: 999,
+      }}
+    >
+      <Text style={{ fontSize: 13 }}>{icon}</Text>
+      <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 13 }}>{label}</Text>
+    </Pressable>
   );
 }
 

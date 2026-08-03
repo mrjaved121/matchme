@@ -57,6 +57,24 @@ export function ErrorState({ message = "Something went wrong.", onRetry }: Error
   );
 }
 
+export function NoInternetState({ onRetry }: { onRetry?: () => void }) {
+  const theme = useTheme();
+  return (
+    <View style={[styles.center, { gap: theme.spacing.sm }]}>
+      <Text style={{ fontSize: 40 }}>📡</Text>
+      <Text style={[theme.typography.title, { color: theme.color.textPrimary, textAlign: "center" }]}>
+        No internet connection
+      </Text>
+      <Text style={[theme.typography.body, { color: theme.color.textSecondary, textAlign: "center" }]}>
+        Check your connection and try again.
+      </Text>
+      {onRetry ? (
+        <Button label="Retry" variant="secondary" onPress={onRetry} style={{ marginTop: theme.spacing.md }} />
+      ) : null}
+    </View>
+  );
+}
+
 export function LoadingState({ label }: { label?: string }) {
   const theme = useTheme();
   return (

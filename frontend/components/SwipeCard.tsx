@@ -1,5 +1,5 @@
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
-import { Animated, Dimensions, Image, StyleSheet, Text, View } from "react-native";
+import { Animated, Dimensions, Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useTheme } from "../theme/useTheme";
 import { Tag } from "./Tag";
@@ -20,6 +20,7 @@ export type SwipeCardProfile = {
   age: number | null;
   distanceLabel: string | null;
   job_title: string | null;
+  loveLanguage: string | null;
   interest_tags: string[];
   is_verified: boolean;
   isOnline: boolean;
@@ -31,10 +32,11 @@ type Props = {
   profile: SwipeCardProfile;
   isTop: boolean;
   onSwiped: (action: SwipeAction) => void;
+  onViewProfile?: () => void;
 };
 
 export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
-  { profile, isTop, onSwiped },
+  { profile, isTop, onSwiped, onViewProfile },
   ref,
 ) {
   const theme = useTheme();
@@ -159,11 +161,28 @@ export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
       ) : null}
 
       <View style={styles.infoOverlay}>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-          <Text style={styles.name}>
-            {profile.first_name ?? "MatchMe user"}{profile.age ? `, ${profile.age}` : ""}
-          </Text>
-          {profile.is_verified ? <Text style={{ fontSize: 18 }}>✓</Text> : null}
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            <Text style={styles.name}>
+              {profile.first_name ?? "MatchMe user"}{profile.age ? `, ${profile.age}` : ""}
+            </Text>
+            {profile.is_verified ? <Text style={{ fontSize: 18 }}>✓</Text> : null}
+          </View>
+          {onViewProfile ? (
+            <Pressable
+              onPress={onViewProfile}
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: 16,
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "rgba(255,255,255,0.2)",
+              }}
+            >
+              <Text style={{ color: "#FFFFFF", fontWeight: "800" }}>i</Text>
+            </Pressable>
+          ) : null}
         </View>
         {profile.job_title || profile.distanceLabel ? (
           <Text style={styles.subline}>
@@ -174,6 +193,14 @@ export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
           <Text style={styles.bio} numberOfLines={2}>
             {profile.bio}
           </Text>
+        ) : null}
+        {profile.loveLanguage ? (
+          <View style={styles.promptBox}>
+            <Text style={styles.promptLabel}>My love language is...</Text>
+            <Text style={styles.promptAnswer} numberOfLines={2}>
+              {profile.loveLanguage}
+            </Text>
+          </View>
         ) : null}
         {profile.interest_tags.length > 0 ? (
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 8 }}>
@@ -255,6 +282,23 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "rgba(255,255,255,0.85)",
     marginTop: 8,
+  },
+  promptBox: {
+    marginTop: 10,
+    backgroundColor: "rgba(255,255,255,0.14)",
+    borderRadius: 12,
+    padding: 10,
+  },
+  promptLabel: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "rgba(255,255,255,0.65)",
+  },
+  promptAnswer: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#FFFFFF",
+    marginTop: 2,
   },
   stamp: {
     position: "absolute",

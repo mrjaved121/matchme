@@ -64,8 +64,8 @@ export default function OnboardingBio() {
 
   return (
     <OnboardingStepLayout
-      step={6}
-      totalSteps={7}
+      step={10}
+      totalSteps={11}
       title="Tell us about you"
       subtitle="Try a prompt: two truths and a lie, or your go-to weekend plan."
       onNext={handleNext}

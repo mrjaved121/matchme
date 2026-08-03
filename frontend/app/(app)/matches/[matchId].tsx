@@ -27,6 +27,7 @@ export default function Chat() {
 
   const [otherName, setOtherName] = useState<string | null>(null);
   const [otherId, setOtherId] = useState<string | null>(null);
+  const [otherReadReceipts, setOtherReadReceipts] = useState(true);
   const [messages, setMessages] = useState<Message[]>([]);
   const [draft, setDraft] = useState("");
   const [loading, setLoading] = useState(true);
@@ -58,7 +59,7 @@ export default function Chat() {
       setOtherId(other);
 
       const [{ data: profile }, { data: initialMessages }] = await Promise.all([
-        supabase.from("profiles").select("first_name").eq("id", other).single(),
+        supabase.from("profiles").select("first_name, read_receipts").eq("id", other).single(),
         supabase
           .from("messages")
           .select("*")
@@ -69,6 +70,11 @@ export default function Chat() {
       if (cancelled) return;
 
       setOtherName(profile?.first_name ?? null);
+      // Whether the OTHER person has Read Receipts enabled — controls
+      // whether I get to see "Seen" on messages I sent them. read_at itself
+      // is always recorded regardless, so the reader's own unread badge
+      // (computed from read_at elsewhere) stays accurate either way.
+      setOtherReadReceipts(profile?.read_receipts ?? true);
       setMessages(initialMessages ?? []);
       setLoading(false);
 
@@ -200,7 +206,9 @@ export default function Chat() {
           borderBottomColor: theme.color.border,
         }}
       >
-        <View>
+        <Pressable
+          onPress={() => otherId && router.push({ pathname: "/(app)/profile/[userId]", params: { userId: otherId } })}
+        >
           <Text style={[theme.typography.title, { color: theme.color.textPrimary }]}>
             {otherName ?? "Chat"}
           </Text>
@@ -209,7 +217,7 @@ export default function Chat() {
               typing…
             </Text>
           ) : null}
-        </View>
+        </Pressable>
         <View style={{ flexDirection: "row", gap: theme.spacing.md }}>
           <Pressable onPress={confirmUnmatch}>
             <Text style={[theme.typography.subtext, { color: theme.color.textSecondary }]}>Unmatch</Text>
@@ -236,7 +244,8 @@ export default function Chat() {
           ListFooterComponent={
             messages.length > 0 &&
             messages[messages.length - 1].sender_id === myId &&
-            messages[messages.length - 1].read_at ? (
+            messages[messages.length - 1].read_at &&
+            otherReadReceipts ? (
               <Text
                 style={[
                   theme.typography.caption,

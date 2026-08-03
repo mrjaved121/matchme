@@ -3,13 +3,15 @@ import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
 import { ScreenContainer } from "../../components/ScreenContainer";
-import { EmptyState, ErrorState, LoadingState } from "../../components/StateViews";
+import { EmptyState, ErrorState, LoadingState, NoInternetState } from "../../components/StateViews";
+import { useIsOnline } from "../../lib/useIsOnline";
 import { SwipeCard, type SwipeCardHandle, type SwipeCardProfile } from "../../components/SwipeCard";
 import { useTheme } from "../../theme/useTheme";
 import { supabase } from "../../lib/supabase";
 import { useAuthStore } from "../../store/authStore";
 import { publicPhotoUrl } from "../../lib/photoUrl";
 import {
+  applyAdvancedFilters,
   calculateAge,
   captureAndSaveLocation,
   computeCompatibility,
@@ -28,6 +30,7 @@ export default function Discover() {
 
   const [deck, setDeck] = useState<SwipeCardProfile[] | null>(null);
   const [error, setError] = useState(false);
+  const isOnline = useIsOnline();
   const [busy, setBusy] = useState(false);
   const [topPicksActive, setTopPicksActive] = useState(false);
   const topCardRef = useRef<SwipeCardHandle>(null);
@@ -36,7 +39,8 @@ export default function Discover() {
     setError(false);
     setDeck(null);
     try {
-      const [candidates, me] = await Promise.all([fetchDiscoverCandidates(20), fetchMySnapshot(myId)]);
+      const [rawCandidates, me] = await Promise.all([fetchDiscoverCandidates(20), fetchMySnapshot(myId)]);
+      const candidates = applyAdvancedFilters(me, rawCandidates);
       const ids = candidates.map((c) => c.id);
       const { data: photos } =
         ids.length > 0
@@ -55,9 +59,10 @@ export default function Discover() {
           id: c.id,
           first_name: c.first_name,
           bio: c.bio,
-          age: c.birthdate ? calculateAge(c.birthdate) : null,
-          distanceLabel: formatDistance(me, c),
+          age: c.show_age && c.birthdate ? calculateAge(c.birthdate) : null,
+          distanceLabel: c.show_distance ? formatDistance(me, c) : null,
           job_title: c.job_title,
+          loveLanguage: c.love_language,
           interest_tags: c.interest_tags ?? [],
           is_verified: c.is_verified,
           isOnline: isRecentlyOnline(c.last_active_at),
@@ -88,8 +93,16 @@ export default function Discover() {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
         router.push({ pathname: "/(app)/match-confirmation/[matchId]", params: { matchId: result.match_id } });
       }
-    } catch {
-      // Non-fatal — the card already left the deck; nothing useful to retry mid-swipe.
+    } catch (e) {
+      // The card already flew off-screen visually; since the swipe was never
+      // recorded server-side when a limit is hit, this candidate will simply
+      // reappear in the deck next load — no local undo needed.
+      const message = e instanceof Error ? e.message : "";
+      if (message.includes("daily_superlike_limit_reached")) {
+        router.push({ pathname: "/(app)/out-of-likes", params: { type: "superlike" } });
+      } else if (message.includes("daily_like_limit_reached")) {
+        router.push({ pathname: "/(app)/out-of-likes", params: { type: "like" } });
+      }
     } finally {
       setBusy(false);
     }
@@ -115,7 +128,7 @@ export default function Discover() {
   if (error) {
     return (
       <ScreenContainer>
-        <ErrorState onRetry={load} />
+        {isOnline === false ? <NoInternetState onRetry={load} /> : <ErrorState onRetry={load} />}
       </ScreenContainer>
     );
   }

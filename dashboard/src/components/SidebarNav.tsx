@@ -10,6 +10,8 @@ const LINKS = [
   { href: "/users", label: "Users" },
   { href: "/reports", label: "Reports" },
   { href: "/verification", label: "Verification" },
+  { href: "/subscriptions", label: "Subscriptions" },
+  { href: "/app-config", label: "App Config" },
 ];
 
 export function SidebarNav({ adminName }: { adminName: string }) {

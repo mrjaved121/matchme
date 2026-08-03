@@ -13,6 +13,10 @@ export type DiscoverCandidate = {
   latitude: number | null;
   longitude: number | null;
   last_active_at: string | null;
+  show_age: boolean;
+  show_distance: boolean;
+  love_language: string | null;
+  created_at: string;
 };
 
 export async function fetchDiscoverCandidates(limit = 15): Promise<DiscoverCandidate[]> {
@@ -27,12 +31,18 @@ export type MySnapshot = {
   latitude: number | null;
   longitude: number | null;
   age: number | null;
+  filter_verified_only: boolean;
+  filter_online_only: boolean;
+  filter_recently_active_only: boolean;
+  filter_new_members_only: boolean;
 };
 
 export async function fetchMySnapshot(myId: string): Promise<MySnapshot> {
   const { data } = await supabase
     .from("profiles")
-    .select("interest_tags, city, latitude, longitude, birthdate")
+    .select(
+      "interest_tags, city, latitude, longitude, birthdate, filter_verified_only, filter_online_only, filter_recently_active_only, filter_new_members_only",
+    )
     .eq("id", myId)
     .single();
   return {
@@ -41,7 +51,32 @@ export async function fetchMySnapshot(myId: string): Promise<MySnapshot> {
     latitude: data?.latitude ?? null,
     longitude: data?.longitude ?? null,
     age: data?.birthdate ? calculateAge(data.birthdate) : null,
+    filter_verified_only: data?.filter_verified_only ?? false,
+    filter_online_only: data?.filter_online_only ?? false,
+    filter_recently_active_only: data?.filter_recently_active_only ?? false,
+    filter_new_members_only: data?.filter_new_members_only ?? false,
   };
+}
+
+/** "Recently Active" advanced filter — a much looser window than
+ * isRecentlyOnline's "online right now" (5 min) check. */
+export function isActiveWithin24h(lastActiveAt: string | null): boolean {
+  if (!lastActiveAt) return false;
+  return Date.now() - new Date(lastActiveAt).getTime() < 24 * 60 * 60 * 1000;
+}
+
+export function isNewMember(createdAt: string): boolean {
+  return Date.now() - new Date(createdAt).getTime() < 7 * 24 * 60 * 60 * 1000;
+}
+
+export function applyAdvancedFilters(me: MySnapshot, candidates: DiscoverCandidate[]): DiscoverCandidate[] {
+  return candidates.filter((c) => {
+    if (me.filter_verified_only && !c.is_verified) return false;
+    if (me.filter_online_only && !isRecentlyOnline(c.last_active_at)) return false;
+    if (me.filter_recently_active_only && !isActiveWithin24h(c.last_active_at)) return false;
+    if (me.filter_new_members_only && !isNewMember(c.created_at)) return false;
+    return true;
+  });
 }
 
 /** A real score from shared signal (interests, city, age proximity) — never

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { ScreenContainer } from "../components/ScreenContainer";
@@ -7,6 +7,8 @@ import { Button } from "../components/Button";
 import { useTheme } from "../theme/useTheme";
 import { supabase } from "../lib/supabase";
 
+const RESEND_COOLDOWN_SECONDS = 30;
+
 export default function Verify() {
   const theme = useTheme();
   const { email } = useLocalSearchParams<{ email: string }>();
@@ -14,6 +16,13 @@ export default function Verify() {
   const [error, setError] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
+  const [cooldown, setCooldown] = useState(RESEND_COOLDOWN_SECONDS);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [cooldown]);
 
   async function handleVerify() {
     if (code.trim().length < 6) {
@@ -45,6 +54,7 @@ export default function Verify() {
     setResending(true);
     await supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
     setResending(false);
+    setCooldown(RESEND_COOLDOWN_SECONDS);
   }
 
   return (
@@ -76,10 +86,11 @@ export default function Verify() {
 
         <Button label="Verify" onPress={handleVerify} loading={loading} />
         <Button
-          label="Resend code"
+          label={cooldown > 0 ? `Resend code (${cooldown}s)` : "Resend code"}
           variant="ghost"
           onPress={handleResend}
           loading={resending}
+          disabled={cooldown > 0}
         />
       </View>
     </ScreenContainer>

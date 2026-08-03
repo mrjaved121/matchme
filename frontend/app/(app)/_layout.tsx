@@ -81,6 +81,9 @@ function AppTabs({ userId, theme }: { userId: string; theme: ReturnType<typeof u
       <Tabs.Screen name="matches/[matchId]" options={{ href: null }} />
       <Tabs.Screen name="profile/edit" options={{ href: null }} />
       <Tabs.Screen name="profile/photos" options={{ href: null }} />
+      <Tabs.Screen name="profile/preview" options={{ href: null }} />
+      <Tabs.Screen name="profile/share" options={{ href: null }} />
+      <Tabs.Screen name="profile/[userId]" options={{ href: null }} />
       <Tabs.Screen name="settings/index" options={{ href: null }} />
       <Tabs.Screen name="settings/notifications" options={{ href: null }} />
       <Tabs.Screen name="settings/privacy" options={{ href: null }} />
@@ -94,6 +97,8 @@ function AppTabs({ userId, theme }: { userId: string; theme: ReturnType<typeof u
       <Tabs.Screen name="boost" options={{ href: null }} />
       <Tabs.Screen name="liked-you" options={{ href: null }} />
       <Tabs.Screen name="discovery-preferences" options={{ href: null }} />
+      <Tabs.Screen name="out-of-likes" options={{ href: null }} />
+      <Tabs.Screen name="invite-friends" options={{ href: null }} />
     </Tabs>
   );
 }

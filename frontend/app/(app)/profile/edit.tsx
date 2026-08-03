@@ -9,12 +9,7 @@ import { LoadingState } from "../../../components/StateViews";
 import { useTheme } from "../../../theme/useTheme";
 import { supabase } from "../../../lib/supabase";
 import { useAuthStore } from "../../../store/authStore";
-import { LOOKING_FOR_OPTIONS, ORIENTATION_OPTIONS } from "../../../lib/constants";
-
-const INTEREST_OPTIONS = [
-  "Travel", "Music", "Fitness", "Foodie", "Movies", "Reading",
-  "Gaming", "Outdoors", "Art", "Dancing", "Coffee", "Pets",
-].map((label) => ({ label, value: label.toLowerCase() }));
+import { INTEREST_OPTIONS, LOOKING_FOR_OPTIONS, ORIENTATION_OPTIONS } from "../../../lib/constants";
 
 const YES_NO_SOMETIMES = [
   { label: "Yes", value: "yes" },
@@ -36,6 +31,7 @@ type EditableProfile = {
   education: string;
   smokes: string | null;
   drinks: string | null;
+  love_language: string;
 };
 
 export default function EditProfile() {
@@ -51,7 +47,7 @@ export default function EditProfile() {
     supabase
       .from("profiles")
       .select(
-        "first_name, city, bio, interest_tags, min_age_pref, max_age_pref, looking_for, orientation, height_cm, job_title, education, smokes, drinks",
+        "first_name, city, bio, interest_tags, min_age_pref, max_age_pref, looking_for, orientation, height_cm, job_title, education, smokes, drinks, love_language",
       )
       .eq("id", myId)
       .single()
@@ -71,6 +67,7 @@ export default function EditProfile() {
             education: data.education ?? "",
             smokes: data.smokes,
             drinks: data.drinks,
+            love_language: data.love_language ?? "",
           });
         }
       });
@@ -112,6 +109,7 @@ export default function EditProfile() {
         education: form.education.trim() || null,
         smokes: form.smokes,
         drinks: form.drinks,
+        love_language: form.love_language.trim() || null,
       })
       .eq("id", myId);
 
@@ -156,6 +154,15 @@ export default function EditProfile() {
           multiline
           numberOfLines={4}
           style={{ minHeight: 100, textAlignVertical: "top", paddingVertical: 12 }}
+        />
+        <TextField
+          label="My love language is... (optional)"
+          placeholder="Quality time and spontaneous adventures."
+          value={form.love_language}
+          onChangeText={(v) => setForm({ ...form, love_language: v })}
+          multiline
+          numberOfLines={2}
+          style={{ minHeight: 60, textAlignVertical: "top", paddingVertical: 12 }}
         />
 
         <View style={{ gap: theme.spacing.sm }}>

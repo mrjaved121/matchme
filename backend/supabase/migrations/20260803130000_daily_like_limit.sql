@@ -1,0 +1,85 @@
+-- Daily Like Limit: free users get a capped number of likes/superlikes per
+-- day (Gold's "Unlimited Likes"/"5 Super Likes/day" benefits were purely
+-- decorative until now — nothing enforced a limit for free users at all).
+-- Enforced server-side in record_swipe so it can't be bypassed client-side.
+create or replace function public.record_swipe(p_swiped_id uuid, p_action text)
+returns table(matched boolean, match_id uuid)
+language plpgsql security definer set search_path = public
+as $$
+declare
+  v_mutual boolean;
+  v_match_id uuid;
+  v_user_a uuid;
+  v_user_b uuid;
+  v_is_gold boolean;
+  v_likes_today int;
+  v_superlikes_today int;
+  v_like_limit constant int := 20;
+  v_superlike_limit_free constant int := 1;
+  v_superlike_limit_gold constant int := 5;
+begin
+  if p_action not in ('like', 'pass', 'superlike') then
+    raise exception 'invalid swipe action: %', p_action;
+  end if;
+
+  if p_action in ('like', 'superlike') then
+    select is_gold and (gold_expires_at is null or gold_expires_at > now())
+      into v_is_gold
+      from public.profiles where id = auth.uid();
+
+    select count(*) into v_likes_today
+      from public.swipes
+      where swiper_id = auth.uid()
+        and action in ('like', 'superlike')
+        and created_at >= date_trunc('day', now());
+
+    if not v_is_gold and v_likes_today >= v_like_limit then
+      raise exception 'daily_like_limit_reached' using errcode = 'P0001';
+    end if;
+
+    if p_action = 'superlike' then
+      select count(*) into v_superlikes_today
+        from public.swipes
+        where swiper_id = auth.uid()
+          and action = 'superlike'
+          and created_at >= date_trunc('day', now());
+
+      if v_superlikes_today >= (case when v_is_gold then v_superlike_limit_gold else v_superlike_limit_free end) then
+        raise exception 'daily_superlike_limit_reached' using errcode = 'P0001';
+      end if;
+    end if;
+  end if;
+
+  insert into public.swipes (swiper_id, swiped_id, action)
+  values (auth.uid(), p_swiped_id, p_action)
+  on conflict (swiper_id, swiped_id) do update set action = excluded.action, created_at = now();
+
+  if p_action = 'pass' then
+    return query select false, null::uuid;
+    return;
+  end if;
+
+  select exists (
+    select 1 from public.swipes
+    where swiper_id = p_swiped_id and swiped_id = auth.uid() and action in ('like', 'superlike')
+  ) into v_mutual;
+
+  if not v_mutual then
+    return query select false, null::uuid;
+    return;
+  end if;
+
+  v_user_a := least(auth.uid(), p_swiped_id);
+  v_user_b := greatest(auth.uid(), p_swiped_id);
+
+  select id into v_match_id from public.matches where user_a_id = v_user_a and user_b_id = v_user_b;
+
+  if v_match_id is null then
+    insert into public.matches (session_id, user_a_id, user_b_id, status, source)
+    values (null, v_user_a, v_user_b, 'active', 'swipe')
+    returning id into v_match_id;
+  end if;
+
+  return query select true, v_match_id;
+end;
+$$;

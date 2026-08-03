@@ -85,7 +85,7 @@ export default function OnboardingBirthdate() {
   return (
     <OnboardingStepLayout
       step={2}
-      totalSteps={7}
+      totalSteps={11}
       title="When's your birthday?"
       subtitle="You must be 18+ to use MatchMe. This won't be shown on your profile."
       onNext={handleNext}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Switch, Text, View } from "react-native";
+import { Pressable, Switch, Text, View } from "react-native";
 import { router } from "expo-router";
 import Slider from "@react-native-community/slider";
 import { ScreenContainer } from "../../components/ScreenContainer";
@@ -18,18 +18,25 @@ type Prefs = {
   max_age_pref: number;
   max_distance_km: number;
   global_mode: boolean;
+  filter_verified_only: boolean;
+  filter_online_only: boolean;
+  filter_recently_active_only: boolean;
+  filter_new_members_only: boolean;
 };
 
 export default function DiscoveryPreferences() {
   const theme = useTheme();
   const myId = useAuthStore((s) => s.session!.user.id);
+  const isGold = useAuthStore((s) => s.profile?.is_gold ?? false);
   const [prefs, setPrefs] = useState<Prefs | null>(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     supabase
       .from("profiles")
-      .select("interested_in, min_age_pref, max_age_pref, max_distance_km, global_mode")
+      .select(
+        "interested_in, min_age_pref, max_age_pref, max_distance_km, global_mode, filter_verified_only, filter_online_only, filter_recently_active_only, filter_new_members_only",
+      )
       .eq("id", myId)
       .single()
       .then(({ data }) => {
@@ -40,6 +47,10 @@ export default function DiscoveryPreferences() {
             max_age_pref: data.max_age_pref,
             max_distance_km: data.max_distance_km ?? 50,
             global_mode: data.global_mode ?? false,
+            filter_verified_only: data.filter_verified_only ?? false,
+            filter_online_only: data.filter_online_only ?? false,
+            filter_recently_active_only: data.filter_recently_active_only ?? false,
+            filter_new_members_only: data.filter_new_members_only ?? false,
           });
         }
       });
@@ -58,6 +69,14 @@ export default function DiscoveryPreferences() {
     );
   }
 
+  function goldGate(onAllowed: () => void) {
+    if (!isGold) {
+      router.push("/(app)/gold");
+      return;
+    }
+    onAllowed();
+  }
+
   async function handleSave() {
     if (!prefs) return;
     setSaving(true);
@@ -69,6 +88,10 @@ export default function DiscoveryPreferences() {
         max_age_pref: prefs.max_age_pref,
         max_distance_km: Math.round(prefs.max_distance_km),
         global_mode: prefs.global_mode,
+        filter_verified_only: prefs.filter_verified_only,
+        filter_online_only: prefs.filter_online_only,
+        filter_recently_active_only: prefs.filter_recently_active_only,
+        filter_new_members_only: prefs.filter_new_members_only,
       })
       .eq("id", myId);
     setSaving(false);
@@ -138,29 +161,114 @@ export default function DiscoveryPreferences() {
           <ChipSelect options={GENDER_OPTIONS} selected={prefs.interested_in} onToggle={toggleGender} />
         </View>
 
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            backgroundColor: theme.color.surface,
-            borderRadius: theme.radius.card,
-            padding: theme.spacing.md,
-          }}
-        >
-          <View style={{ flex: 1 }}>
-            <Text style={[theme.typography.body, { color: theme.color.textPrimary }]}>🌐 Global Mode</Text>
-            <Text style={[theme.typography.caption, { color: theme.color.textSecondary }]}>Match worldwide</Text>
-          </View>
-          <Switch
-            value={prefs.global_mode}
-            onValueChange={(v) => setPrefs((prev) => (prev ? { ...prev, global_mode: v } : prev))}
-            trackColor={{ true: theme.color.primary }}
+        <GoldToggleRow
+          icon="🌐"
+          label="Global Mode"
+          description="Match worldwide"
+          value={prefs.global_mode}
+          isGold={isGold}
+          onChange={(v) => goldGate(() => setPrefs((prev) => (prev ? { ...prev, global_mode: v } : prev)))}
+        />
+
+        <View style={{ gap: theme.spacing.sm }}>
+          <Text
+            style={[
+              theme.typography.caption,
+              { color: theme.color.textSecondary, textTransform: "uppercase", letterSpacing: 0.5 },
+            ]}
+          >
+            Advanced Filters
+          </Text>
+          <GoldToggleRow
+            icon="✓"
+            label="Verified Users"
+            description="Only show verified profiles"
+            value={prefs.filter_verified_only}
+            isGold={isGold}
+            onChange={(v) => goldGate(() => setPrefs((prev) => (prev ? { ...prev, filter_verified_only: v } : prev)))}
+          />
+          <GoldToggleRow
+            icon="●"
+            label="Online Users"
+            description="Only show people online right now"
+            value={prefs.filter_online_only}
+            isGold={isGold}
+            onChange={(v) => goldGate(() => setPrefs((prev) => (prev ? { ...prev, filter_online_only: v } : prev)))}
+          />
+          <GoldToggleRow
+            icon="🕒"
+            label="Recently Active"
+            description="Only show people active in the last 24h"
+            value={prefs.filter_recently_active_only}
+            isGold={isGold}
+            onChange={(v) =>
+              goldGate(() => setPrefs((prev) => (prev ? { ...prev, filter_recently_active_only: v } : prev)))
+            }
+          />
+          <GoldToggleRow
+            icon="✨"
+            label="New Members"
+            description="Only show profiles created in the last 7 days"
+            value={prefs.filter_new_members_only}
+            isGold={isGold}
+            onChange={(v) =>
+              goldGate(() => setPrefs((prev) => (prev ? { ...prev, filter_new_members_only: v } : prev)))
+            }
           />
         </View>
       </View>
 
       <Button label="Apply Filters" onPress={handleSave} loading={saving} style={{ marginTop: theme.spacing.xl }} />
     </ScreenContainer>
+  );
+}
+
+function GoldToggleRow({
+  icon,
+  label,
+  description,
+  value,
+  isGold,
+  onChange,
+}: {
+  icon: string;
+  label: string;
+  description: string;
+  value: boolean;
+  isGold: boolean;
+  onChange: (value: boolean) => void;
+}) {
+  const theme = useTheme();
+  return (
+    <Pressable
+      onPress={() => (!isGold ? onChange(true) : undefined)}
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        backgroundColor: theme.color.surface,
+        borderRadius: theme.radius.card,
+        padding: theme.spacing.md,
+      }}
+    >
+      <View style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: 10 }}>
+        <Text style={{ fontSize: 16 }}>{icon}</Text>
+        <View style={{ flex: 1 }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+            <Text style={[theme.typography.body, { color: theme.color.textPrimary }]}>{label}</Text>
+            {!isGold ? (
+              <Text style={{ color: theme.color.gold, fontSize: 11, fontWeight: "800" }}>GOLD</Text>
+            ) : null}
+          </View>
+          <Text style={[theme.typography.caption, { color: theme.color.textSecondary }]}>{description}</Text>
+        </View>
+      </View>
+      <Switch
+        value={isGold && value}
+        onValueChange={onChange}
+        disabled={!isGold}
+        trackColor={{ true: theme.color.primary }}
+      />
+    </Pressable>
   );
 }

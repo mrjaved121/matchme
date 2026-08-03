@@ -35,15 +35,16 @@ export default function OnboardingGuidelines() {
       return;
     }
 
+    await supabase.rpc("grant_referral_reward", { p_referred_id: session!.user.id });
     await refreshProfile();
     setLoading(false);
-    router.replace("/(app)/discover");
+    router.replace("/account-created");
   }
 
   return (
     <OnboardingStepLayout
-      step={7}
-      totalSteps={7}
+      step={11}
+      totalSteps={11}
       title="Community guidelines"
       onNext={handleAccept}
       nextLabel="Accept & finish"

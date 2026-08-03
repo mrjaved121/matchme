@@ -61,7 +61,7 @@ export default function OnboardingGender() {
   return (
     <OnboardingStepLayout
       step={3}
-      totalSteps={7}
+      totalSteps={11}
       title="I am a..."
       onNext={handleNext}
       nextDisabled={loading}

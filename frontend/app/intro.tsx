@@ -18,7 +18,7 @@ type Slide = {
 
 async function finishIntro() {
   await AsyncStorage.setItem(SEEN_KEY, "true").catch(() => {});
-  router.replace("/sign-in");
+  router.replace("/welcome");
 }
 
 export default function Intro() {
@@ -30,7 +30,7 @@ export default function Intro() {
   useEffect(() => {
     AsyncStorage.getItem(SEEN_KEY).then((seen) => {
       if (seen === "true") {
-        router.replace("/sign-in");
+        router.replace("/welcome");
       } else {
         setChecking(false);
       }

@@ -76,13 +76,13 @@ export default function OnboardingPreferences() {
       return;
     }
 
-    router.push("/onboarding/photos");
+    router.push("/onboarding/about-you");
   }
 
   return (
     <OnboardingStepLayout
       step={4}
-      totalSteps={7}
+      totalSteps={11}
       title="Who do you want to meet?"
       onNext={handleNext}
       nextDisabled={loading}

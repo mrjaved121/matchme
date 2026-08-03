@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
-import { Image, Text, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { Animated, Image, Text, View } from "react-native";
+import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
 import { ScreenContainer } from "../../../components/ScreenContainer";
@@ -42,6 +43,10 @@ export default function MatchConfirmation() {
   const theme = useTheme();
   const { matchId } = useLocalSearchParams<{ matchId: string }>();
   const myId = useAuthStore((s) => s.session!.user.id);
+
+  const leftSlide = useRef(new Animated.Value(-140)).current;
+  const rightSlide = useRef(new Animated.Value(140)).current;
+  const textOpacity = useRef(new Animated.Value(0)).current;
 
   const [me, setMe] = useState<Person | null>(null);
   const [other, setOther] = useState<Person | null>(null);
@@ -91,6 +96,16 @@ export default function MatchConfirmation() {
     };
   }, [matchId, myId]);
 
+  useEffect(() => {
+    if (loading) return;
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+    Animated.parallel([
+      Animated.spring(leftSlide, { toValue: 0, useNativeDriver: true, friction: 6 }),
+      Animated.spring(rightSlide, { toValue: 0, useNativeDriver: true, friction: 6 }),
+      Animated.timing(textOpacity, { toValue: 1, duration: 400, delay: 150, useNativeDriver: true }),
+    ]).start();
+  }, [loading, leftSlide, rightSlide, textOpacity]);
+
   if (loading) {
     return (
       <ScreenContainer>
@@ -108,20 +123,24 @@ export default function MatchConfirmation() {
         style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: theme.spacing.lg, paddingHorizontal: theme.spacing.lg }}
       >
         <View style={{ flexDirection: "row" }}>
-          <View style={{ marginRight: -22, zIndex: 1 }}>
+          <Animated.View style={{ marginRight: -22, zIndex: 1, transform: [{ translateX: leftSlide }] }}>
             <Avatar person={me} size={104} borderColor="rgba(255,255,255,0.9)" />
-          </View>
-          <Avatar person={other} size={104} borderColor="rgba(255,255,255,0.9)" />
+          </Animated.View>
+          <Animated.View style={{ transform: [{ translateX: rightSlide }] }}>
+            <Avatar person={other} size={104} borderColor="rgba(255,255,255,0.9)" />
+          </Animated.View>
         </View>
 
-        <Text style={[theme.typography.display, { color: "#FFFFFF", textAlign: "center", fontSize: 34 }]}>
+        <Animated.Text
+          style={[theme.typography.display, { color: "#FFFFFF", textAlign: "center", fontSize: 34, opacity: textOpacity }]}
+        >
           It's a match!
-        </Text>
-        <Text style={{ color: "rgba(255,255,255,0.9)", fontSize: 16, textAlign: "center" }}>
+        </Animated.Text>
+        <Animated.Text style={{ color: "rgba(255,255,255,0.9)", fontSize: 16, textAlign: "center", opacity: textOpacity }}>
           You and {otherName ?? "your match"} both said yes.
-        </Text>
+        </Animated.Text>
 
-        <View style={{ width: "100%", gap: theme.spacing.sm, marginTop: theme.spacing.md }}>
+        <Animated.View style={{ width: "100%", gap: theme.spacing.sm, marginTop: theme.spacing.md, opacity: textOpacity }}>
           <Button
             label="Send a message"
             variant="secondary"
@@ -135,7 +154,7 @@ export default function MatchConfirmation() {
             textColor="#FFFFFF"
             onPress={() => router.replace("/(app)/discover")}
           />
-        </View>
+        </Animated.View>
       </LinearGradient>
     </ScreenContainer>
   );
