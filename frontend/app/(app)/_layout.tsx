@@ -1,14 +1,23 @@
 import { useEffect } from "react";
 import { Redirect, Tabs } from "expo-router";
-import { ColorValue, Text } from "react-native";
+import { ColorValue } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "../../store/authStore";
 import { useTheme } from "../../theme/useTheme";
 import { registerPushToken } from "../../lib/registerPushToken";
 import { fetchMatches } from "../../lib/queries";
 
-function TabIcon({ symbol, focused, color }: { symbol: string; focused: boolean; color: ColorValue }) {
-  return <Text style={{ fontSize: 22, opacity: focused ? 1 : 0.6, color }}>{symbol}</Text>;
+function TabIcon({
+  name,
+  focused,
+  color,
+}: {
+  name: keyof typeof Ionicons.glyphMap;
+  focused: boolean;
+  color: ColorValue;
+}) {
+  return <Ionicons name={name} size={22} style={{ opacity: focused ? 1 : 0.6 }} color={color as string} />;
 }
 
 export default function AppLayout() {
@@ -55,20 +64,20 @@ function AppTabs({ userId, theme }: { userId: string; theme: ReturnType<typeof u
     >
       <Tabs.Screen
         name="discover"
-        options={{ title: "Discover", tabBarIcon: (p) => <TabIcon symbol="🔥" {...p} /> }}
+        options={{ title: "Discover", tabBarIcon: (p) => <TabIcon name="flame" {...p} /> }}
       />
       <Tabs.Screen
         name="matches/index"
         options={{
           title: "Matches",
-          tabBarIcon: (p) => <TabIcon symbol="♥" {...p} />,
+          tabBarIcon: (p) => <TabIcon name={p.focused ? "heart" : "heart-outline"} {...p} />,
           tabBarBadge: unreadCount > 0 ? unreadCount : undefined,
           tabBarBadgeStyle: { backgroundColor: theme.color.primary },
         }}
       />
       <Tabs.Screen
         name="profile/index"
-        options={{ title: "Profile", tabBarIcon: (p) => <TabIcon symbol="◐" {...p} /> }}
+        options={{ title: "Profile", tabBarIcon: (p) => <TabIcon name="person-outline" {...p} /> }}
       />
 
       {/* Reachable via router.push, hidden from the tab bar */}

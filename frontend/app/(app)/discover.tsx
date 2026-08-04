@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
 import { ScreenContainer } from "../../components/ScreenContainer";
@@ -157,14 +158,25 @@ export default function Discover() {
             paddingBottom: theme.spacing.sm,
           }}
         >
-          <TopBarIconButton icon="▤" onPress={() => router.push("/(app)/preference-filter")} />
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-            <Text style={{ fontSize: 20 }}>🔥</Text>
+          <TopBarIconButton iconName="options-outline" onPress={() => router.push("/(app)/preference-filter")} />
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            <View
+              style={{
+                width: 28,
+                height: 28,
+                borderRadius: 14,
+                backgroundColor: theme.color.primary,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Ionicons name="flame" size={16} color="#FFFFFF" />
+            </View>
             <Text style={[theme.typography.title, { color: theme.color.textPrimary, fontStyle: "italic" }]}>
               Spark
             </Text>
           </View>
-          <TopBarIconButton icon="⚡" color={theme.swipe.boost} onPress={() => router.push("/(app)/boost")} />
+          <TopBarIconButton iconName="flash" color={theme.swipe.boost} onPress={() => router.push("/(app)/boost")} />
         </View>
 
         <ScrollView
@@ -174,20 +186,21 @@ export default function Discover() {
         >
           <QuickAccessCircle
             label="Top Picks"
-            icon="★"
+            iconName="star"
             gradient={theme.color.goldGradient}
             active={topPicksActive}
             onPress={() => setTopPicksActive((v) => !v)}
           />
           <QuickAccessCircle
             label="Passport"
-            icon="🌐"
+            iconName="globe-outline"
             gradient={[theme.swipe.superlike, theme.swipe.boost]}
+            labelColor={theme.swipe.boost}
             onPress={openPassport}
           />
           <QuickAccessCircle
             label="Events"
-            icon="⚡"
+            iconName="flash"
             gradient={[theme.swipe.like, "#1FBE7A"]}
             onPress={() => router.push("/(app)/queue")}
           />
@@ -248,11 +261,11 @@ export default function Discover() {
 
         {visible.length > 0 ? (
           <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 16, paddingVertical: theme.spacing.lg }}>
-            <ActionButton symbol="↺" color={theme.swipe.rewind} size={44} onPress={() => {}} disabled />
-            <ActionButton symbol="✕" color={theme.swipe.pass} size={56} onPress={() => !busy && topCardRef.current?.swipe("pass")} />
-            <ActionButton symbol="★" color={theme.swipe.superlike} size={44} onPress={() => !busy && topCardRef.current?.swipe("superlike")} />
-            <ActionButton symbol="♥" color={theme.swipe.like} size={56} onPress={() => !busy && topCardRef.current?.swipe("like")} />
-            <ActionButton symbol="⚡" color={theme.swipe.boost} size={44} onPress={() => router.push("/(app)/boost")} />
+            <ActionButton iconName="arrow-undo" color={theme.swipe.rewind} size={44} onPress={() => {}} disabled />
+            <ActionButton iconName="close" color={theme.swipe.pass} size={56} onPress={() => !busy && topCardRef.current?.swipe("pass")} />
+            <ActionButton iconName="star" color={theme.swipe.superlike} size={44} onPress={() => !busy && topCardRef.current?.swipe("superlike")} />
+            <ActionButton iconName="heart" color={theme.swipe.like} size={56} onPress={() => !busy && topCardRef.current?.swipe("like")} />
+            <ActionButton iconName="flash" color={theme.swipe.boost} size={44} onPress={() => router.push("/(app)/boost")} />
           </View>
         ) : null}
       </View>
@@ -262,15 +275,17 @@ export default function Discover() {
 
 function QuickAccessCircle({
   label,
-  icon,
+  iconName,
   gradient,
   active,
+  labelColor,
   onPress,
 }: {
   label: string;
-  icon: string;
+  iconName: keyof typeof Ionicons.glyphMap;
   gradient: readonly [string, string];
   active?: boolean;
+  labelColor?: string;
   onPress: () => void;
 }) {
   const theme = useTheme();
@@ -290,9 +305,9 @@ function QuickAccessCircle({
           borderColor: "#FFFFFF",
         }}
       >
-        <Text style={{ fontSize: 22, color: "#FFFFFF" }}>{icon}</Text>
+        <Ionicons name={iconName} size={24} color="#FFFFFF" />
       </LinearGradient>
-      <Text numberOfLines={1} style={[theme.typography.caption, { color: theme.color.textSecondary, fontWeight: "700" }]}>
+      <Text numberOfLines={1} style={[theme.typography.caption, { color: labelColor ?? theme.color.textSecondary, fontWeight: "700" }]}>
         {label}
       </Text>
     </Pressable>
@@ -300,13 +315,13 @@ function QuickAccessCircle({
 }
 
 function ActionButton({
-  symbol,
+  iconName,
   color,
   size,
   onPress,
   disabled,
 }: {
-  symbol: string;
+  iconName: keyof typeof Ionicons.glyphMap;
   color: string;
   size: number;
   onPress: () => void;
@@ -331,12 +346,20 @@ function ActionButton({
         elevation: 3,
       }}
     >
-      <Text style={{ fontSize: size * 0.4, color }}>{symbol}</Text>
+      <Ionicons name={iconName} size={size * 0.42} color={color} />
     </Pressable>
   );
 }
 
-function TopBarIconButton({ icon, color, onPress }: { icon: string; color?: string; onPress: () => void }) {
+function TopBarIconButton({
+  iconName,
+  color,
+  onPress,
+}: {
+  iconName: keyof typeof Ionicons.glyphMap;
+  color?: string;
+  onPress: () => void;
+}) {
   const theme = useTheme();
   return (
     <Pressable
@@ -350,7 +373,7 @@ function TopBarIconButton({ icon, color, onPress }: { icon: string; color?: stri
         backgroundColor: theme.color.surface,
       }}
     >
-      <Text style={{ fontSize: 18, color: color ?? theme.color.textPrimary }}>{icon}</Text>
+      <Ionicons name={iconName} size={19} color={color ?? theme.color.textPrimary} />
     </Pressable>
   );
 }

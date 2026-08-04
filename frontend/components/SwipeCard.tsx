@@ -1,8 +1,8 @@
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { Animated, Dimensions, Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../theme/useTheme";
-import { Tag } from "./Tag";
 import type { SwipeAction } from "../lib/discover";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -161,39 +161,31 @@ export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
       ) : null}
 
       <View style={styles.infoOverlay}>
-        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-            <Text style={styles.name}>
-              {profile.first_name ?? "Spark user"}{profile.age ? `, ${profile.age}` : ""}
-            </Text>
-            {profile.is_verified ? (
-              <View style={[styles.verifiedBadge, { backgroundColor: theme.swipe.superlike }]}>
-                <Text style={styles.verifiedCheck}>✓</Text>
-              </View>
-            ) : null}
-          </View>
-          {onViewProfile ? (
-            <Pressable
-              onPress={onViewProfile}
-              style={{
-                width: 32,
-                height: 32,
-                borderRadius: 16,
-                alignItems: "center",
-                justifyContent: "center",
-                backgroundColor: "rgba(255,255,255,0.2)",
-              }}
-            >
-              <Text style={{ color: "#FFFFFF", fontWeight: "800" }}>i</Text>
-            </Pressable>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+          <Text style={styles.name}>
+            {profile.first_name ?? "Spark user"}{profile.age ? `, ${profile.age}` : ""}
+          </Text>
+          {profile.is_verified ? (
+            <View style={[styles.verifiedBadge, { backgroundColor: theme.swipe.superlike }]}>
+              <Ionicons name="checkmark" size={12} color="#FFFFFF" />
+            </View>
           ) : null}
         </View>
         {profile.job_title || profile.distanceLabel ? (
-          <Text style={styles.subline}>
-            {[profile.distanceLabel && `📍 ${profile.distanceLabel}`, profile.job_title && `💼 ${profile.job_title}`]
-              .filter(Boolean)
-              .join("   ·   ")}
-          </Text>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 14, marginTop: 2 }}>
+            {profile.distanceLabel ? (
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                <Ionicons name="location" size={13} color="rgba(255,255,255,0.85)" />
+                <Text style={styles.subline}>{profile.distanceLabel}</Text>
+              </View>
+            ) : null}
+            {profile.job_title ? (
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                <Ionicons name="briefcase-outline" size={13} color="rgba(255,255,255,0.85)" />
+                <Text style={styles.subline}>{profile.job_title}</Text>
+              </View>
+            ) : null}
+          </View>
         ) : null}
         {profile.bio ? (
           <Text style={styles.bio} numberOfLines={2}>
@@ -202,19 +194,26 @@ export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
         ) : null}
         {profile.loveLanguage ? (
           <View style={styles.promptBox}>
-            <Text style={[styles.promptLabel, { color: theme.color.gold }]}>💬 My love language is...</Text>
+            <Text style={[styles.promptLabel, { color: theme.color.gold }]}>My love language is...</Text>
             <Text style={styles.promptAnswer} numberOfLines={2}>
               {profile.loveLanguage}
             </Text>
           </View>
         ) : null}
-        {profile.interest_tags.length > 0 ? (
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 8 }}>
-            {profile.interest_tags.slice(0, 4).map((tag, index) => (
-              <Tag key={tag} label={tag.charAt(0).toUpperCase() + tag.slice(1)} index={index} />
+        <View style={{ flexDirection: "row", alignItems: "flex-end", marginTop: 8 }}>
+          <View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
+            {profile.interest_tags.slice(0, 4).map((tag) => (
+              <View key={tag} style={styles.cardTag}>
+                <Text style={styles.cardTagText}>{tag.charAt(0).toUpperCase() + tag.slice(1)}</Text>
+              </View>
             ))}
           </View>
-        ) : null}
+          {onViewProfile ? (
+            <Pressable onPress={onViewProfile} style={styles.infoButton}>
+              <Ionicons name="information-outline" size={18} color="#FFFFFF" />
+            </Pressable>
+          ) : null}
+        </View>
       </View>
     </Animated.View>
   );
@@ -288,15 +287,29 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: "#FFFFFF",
   },
-  verifiedCheck: {
-    fontSize: 11,
-    fontWeight: "800",
+  cardTag: {
+    backgroundColor: "rgba(255,255,255,0.16)",
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+  },
+  cardTagText: {
     color: "#FFFFFF",
+    fontWeight: "700",
+    fontSize: 13,
+  },
+  infoButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255,255,255,0.2)",
+    marginLeft: 8,
   },
   subline: {
     fontSize: 14,
     color: "rgba(255,255,255,0.85)",
-    marginTop: 2,
   },
   bio: {
     fontSize: 14,
