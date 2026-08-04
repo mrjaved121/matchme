@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Animated, Image, Text, View } from "react-native";
 import * as Haptics from "expo-haptics";
-import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { ScreenContainer } from "../../../components/ScreenContainer";
 import { Button } from "../../../components/Button";
@@ -11,7 +11,15 @@ import { supabase } from "../../../lib/supabase";
 import { useAuthStore } from "../../../store/authStore";
 import { publicPhotoUrl } from "../../../lib/photoUrl";
 
-type Person = { firstName: string | null; photoPath: string | null };
+type Person = { firstName: string | null; photoPath: string | null; interestTags: string[] };
+
+const ICEBREAKERS = [
+  "If you could live anywhere for a month, where? 🌍",
+  "What's your go-to order at your favorite restaurant?",
+  "Coffee or tea person? Defend your answer.",
+  "What's the best trip you've ever taken?",
+  "Dogs, cats, or neither?",
+];
 
 function Avatar({ person, size, borderColor }: { person: Person | null; size: number; borderColor: string }) {
   return person?.photoPath ? (
@@ -27,7 +35,7 @@ function Avatar({ person, size, borderColor }: { person: Person | null; size: nu
         borderRadius: size / 2,
         borderWidth: 3,
         borderColor,
-        backgroundColor: "rgba(255,255,255,0.35)",
+        backgroundColor: "rgba(255,255,255,0.12)",
         alignItems: "center",
         justifyContent: "center",
       }}
@@ -53,6 +61,8 @@ export default function MatchConfirmation() {
   const [otherName, setOtherName] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const icebreaker = useMemo(() => ICEBREAKERS[Math.floor(Math.random() * ICEBREAKERS.length)], []);
+
   useEffect(() => {
     let cancelled = false;
 
@@ -71,7 +81,7 @@ export default function MatchConfirmation() {
       const otherId = match.user_a_id === myId ? match.user_b_id : match.user_a_id;
 
       const [{ data: profiles }, { data: photos }] = await Promise.all([
-        supabase.from("profiles").select("id, first_name").in("id", [myId, otherId]),
+        supabase.from("profiles").select("id, first_name, interest_tags").in("id", [myId, otherId]),
         supabase
           .from("profile_photos")
           .select("profile_id, storage_path")
@@ -81,12 +91,23 @@ export default function MatchConfirmation() {
 
       if (cancelled) return;
 
-      const nameById = new Map((profiles ?? []).map((p) => [p.id, p.first_name]));
+      const profileById = new Map((profiles ?? []).map((p) => [p.id, p]));
       const photoById = new Map((photos ?? []).map((p) => [p.profile_id, p.storage_path]));
 
-      setMe({ firstName: nameById.get(myId) ?? null, photoPath: photoById.get(myId) ?? null });
-      setOther({ firstName: nameById.get(otherId) ?? null, photoPath: photoById.get(otherId) ?? null });
-      setOtherName(nameById.get(otherId) ?? null);
+      const myProfile = profileById.get(myId);
+      const otherProfile = profileById.get(otherId);
+
+      setMe({
+        firstName: myProfile?.first_name ?? null,
+        photoPath: photoById.get(myId) ?? null,
+        interestTags: myProfile?.interest_tags ?? [],
+      });
+      setOther({
+        firstName: otherProfile?.first_name ?? null,
+        photoPath: photoById.get(otherId) ?? null,
+        interestTags: otherProfile?.interest_tags ?? [],
+      });
+      setOtherName(otherProfile?.first_name ?? null);
       setLoading(false);
     }
 
@@ -114,48 +135,89 @@ export default function MatchConfirmation() {
     );
   }
 
+  const sharedTags = (me?.interestTags ?? []).filter((tag) => (other?.interestTags ?? []).includes(tag));
+
   return (
-    <ScreenContainer padded={false} backgroundColor={theme.color.primaryGradient[1]}>
-      <LinearGradient
-        colors={[theme.color.primary, theme.color.primaryGradient[1]]}
-        start={{ x: 0.1, y: 0 }}
-        end={{ x: 0.9, y: 1 }}
-        style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: theme.spacing.lg, paddingHorizontal: theme.spacing.lg }}
+    <ScreenContainer padded={false}>
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          gap: theme.spacing.md,
+          paddingHorizontal: theme.spacing.lg,
+        }}
       >
+        <Ionicons name="heart" size={40} color={theme.color.primary} />
+
         <View style={{ flexDirection: "row" }}>
           <Animated.View style={{ marginRight: -22, zIndex: 1, transform: [{ translateX: leftSlide }] }}>
-            <Avatar person={me} size={104} borderColor="rgba(255,255,255,0.9)" />
+            <Avatar person={me} size={104} borderColor={theme.color.primary} />
           </Animated.View>
           <Animated.View style={{ transform: [{ translateX: rightSlide }] }}>
-            <Avatar person={other} size={104} borderColor="rgba(255,255,255,0.9)" />
+            <Avatar person={other} size={104} borderColor={theme.color.primary} />
           </Animated.View>
         </View>
 
         <Animated.Text
-          style={[theme.typography.display, { color: "#FFFFFF", textAlign: "center", fontSize: 34, opacity: textOpacity }]}
+          style={[
+            theme.typography.display,
+            { color: theme.color.primaryGradient[1], textAlign: "center", fontSize: 34, fontWeight: "800", opacity: textOpacity },
+          ]}
         >
-          It's a match!
+          It's a Match!
         </Animated.Text>
-        <Animated.Text style={{ color: "rgba(255,255,255,0.9)", fontSize: 16, textAlign: "center", opacity: textOpacity }}>
-          You and {otherName ?? "your match"} both said yes.
+        <Animated.Text style={{ color: theme.color.textSecondary, fontSize: 16, textAlign: "center", opacity: textOpacity }}>
+          You and {otherName ?? "your match"} liked each other
         </Animated.Text>
+
+        {sharedTags.length > 0 ? (
+          <Animated.View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, justifyContent: "center", opacity: textOpacity }}>
+            {sharedTags.slice(0, 4).map((tag) => (
+              <View
+                key={tag}
+                style={{
+                  backgroundColor: theme.color.primary + "22",
+                  borderRadius: theme.radius.pill,
+                  paddingHorizontal: 14,
+                  paddingVertical: 6,
+                }}
+              >
+                <Text style={{ color: theme.color.primary, fontWeight: "700", fontSize: 13 }}>
+                  {tag.charAt(0).toUpperCase() + tag.slice(1)}
+                </Text>
+              </View>
+            ))}
+          </Animated.View>
+        ) : null}
+
+        <Animated.View
+          style={{
+            width: "100%",
+            backgroundColor: theme.color.surface,
+            borderRadius: theme.radius.card,
+            padding: theme.spacing.md,
+            marginTop: theme.spacing.sm,
+            opacity: textOpacity,
+          }}
+        >
+          <Text style={[theme.typography.caption, { color: theme.color.textSecondary, fontWeight: "700", letterSpacing: 0.5 }]}>
+            TRY AN ICEBREAKER 🧊
+          </Text>
+          <Text style={[theme.typography.body, { color: theme.color.textPrimary, marginTop: 4 }]}>
+            "{icebreaker}"
+          </Text>
+        </Animated.View>
 
         <Animated.View style={{ width: "100%", gap: theme.spacing.sm, marginTop: theme.spacing.md, opacity: textOpacity }}>
           <Button
-            label="Send a message"
-            variant="secondary"
-            onPress={() =>
-              router.replace({ pathname: "/(app)/matches/[matchId]", params: { matchId } })
-            }
+            label="Send a Message 💬"
+            variant="primary"
+            onPress={() => router.replace({ pathname: "/(app)/matches/[matchId]", params: { matchId } })}
           />
-          <Button
-            label="Keep discovering"
-            variant="ghost"
-            textColor="#FFFFFF"
-            onPress={() => router.replace("/(app)/discover")}
-          />
+          <Button label="Keep Swiping 🔥" variant="ghost" onPress={() => router.replace("/(app)/discover")} />
         </Animated.View>
-      </LinearGradient>
+      </View>
     </ScreenContainer>
   );
 }
