@@ -51,8 +51,8 @@ export default function OnboardingLanguages() {
 
   return (
     <OnboardingStepLayout
-      step={6}
-      totalSteps={11}
+      step={7}
+      totalSteps={12}
       title="What languages do you speak?"
       subtitle="Optional — helps you match with people you can actually talk to."
       onNext={handleNext}

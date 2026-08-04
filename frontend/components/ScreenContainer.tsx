@@ -21,7 +21,7 @@ export function ScreenContainer({ children, style, padded = true, backgroundColo
       <View
         style={[
           styles.flex,
-          padded && { paddingHorizontal: theme.spacing.md },
+          padded && { paddingHorizontal: theme.spacing.screen },
           style,
         ]}
       >

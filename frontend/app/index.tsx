@@ -6,7 +6,7 @@ export default function RootIndex() {
   const profile = useAuthStore((s) => s.profile);
 
   if (!session) {
-    return <Redirect href="/intro" />;
+    return <Redirect href="/welcome" />;
   }
 
   if (!profile?.onboarding_completed) {

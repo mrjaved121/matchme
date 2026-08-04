@@ -161,7 +161,15 @@ export async function captureAndSaveLocation(userId: string): Promise<void> {
   }
 }
 
-export type Liker = { id: string; first_name: string | null; photoPath: string | null };
+export type Liker = {
+  id: string;
+  first_name: string | null;
+  photoPath: string | null;
+  birthdate: string | null;
+  city: string | null;
+  latitude: number | null;
+  longitude: number | null;
+};
 
 export async function fetchWhoLikedMe(myId: string): Promise<Liker[]> {
   const { data: likes } = await supabase
@@ -186,16 +194,23 @@ export async function fetchWhoLikedMe(myId: string): Promise<Liker[]> {
   if (pendingIds.length === 0) return [];
 
   const [{ data: profiles }, { data: photos }] = await Promise.all([
-    supabase.from("profiles").select("id, first_name").in("id", pendingIds),
+    supabase.from("profiles").select("id, first_name, birthdate, city, latitude, longitude").in("id", pendingIds),
     supabase.from("profile_photos").select("profile_id, storage_path").in("profile_id", pendingIds).eq("position", 0),
   ]);
 
   const photoById = new Map((photos ?? []).map((p) => [p.profile_id, p.storage_path]));
-  return pendingIds.map((id) => ({
-    id,
-    first_name: profiles?.find((p) => p.id === id)?.first_name ?? null,
-    photoPath: photoById.get(id) ?? null,
-  }));
+  return pendingIds.map((id) => {
+    const profile = profiles?.find((p) => p.id === id);
+    return {
+      id,
+      first_name: profile?.first_name ?? null,
+      photoPath: photoById.get(id) ?? null,
+      birthdate: profile?.birthdate ?? null,
+      city: profile?.city ?? null,
+      latitude: profile?.latitude ?? null,
+      longitude: profile?.longitude ?? null,
+    };
+  });
 }
 
 export function calculateAge(birthdate: string): number {

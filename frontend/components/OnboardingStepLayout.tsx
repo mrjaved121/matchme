@@ -39,7 +39,7 @@ export function OnboardingStepLayout({
           style={{
             height: 4,
             borderRadius: theme.radius.pill,
-            backgroundColor: theme.color.border,
+            backgroundColor: theme.color.surfaceVariant,
             overflow: "hidden",
           }}
         >
@@ -53,11 +53,11 @@ export function OnboardingStepLayout({
         </View>
 
         <View style={{ gap: theme.spacing.xs }}>
-          <Text style={[theme.typography.title, { color: theme.color.textPrimary }]}>
+          <Text style={[theme.typography.displayLg, { color: theme.color.textPrimary }]}>
             {title}
           </Text>
           {subtitle ? (
-            <Text style={[theme.typography.body, { color: theme.color.textSecondary }]}>
+            <Text style={[theme.typography.bodyLg, { color: theme.color.textSecondary }]}>
               {subtitle}
             </Text>
           ) : null}

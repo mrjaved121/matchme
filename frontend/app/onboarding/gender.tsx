@@ -1,37 +1,44 @@
 import { useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { router } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { OnboardingStepLayout } from "../../components/OnboardingStepLayout";
-import { ChipSelect } from "../../components/ChipSelect";
 import { useTheme } from "../../theme/useTheme";
 import { supabase } from "../../lib/supabase";
 import { useAuthStore } from "../../store/authStore";
-import { ORIENTATION_OPTIONS } from "../../lib/constants";
 
-const GENDER_OPTIONS = [
+const CORE_OPTIONS = [
   { label: "Woman", value: "female" },
   { label: "Man", value: "male" },
-  { label: "Non-binary", value: "nonbinary" },
-  { label: "Other", value: "other" },
+  { label: "Nonbinary", value: "nonbinary" },
 ];
+const MORE_OPTIONS = [{ label: "Other", value: "other" }];
 
+// Matches design/stitch_just_spark_ui_kit/onboarding_gender/code.html: tall
+// selectable rows (not small wrapped chips), 3 core options plus a "More
+// gender options" link that reveals the rest. No orientation field exists
+// anywhere in this Stitch kit — dropped rather than kept as an unplaced
+// addition; the app still has the column for whenever a real spot is
+// designed for it.
 export default function OnboardingGender() {
   const theme = useTheme();
   const session = useAuthStore((s) => s.session);
   const [gender, setGender] = useState<string | undefined>();
-  const [orientation, setOrientation] = useState<string | undefined>();
+  const [showMore, setShowMore] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
 
   useEffect(() => {
     supabase
       .from("profiles")
-      .select("gender, orientation")
+      .select("gender")
       .eq("id", session!.user.id)
       .single()
       .then(({ data }) => {
-        if (data?.gender) setGender(data.gender);
-        if (data?.orientation) setOrientation(data.orientation);
+        if (data?.gender) {
+          setGender(data.gender);
+          if (MORE_OPTIONS.some((o) => o.value === data.gender)) setShowMore(true);
+        }
       });
   }, [session]);
 
@@ -43,10 +50,7 @@ export default function OnboardingGender() {
     setError(undefined);
     setLoading(true);
 
-    const { error: updateError } = await supabase
-      .from("profiles")
-      .update({ gender, orientation: orientation ?? null })
-      .eq("id", session!.user.id);
+    const { error: updateError } = await supabase.from("profiles").update({ gender }).eq("id", session!.user.id);
 
     setLoading(false);
 
@@ -58,36 +62,44 @@ export default function OnboardingGender() {
     router.push("/onboarding/preferences");
   }
 
+  const options = showMore ? [...CORE_OPTIONS, ...MORE_OPTIONS] : CORE_OPTIONS;
+
   return (
     <OnboardingStepLayout
       step={3}
-      totalSteps={11}
+      totalSteps={12}
       title="I am a..."
+      subtitle="Choose how you identify."
       onNext={handleNext}
-      nextDisabled={loading}
+      nextDisabled={loading || !gender}
       nextLoading={loading}
     >
-      <View style={{ gap: 20 }}>
-        <ChipSelect
-          options={GENDER_OPTIONS}
-          selected={gender ? [gender] : []}
-          onToggle={(value) => setGender(value)}
-        />
-
-        <View style={{ gap: 8 }}>
-          <Text style={[theme.typography.subtext, { color: theme.color.textSecondary }]}>
-            Orientation (optional)
-          </Text>
-          <ChipSelect
-            options={ORIENTATION_OPTIONS}
-            selected={orientation ? [orientation] : []}
-            onToggle={(value) => setOrientation((prev) => (prev === value ? undefined : value))}
-          />
-        </View>
-
-        {error ? (
-          <Text style={[theme.typography.caption, { color: theme.color.error }]}>{error}</Text>
+      <View style={{ gap: theme.spacing.sm }}>
+        {options.map((option) => {
+          const selected = gender === option.value;
+          return (
+            <Pressable
+              key={option.value}
+              onPress={() => setGender(option.value)}
+              style={{
+                paddingVertical: theme.spacing.md,
+                borderRadius: 24,
+                alignItems: "center",
+                backgroundColor: selected ? theme.color.surfaceSecondary : theme.color.inputFill,
+                borderWidth: selected ? 2 : 0,
+                borderColor: theme.color.primary,
+              }}
+            >
+              <Text style={[theme.typography.title, { color: theme.color.textPrimary }]}>{option.label}</Text>
+            </Pressable>
+          );
+        })}
+        {!showMore ? (
+          <Pressable onPress={() => setShowMore(true)} style={{ alignSelf: "center", paddingVertical: theme.spacing.sm }}>
+            <Text style={[theme.typography.label, { color: theme.color.primary }]}>More gender options</Text>
+          </Pressable>
         ) : null}
+        {error ? <Text style={[theme.typography.caption, { color: theme.color.error }]}>{error}</Text> : null}
       </View>
     </OnboardingStepLayout>
   );

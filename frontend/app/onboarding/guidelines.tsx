@@ -43,8 +43,8 @@ export default function OnboardingGuidelines() {
 
   return (
     <OnboardingStepLayout
-      step={11}
-      totalSteps={11}
+      step={12}
+      totalSteps={12}
       title="Community guidelines"
       onNext={handleAccept}
       nextLabel="Accept & finish"

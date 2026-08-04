@@ -2,7 +2,10 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, ViewStyle } from "react
 import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "../theme/useTheme";
 
-type Variant = "primary" | "secondary" | "ghost" | "danger";
+// "ghost" renders identically to the export's "outlined" button (transparent +
+// border) — kept under its existing name since it's used in 17 screens, rather
+// than a repo-wide rename for a vocabulary difference with no visual change.
+type Variant = "primary" | "secondary" | "inverted" | "ghost" | "danger";
 
 type Props = {
   label: string;
@@ -15,6 +18,8 @@ type Props = {
   textColor?: string;
   /** Override the primary variant's gradient — e.g. Gold's yellow gradient instead of the brand one. */
   gradientColors?: readonly [string, string];
+  /** Stretch to the width of its container instead of hugging its label. */
+  fullWidth?: boolean;
 };
 
 export function Button({
@@ -26,6 +31,7 @@ export function Button({
   style,
   textColor: textColorOverride,
   gradientColors,
+  fullWidth,
 }: Props) {
   const theme = useTheme();
   const isDisabled = disabled || loading;
@@ -34,13 +40,18 @@ export function Button({
     variant === "danger"
       ? theme.color.error
       : variant === "secondary"
-        ? theme.color.surface
-        : "transparent";
+        ? theme.color.surfaceSecondary
+        : variant === "inverted"
+          ? theme.color.surface
+          : "transparent";
 
   const textColor =
-    textColorOverride ?? (variant === "primary" || variant === "danger" ? "#FFFFFF" : theme.color.primary);
+    textColorOverride ??
+    (variant === "primary" || variant === "danger"
+      ? "#FFFFFF"
+      : theme.color.primary);
 
-  const borderWidth = variant === "secondary" || variant === "ghost" ? 1 : 0;
+  const borderWidth = variant === "ghost" ? 1 : 0;
 
   const content = loading ? (
     <ActivityIndicator color={textColor} />
@@ -59,7 +70,12 @@ export function Button({
         disabled={isDisabled}
         style={({ pressed }) => [
           styles.glow,
-          { borderRadius: theme.radius.pill, shadowColor: theme.color.primary, opacity: isDisabled ? 0.5 : pressed ? 0.85 : 1 },
+          {
+            borderRadius: theme.radius.pill,
+            shadowColor: theme.color.primary,
+            opacity: isDisabled ? 0.5 : pressed ? 0.85 : 1,
+            width: fullWidth ? "100%" : undefined,
+          },
           style,
         ]}
       >
@@ -89,6 +105,7 @@ export function Button({
           borderColor: textColorOverride ?? theme.color.primary,
           borderRadius: theme.radius.pill,
           opacity: isDisabled ? 0.5 : pressed ? 0.85 : 1,
+          width: fullWidth ? "100%" : undefined,
         },
         style,
       ]}

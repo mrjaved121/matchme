@@ -85,19 +85,19 @@ export default function OnboardingBirthdate() {
   return (
     <OnboardingStepLayout
       step={2}
-      totalSteps={11}
+      totalSteps={12}
       title="When's your birthday?"
-      subtitle="You must be 18+ to use Spark. This won't be shown on your profile."
+      subtitle="You must be 18+ to use Spark. Your age will be public, but not your birthday."
       onNext={handleNext}
       nextDisabled={loading}
       nextLoading={loading}
     >
       <View style={{ flexDirection: "row", gap: 12 }}>
         <View style={{ flex: 1 }}>
-          <TextField label="Day" placeholder="DD" keyboardType="number-pad" maxLength={2} value={day} onChangeText={setDay} />
+          <TextField label="Month" placeholder="MM" keyboardType="number-pad" maxLength={2} value={month} onChangeText={setMonth} />
         </View>
         <View style={{ flex: 1 }}>
-          <TextField label="Month" placeholder="MM" keyboardType="number-pad" maxLength={2} value={month} onChangeText={setMonth} />
+          <TextField label="Day" placeholder="DD" keyboardType="number-pad" maxLength={2} value={day} onChangeText={setDay} />
         </View>
         <View style={{ flex: 1.4 }}>
           <TextField label="Year" placeholder="YYYY" keyboardType="number-pad" maxLength={4} value={year} onChangeText={setYear} />

@@ -151,10 +151,10 @@ export default function MatchConfirmation() {
         <Ionicons name="heart" size={40} color={theme.color.primary} />
 
         <View style={{ flexDirection: "row" }}>
-          <Animated.View style={{ marginRight: -22, zIndex: 1, transform: [{ translateX: leftSlide }] }}>
+          <Animated.View style={{ marginRight: -22, zIndex: 1, transform: [{ translateX: leftSlide }, { rotate: "-6deg" }] }}>
             <Avatar person={me} size={104} borderColor={theme.color.primary} />
           </Animated.View>
-          <Animated.View style={{ transform: [{ translateX: rightSlide }] }}>
+          <Animated.View style={{ transform: [{ translateX: rightSlide }, { rotate: "6deg" }] }}>
             <Avatar person={other} size={104} borderColor={theme.color.primary} />
           </Animated.View>
         </View>

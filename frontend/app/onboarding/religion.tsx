@@ -47,8 +47,8 @@ export default function OnboardingReligion() {
 
   return (
     <OnboardingStepLayout
-      step={7}
-      totalSteps={11}
+      step={8}
+      totalSteps={12}
       title="Religion"
       subtitle="Optional — only shown on your profile if you want it to be."
       onNext={handleNext}

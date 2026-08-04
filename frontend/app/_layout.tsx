@@ -73,7 +73,6 @@ export default function RootLayout() {
             <StatusBar style={theme.scheme === "dark" ? "light" : "dark"} />
             <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: theme.color.background } }}>
               <Stack.Screen name="index" />
-              <Stack.Screen name="intro" />
               <Stack.Screen name="welcome" />
               <Stack.Screen name="sign-in" />
               <Stack.Screen name="verify" />

@@ -1,0 +1,112 @@
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-secondary-container":"#6d6166","surface-variant":"#e20fc","tertiary-fixed":"#d3e4ff","surface-container-low":"#f5f2ff","surface-container-highest":"#e2e0fc",outline:"#8e706f","on-secondary-fixed":"#22191d","secondary-fixed":"#efdee4","inverse-primary":"#ffb3b3",secondary:"#675b60","outline-variant":"#e2bebd","inverse-surface":"#2f2e43","primary-fixed":"#ffdad9","on-tertiary":"#ffffff","on-error-container":"#93000a","on-background":"#1a1a2e","on-surface":"#1a1a2e","tertiary-container":"#2f96f7","on-secondary":"#ffffff","primary-container":"#ff5864","surface-container-high":"#e8e5ff","on-tertiary-container":"#002d53","secondary-fixed-dim":"#d2c2c8","on-tertiary-fixed":"#001c38",error:"#ba1a1a","on-tertiary-fixed-variant":"#004880","error-container":"#ffdad6","surface-dim":"#dad7f3","primary-fixed-dim":"#ffb3b3","on-secondary-fixed-variant":"#4f4449","on-error":"#ffffff","tertiary-fixed-dim":"#a1c9ff","surface-bright":"#fcf8ff","inverse-on-surface":"#f2efff",primary:"#b62135",background:"#fcf8ff","on-primary-fixed-variant":"#920021","on-primary-container":"#5f0012","surface-container":"#efecff","on-surface-variant":"#5a4040",tertiary:"#0060a8",surface:"#fcf8ff","surface-container-lowest":"#ffffff","secondary-container":"#efdee4","on-primary":"#ffffff","surface-tint":"#b62135","on-primary-fixed":"#400009"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{lg:"24px","margin-desktop":"40px",xs:"8px",md:"16px",sm:"12px","margin-mobile":"20px",gutter:"16px",xl:"32px",base:"4px"},fontFamily:{"headline-md":["Inter"],"body-md":["Inter"],"headline-lg":["Inter"],display:["Inter"],"body-lg":["Inter"],"headline-lg-mobile":["Inter"],caption:["Inter"],"label-md":["Inter"]},fontSize:{"headline-md":["24px",{lineHeight:"32px",fontWeight:"600"}],"body-md":["16px",{lineHeight:"24px",fontWeight:"400"}],"headline-lg":["32px",{lineHeight:"40px",letterSpacing:"-0.01em",fontWeight:"700"}],display:["40px",{lineHeight:"48px",letterSpacing:"-0.02em",fontWeight:"700"}],"body-lg":["18px",{lineHeight:"28px",fontWeight:"400"}],"headline-lg-mobile":["28px",{lineHeight:"34px",fontWeight:"700"}],caption:["12px",{lineHeight:"16px",fontWeight:"400"}],"label-md":["14px",{lineHeight:"20px",letterSpacing:"0.05em",fontWeight:"600"}]}}}}</script><style>@layer base{.pb-safe{padding-bottom:env(safe-area-inset-bottom,0)}.pt-safe{padding-top:env(safe-area-inset-top,0)}body{overscroll-behavior:none}}::-webkit-scrollbar{display:none}</style></head><body class="bg-background font-body-md text-on-background min-h-screen flex flex-col pt-safe pb-safe"><main class="flex-1 flex flex-col relative w-full"><div class="flex flex-col w-full h-full relative bg-surface">
+<!-- Header / Progress -->
+<div class="flex flex-col px-margin-mobile pt-lg pb-md gap-sm">
+<div class="flex items-center justify-between">
+<button aria-label="Go back" class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-low text-on-surface transition-transform active:scale-95">
+<span class="material-symbols-outlined text-[24px]">arrow_back</span>
+</button>
+<div class="flex-1 px-md">
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full w-[70%]"></div>
+</div>
+</div>
+<button aria-label="Skip for now" class="text-label-md text-on-surface-variant px-2 py-1">Skip</button>
+</div>
+<div class="mt-md">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs">Add your photos</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Add at least 2 photos to continue. Drag to reorder.</p>
+</div>
+</div>
+<!-- Photo Grid -->
+<div class="px-margin-mobile flex-1 flex flex-col gap-lg">
+<div class="grid grid-cols-2 gap-sm" id="photoGrid">
+<!-- Slot 1 (Filled - Primary) -->
+<div class="relative w-full aspect-[3/4] rounded-[24px] bg-surface-container-highest overflow-hidden shadow-[0_8px_24px_rgba(26,26,46,0.04)] group" draggable="true">
+<div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida/AP1WRLtOTuz9vxvvwG_bCpcalaUwWJQWpHbgCR78h0DmYtK2sqRrFDAMvkOHnuZVe9pS6ub8WWJKFVRxv_4HkH0CSzuCEezMygB3fOW6jpQr4GIIWCB6w94lwR2nU9C5VxeCWMNiLyNWzbsjtrqKoJxQu_UlBAr7eLu1xUfBz-tGTf54YmmxagyI61kMrybuoG0FPGdvajwrw-j6osPn-uXQ3239C4PQFn0smn16Cz4Rruxy_qJHpcuh9MKc2J0')"></div>
+<div class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-[14px] text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-caption text-caption text-on-surface font-semibold">Primary</span>
+</div>
+<button aria-label="Remove photo" class="absolute bottom-3 right-3 w-8 h-8 rounded-full bg-white text-on-surface shadow-md flex items-center justify-center transition-transform active:scale-90">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<!-- Slot 2 (Empty) -->
+<button class="relative w-full aspect-[3/4] rounded-[24px] bg-surface-container-low border-2 border-dashed border-outline-variant flex flex-col items-center justify-center gap-2 transition-colors hover:bg-surface-container active:scale-[0.98]">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">add</span>
+</div>
+</button>
+<!-- Slot 3 (Empty) -->
+<button class="relative w-full aspect-[3/4] rounded-[24px] bg-surface-container-low border-2 border-dashed border-outline-variant flex flex-col items-center justify-center gap-2 transition-colors hover:bg-surface-container active:scale-[0.98]">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">add</span>
+</div>
+</button>
+<!-- Slot 4 (Empty) -->
+<button class="relative w-full aspect-[3/4] rounded-[24px] bg-surface-container-low border-2 border-dashed border-outline-variant flex flex-col items-center justify-center gap-2 transition-colors hover:bg-surface-container active:scale-[0.98]">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">add</span>
+</div>
+</button>
+<!-- Slot 5 (Empty) -->
+<button class="relative w-full aspect-[3/4] rounded-[24px] bg-surface-container-low border-2 border-dashed border-outline-variant flex flex-col items-center justify-center gap-2 transition-colors hover:bg-surface-container active:scale-[0.98]">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">add</span>
+</div>
+</button>
+<!-- Slot 6 (Empty) -->
+<button class="relative w-full aspect-[3/4] rounded-[24px] bg-surface-container-low border-2 border-dashed border-outline-variant flex flex-col items-center justify-center gap-2 transition-colors hover:bg-surface-container active:scale-[0.98]">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">add</span>
+</div>
+</button>
+</div>
+<!-- Tips Section -->
+<div class="bg-secondary-fixed rounded-2xl p-4 flex gap-3 items-start mt-2 mb-xl">
+<span class="material-symbols-outlined text-on-secondary-fixed-variant" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+<div>
+<h3 class="font-label-md text-label-md text-on-secondary-fixed mb-1">Photo tips</h3>
+<p class="font-caption text-caption text-on-secondary-fixed-variant">Ditch the sunglasses and group shots. Good lighting and a genuine smile get 3x more matches.</p>
+</div>
+</div>
+</div>
+<!-- Bottom Action -->
+<div class="px-margin-mobile pb-margin-mobile pt-sm mt-auto bg-gradient-to-t from-surface via-surface to-transparent relative z-10">
+<button class="w-full h-14 rounded-full bg-surface-container-highest text-on-surface-variant font-label-md text-label-md flex items-center justify-center transition-all duration-300 pointer-events-none opacity-80" disabled="" id="continueBtn">
+            Continue
+        </button>
+<p class="text-center font-caption text-caption text-on-surface-variant mt-3">Need 1 more photo to continue</p>
+</div>
+</div>
+<script>
+    // Simulate interaction for the empty slots to demo states
+    document.querySelectorAll('button.border-dashed').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // For demo purposes, we'll visually change one slot and activate the continue button
+            if(this.classList.contains('border-dashed')) {
+                // Add loading state
+                this.innerHTML = '<span class="material-symbols-outlined animate-spin text-primary">sync</span>';
+                
+                setTimeout(() => {
+                    // Turn it into a filled slot
+                    this.className = 'relative w-full aspect-[3/4] rounded-[24px] bg-surface-container-highest overflow-hidden shadow-[0_8px_24px_rgba(26,26,46,0.04)] group';
+                    this.innerHTML = `
+                        <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('placeholder')" data-alt="A candid, warm lifestyle photo of a young woman at a coffee shop, natural sunlight, soft focus background, inviting smile, casual chic attire."></div>
+                        <button class="absolute bottom-3 right-3 w-8 h-8 rounded-full bg-white text-on-surface shadow-md flex items-center justify-center transition-transform active:scale-90">
+                            <span class="material-symbols-outlined text-[18px]">close</span>
+                        </button>
+                    `;
+                    
+                    // Activate Continue Button
+                    const continueBtn = document.getElementById('continueBtn');
+                    continueBtn.className = 'w-full h-14 rounded-full bg-gradient-to-b from-[#FF5864] to-[#FF7A84] text-white font-label-md text-label-md flex items-center justify-center transition-all duration-300 shadow-[0_12px_32px_rgba(255,88,100,0.2)] active:scale-[0.98] cursor-pointer';
+                    continueBtn.disabled = false;
+                    continueBtn.nextElementSibling.style.opacity = '0';
+                }, 800);
+            }
+        });
+    });
+</script></main></body></html>

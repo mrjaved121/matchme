@@ -1,0 +1,80 @@
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-secondary-container":"#6d6166","surface-variant":"#e20fc","tertiary-fixed":"#d3e4ff","surface-container-low":"#f5f2ff","surface-container-highest":"#e2e0fc",outline:"#8e706f","on-secondary-fixed":"#22191d","secondary-fixed":"#efdee4","inverse-primary":"#ffb3b3",secondary:"#675b60","outline-variant":"#e2bebd","inverse-surface":"#2f2e43","primary-fixed":"#ffdad9","on-tertiary":"#ffffff","on-error-container":"#93000a","on-background":"#1a1a2e","on-surface":"#1a1a2e","tertiary-container":"#2f96f7","on-secondary":"#ffffff","primary-container":"#ff5864","surface-container-high":"#e8e5ff","on-tertiary-container":"#002d53","secondary-fixed-dim":"#d2c2c8","on-tertiary-fixed":"#001c38",error:"#ba1a1a","on-tertiary-fixed-variant":"#004880","error-container":"#ffdad6","surface-dim":"#dad7f3","primary-fixed-dim":"#ffb3b3","on-secondary-fixed-variant":"#4f4449","on-error":"#ffffff","tertiary-fixed-dim":"#a1c9ff","surface-bright":"#fcf8ff","inverse-on-surface":"#f2efff",primary:"#b62135",background:"#fcf8ff","on-primary-fixed-variant":"#920021","on-primary-container":"#5f0012","surface-container":"#efecff","on-surface-variant":"#5a4040",tertiary:"#0060a8",surface:"#fcf8ff","surface-container-lowest":"#ffffff","secondary-container":"#efdee4","on-primary":"#ffffff","surface-tint":"#b62135","on-primary-fixed":"#400009"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{lg:"24px","margin-desktop":"40px",xs:"8px",md:"16px",sm:"12px","margin-mobile":"20px",gutter:"16px",xl:"32px",base:"4px"},fontFamily:{"headline-md":["Inter"],"body-md":["Inter"],"headline-lg":["Inter"],display:["Inter"],"body-lg":["Inter"],"headline-lg-mobile":["Inter"],caption:["Inter"],"label-md":["Inter"]},fontSize:{"headline-md":["24px",{lineHeight:"32px",fontWeight:"600"}],"body-md":["16px",{lineHeight:"24px",fontWeight:"400"}],"headline-lg":["32px",{lineHeight:"40px",letterSpacing:"-0.01em",fontWeight:"700"}],display:["40px",{lineHeight:"48px",letterSpacing:"-0.02em",fontWeight:"700"}],"body-lg":["18px",{lineHeight:"28px",fontWeight:"400"}],"headline-lg-mobile":["28px",{lineHeight:"34px",fontWeight:"700"}],caption:["12px",{lineHeight:"16px",fontWeight:"400"}],"label-md":["14px",{lineHeight:"20px",letterSpacing:"0.05em",fontWeight:"600"}]}}}}</script><style>@layer base{.pb-safe{padding-bottom:env(safe-area-inset-bottom,0)}.pt-safe{padding-top:env(safe-area-inset-top,0)}body{overscroll-behavior:none}}::-webkit-scrollbar{display:none}</style></head><body class="bg-background font-body-md text-on-background min-h-screen flex flex-col pt-safe pb-safe"><main class="flex-1 flex flex-col relative w-full"><div class="flex flex-col w-full h-full relative bg-background font-body-md text-on-background">
+<!-- Search Header -->
+<div class="px-margin-desktop py-lg sticky top-0 z-10 bg-background/80 backdrop-blur-md">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-md text-on-surface-variant z-10">search</span>
+<input class="w-full h-14 pl-12 pr-md bg-surface-container rounded-xl text-body-md text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary-container transition-shadow" placeholder="Search for a city..." type="text"/>
+<button class="absolute right-md text-primary font-label-md flex items-center gap-base">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">my_location</span>
+</button>
+</div>
+</div>
+<!-- Map View Container -->
+<div class="px-margin-desktop mb-lg relative">
+<div class="relative w-full h-[45vh] rounded-[24px] overflow-hidden shadow-md">
+<div class="absolute inset-0 bg-cover bg-center" data-location="Tokyo, Japan" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBwDI6c8gxAnMB_VEnOdBKtnqhy4AwQWm4aGjY83M8fn9uKjZYpzIt-Htbbqzcd2ne_q59S7J3oBXQZ3Tuc8W8LUtT3ZyJ_5SrywmNBd6TpUtWf9PXRfudlkKazBnIlKtGn7TPaCLx3Sm8NAer5NpuwBbtRJ8nY32fq1AzZlwSG_mg-ths-e8RR3qVmoo8aDScaf_DQ3gxQsBF_uMk3XBeP0OZSNp0Jfx0IrDpmRQHX4RoK017COXAwcQ')"></div>
+<!-- Center Pin Overlay (Simulated) -->
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<div class="relative -mt-8 flex flex-col items-center">
+<div class="w-10 h-10 bg-primary-container rounded-full flex items-center justify-center shadow-lg animate-bounce">
+<span class="material-symbols-outlined text-on-primary" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+<!-- Pin Drop Shadow -->
+<div class="w-3 h-1 bg-on-background/20 rounded-full mt-1 blur-[1px]"></div>
+</div>
+</div>
+<!-- Floating Status Pill -->
+<div class="absolute top-md left-1/2 -translate-x-1/2 bg-surface/90 backdrop-blur-sm px-md py-xs rounded-full shadow-sm flex items-center gap-xs">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+<span class="text-label-md text-on-surface">Exploring Tokyo</span>
+</div>
+</div>
+</div>
+<!-- Locations List -->
+<div class="px-margin-desktop flex-1 flex flex-col pb-32">
+<h2 class="text-headline-md text-on-background mb-md">Popular Destinations</h2>
+<div class="flex flex-col gap-sm">
+<!-- Location Item 1 -->
+<button class="flex items-center gap-md p-md bg-surface-container-low hover:bg-surface-container rounded-xl transition-colors text-left group">
+<div class="w-12 h-12 rounded-lg bg-primary-fixed-dim/20 flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">flight_takeoff</span>
+</div>
+<div class="flex-1">
+<div class="text-body-lg font-semibold text-on-surface group-hover:text-primary-container transition-colors">Paris</div>
+<div class="text-caption text-on-surface-variant">France</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</button>
+<!-- Location Item 2 -->
+<button class="flex items-center gap-md p-md bg-surface-container-low hover:bg-surface-container rounded-xl transition-colors text-left group">
+<div class="w-12 h-12 rounded-lg bg-primary-fixed-dim/20 flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">flight_takeoff</span>
+</div>
+<div class="flex-1">
+<div class="text-body-lg font-semibold text-on-surface group-hover:text-primary-container transition-colors">London</div>
+<div class="text-caption text-on-surface-variant">United Kingdom</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</button>
+<!-- Location Item 3 -->
+<button class="flex items-center gap-md p-md bg-surface-container-low hover:bg-surface-container rounded-xl transition-colors text-left group">
+<div class="w-12 h-12 rounded-lg bg-primary-fixed-dim/20 flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">flight_takeoff</span>
+</div>
+<div class="flex-1">
+<div class="text-body-lg font-semibold text-on-surface group-hover:text-primary-container transition-colors">New York</div>
+<div class="text-caption text-on-surface-variant">United States</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Bottom Action Area -->
+<div class="fixed bottom-0 left-0 right-0 p-margin-desktop pb-safe bg-gradient-to-t from-background via-background/95 to-transparent z-20 pointer-events-none flex flex-col justify-end h-40">
+<button class="w-full h-14 bg-gradient-to-b from-[#FF5864] to-[#FF7A84] rounded-full text-on-primary font-headline-md flex items-center justify-center shadow-[0_12px_32px_rgba(255,88,100,0.2)] hover:scale-[1.02] active:scale-[0.98] transition-transform pointer-events-auto">
+        Confirm Location
+    </button>
+</div>
+</div></main></body></html>

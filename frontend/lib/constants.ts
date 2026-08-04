@@ -1,3 +1,5 @@
+import { Ionicons } from "@expo/vector-icons";
+
 export const GENDER_OPTIONS = [
   { label: "Women", value: "female" },
   { label: "Men", value: "male" },
@@ -26,10 +28,27 @@ export const LANGUAGE_OPTIONS = [
   "Arabic", "Hindi", "Urdu", "Japanese", "Korean", "Italian",
 ].map((label) => ({ label, value: label.toLowerCase() }));
 
-export const INTEREST_OPTIONS = [
-  "Travel", "Music", "Fitness", "Foodie", "Movies", "Reading",
-  "Gaming", "Outdoors", "Art", "Dancing", "Coffee", "Pets",
-].map((label) => ({ label, value: label.toLowerCase() }));
+// Matches design/stitch_just_spark_ui_kit/onboarding_interests/code.html's
+// 17-option list and icons exactly.
+export const INTEREST_OPTIONS: { label: string; value: string; icon: keyof typeof Ionicons.glyphMap }[] = [
+  { label: "Travel", value: "travel", icon: "airplane-outline" },
+  { label: "Coffee", value: "coffee", icon: "cafe-outline" },
+  { label: "Music", value: "music", icon: "musical-notes-outline" },
+  { label: "Fitness", value: "fitness", icon: "barbell-outline" },
+  { label: "Food", value: "food", icon: "restaurant-outline" },
+  { label: "Art", value: "art", icon: "color-palette-outline" },
+  { label: "Gaming", value: "gaming", icon: "game-controller-outline" },
+  { label: "Movies", value: "movies", icon: "film-outline" },
+  { label: "Reading", value: "reading", icon: "book-outline" },
+  { label: "Nature", value: "nature", icon: "leaf-outline" },
+  { label: "Pets", value: "pets", icon: "paw-outline" },
+  { label: "Photography", value: "photo", icon: "camera-outline" },
+  { label: "Sports", value: "sports", icon: "baseball-outline" },
+  { label: "Cooking", value: "cooking", icon: "flame-outline" },
+  { label: "Wine", value: "wine", icon: "wine-outline" },
+  { label: "Yoga", value: "yoga", icon: "body-outline" },
+  { label: "Hiking", value: "hiking", icon: "walk-outline" },
+];
 
 export const ICEBREAKER_PROMPTS = [
   "What's your most controversial food opinion?",

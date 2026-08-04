@@ -53,8 +53,8 @@ export default function OnboardingAboutYou() {
 
   return (
     <OnboardingStepLayout
-      step={5}
-      totalSteps={11}
+      step={6}
+      totalSteps={12}
       title="A bit more about you"
       subtitle="All optional — skip anything you'd rather not share."
       onNext={handleNext}

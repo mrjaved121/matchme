@@ -1,0 +1,103 @@
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-secondary-container":"#6d6166","surface-variant":"#e20fc","tertiary-fixed":"#d3e4ff","surface-container-low":"#f5f2ff","surface-container-highest":"#e2e0fc",outline:"#8e706f","on-secondary-fixed":"#22191d","secondary-fixed":"#efdee4","inverse-primary":"#ffb3b3",secondary:"#675b60","outline-variant":"#e2bebd","inverse-surface":"#2f2e43","primary-fixed":"#ffdad9","on-tertiary":"#ffffff","on-error-container":"#93000a","on-background":"#1a1a2e","on-surface":"#1a1a2e","tertiary-container":"#2f96f7","on-secondary":"#ffffff","primary-container":"#ff5864","surface-container-high":"#e8e5ff","on-tertiary-container":"#002d53","secondary-fixed-dim":"#d2c2c8","on-tertiary-fixed":"#001c38",error:"#ba1a1a","on-tertiary-fixed-variant":"#004880","error-container":"#ffdad6","surface-dim":"#dad7f3","primary-fixed-dim":"#ffb3b3","on-secondary-fixed-variant":"#4f4449","on-error":"#ffffff","tertiary-fixed-dim":"#a1c9ff","surface-bright":"#fcf8ff","inverse-on-surface":"#f2efff",primary:"#b62135",background:"#fcf8ff","on-primary-fixed-variant":"#920021","on-primary-container":"#5f0012","surface-container":"#efecff","on-surface-variant":"#5a4040",tertiary:"#0060a8",surface:"#fcf8ff","surface-container-lowest":"#ffffff","secondary-container":"#efdee4","on-primary":"#ffffff","surface-tint":"#b62135","on-primary-fixed":"#400009"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{lg:"24px","margin-desktop":"40px",xs:"8px",md:"16px",sm:"12px","margin-mobile":"20px",gutter:"16px",xl:"32px",base:"4px"},fontFamily:{"headline-md":["Inter"],"body-md":["Inter"],"headline-lg":["Inter"],display:["Inter"],"body-lg":["Inter"],"headline-lg-mobile":["Inter"],caption:["Inter"],"label-md":["Inter"]},fontSize:{"headline-md":["24px",{lineHeight:"32px",fontWeight:"600"}],"body-md":["16px",{lineHeight:"24px",fontWeight:"400"}],"headline-lg":["32px",{lineHeight:"40px",letterSpacing:"-0.01em",fontWeight:"700"}],display:["40px",{lineHeight:"48px",letterSpacing:"-0.02em",fontWeight:"700"}],"body-lg":["18px",{lineHeight:"28px",fontWeight:"400"}],"headline-lg-mobile":["28px",{lineHeight:"34px",fontWeight:"700"}],caption:["12px",{lineHeight:"16px",fontWeight:"400"}],"label-md":["14px",{lineHeight:"20px",letterSpacing:"0.05em",fontWeight:"600"}]}}}}</script><style>@layer base{.pb-safe{padding-bottom:env(safe-area-inset-bottom,0)}.pt-safe{padding-top:env(safe-area-inset-top,0)}body{overscroll-behavior:none}}::-webkit-scrollbar{display:none}</style></head><body class="bg-background font-body-md text-on-background min-h-screen flex flex-col pt-safe pb-safe"><main class="flex-1 flex flex-col relative w-full"><div class="flex flex-col w-full px-margin-mobile py-margin-desktop bg-surface relative">
+<!-- Progress Bar & Header -->
+<header class="flex flex-col gap-sm mb-lg w-full">
+<div class="flex items-center w-full gap-md relative">
+<button aria-label="Go back" class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-low shadow-[0px_8px_24px_rgba(26,26,46,0.04)] text-on-surface hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[20px]">arrow_back</span>
+</button>
+<!-- Progress Bar -->
+<div class="flex-1 h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 90%;"></div>
+</div>
+<div class="w-10"></div> <!-- Balancer for centering -->
+</div>
+</header>
+<!-- Content -->
+<main class="flex-1 flex flex-col gap-lg w-full max-w-lg mx-auto pb-[100px]">
+<div class="flex flex-col gap-base text-center mb-md">
+<h1 class="text-headline-lg-mobile font-headline-lg-mobile text-on-surface">About you</h1>
+<p class="text-body-md font-body-md text-on-surface-variant">Tell others what makes you unique. Be yourself!</p>
+</div>
+<!-- Bio Text Area -->
+<div class="flex flex-col gap-xs w-full">
+<div class="relative w-full rounded-[16px] bg-[#F7F7FA] overflow-hidden focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 focus-within:ring-offset-surface transition-shadow">
+<textarea class="w-full h-40 bg-transparent text-on-surface text-body-md font-body-md p-md resize-none outline-none placeholder:text-on-surface-variant/50" id="bio-input" maxlength="500" placeholder="I love spontaneous road trips, finding the best local coffee shops, and debating whether pineapple belongs on pizza."></textarea>
+<div class="absolute bottom-md right-md flex items-center gap-xs text-caption font-caption text-on-surface-variant bg-[#F7F7FA]/80 backdrop-blur-sm px-xs py-[2px] rounded-full pointer-events-none">
+<span id="char-count">0</span>/500
+        </div>
+</div>
+</div>
+<!-- Prompt Chips -->
+<div class="flex flex-col gap-sm w-full">
+<p class="text-label-md font-label-md text-on-surface-variant">Need some inspiration?</p>
+<div class="flex flex-wrap gap-sm">
+<button class="prompt-chip bg-[#F7F7FA] text-on-surface text-body-md font-body-md px-md py-sm rounded-full whitespace-nowrap transition-colors hover:bg-surface-container-high active:bg-primary active:text-on-primary">
+          My perfect Sunday...
+        </button>
+<button class="prompt-chip bg-[#F7F7FA] text-on-surface text-body-md font-body-md px-md py-sm rounded-full whitespace-nowrap transition-colors hover:bg-surface-container-high active:bg-primary active:text-on-primary">
+          Unpopular opinion...
+        </button>
+<button class="prompt-chip bg-[#F7F7FA] text-on-surface text-body-md font-body-md px-md py-sm rounded-full whitespace-nowrap transition-colors hover:bg-surface-container-high active:bg-primary active:text-on-primary">
+          I'm a regular at...
+        </button>
+</div>
+</div>
+</main>
+<!-- Sticky Footer -->
+<footer class="fixed bottom-0 left-0 right-0 p-margin-mobile bg-gradient-to-t from-surface via-surface/90 to-transparent pb-safe pointer-events-none z-10">
+<div class="max-w-lg mx-auto w-full pointer-events-auto">
+<button class="w-full h-[56px] rounded-full bg-primary text-on-primary text-body-lg font-body-lg font-bold shadow-[0px_12px_32px_rgba(255,88,100,0.2)] hover:bg-primary-container transition-all active:scale-[0.98] flex items-center justify-center">
+        Continue
+      </button>
+</div>
+</footer>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const textarea = document.getElementById('bio-input');
+    const charCount = document.getElementById('char-count');
+    const promptChips = document.querySelectorAll('.prompt-chip');
+
+    // Update character count
+    textarea.addEventListener('input', (e) => {
+      const length = e.target.value.length;
+      charCount.textContent = length;
+      
+      // Optional: Add visual feedback when nearing limit
+      if (length > 450) {
+        charCount.classList.add('text-primary');
+        charCount.classList.remove('text-on-surface-variant');
+      } else {
+        charCount.classList.remove('text-primary');
+        charCount.classList.add('text-on-surface-variant');
+      }
+    });
+
+    // Handle prompt chips
+    promptChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const promptText = chip.textContent.trim();
+        const currentVal = textarea.value;
+        
+        // Append prompt if it's not already there
+        if (!currentVal.includes(promptText)) {
+          textarea.value = currentVal ? `${currentVal}\n\n${promptText} ` : `${promptText} `;
+          textarea.focus();
+          
+          // Manually trigger input event to update counter
+          textarea.dispatchEvent(new Event('input'));
+        }
+        
+        // Visual feedback for chip selection
+        promptChips.forEach(c => {
+          c.classList.remove('bg-primary', 'text-on-primary');
+          c.classList.add('bg-[#F7F7FA]', 'text-on-surface');
+        });
+        chip.classList.remove('bg-[#F7F7FA]', 'text-on-surface');
+        chip.classList.add('bg-primary', 'text-on-primary');
+      });
+    });
+  });
+</script></main></body></html>

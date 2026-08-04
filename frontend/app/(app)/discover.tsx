@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Image, Pressable, ScrollView, Text, View } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
+import { Pressable, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import * as Haptics from "expo-haptics";
 import { ScreenContainer } from "../../components/ScreenContainer";
-import { EmptyState, ErrorState, LoadingState, NoInternetState } from "../../components/StateViews";
+import { Button } from "../../components/Button";
+import { ErrorState, LoadingState, NoInternetState } from "../../components/StateViews";
 import { useIsOnline } from "../../lib/useIsOnline";
 import { SwipeCard, type SwipeCardHandle, type SwipeCardProfile } from "../../components/SwipeCard";
 import { useTheme } from "../../theme/useTheme";
@@ -28,13 +28,11 @@ import {
 export default function Discover() {
   const theme = useTheme();
   const myId = useAuthStore((s) => s.session!.user.id);
-  const profile = useAuthStore((s) => s.profile);
 
   const [deck, setDeck] = useState<SwipeCardProfile[] | null>(null);
   const [error, setError] = useState(false);
   const isOnline = useIsOnline();
   const [busy, setBusy] = useState(false);
-  const [topPicksActive, setTopPicksActive] = useState(false);
   const topCardRef = useRef<SwipeCardHandle>(null);
 
   const load = useCallback(async () => {
@@ -78,9 +76,17 @@ export default function Discover() {
   }, [myId]);
 
   useEffect(() => {
-    load();
     captureAndSaveLocation(myId);
-  }, [load, myId]);
+  }, [myId]);
+
+  // Refetch on focus (not just mount) so returning from Discovery
+  // Preferences or Boost — the two actions offered when the deck runs dry —
+  // actually shows a refreshed deck instead of the same empty state.
+  useFocusEffect(
+    useCallback(() => {
+      load();
+    }, [load]),
+  );
 
   async function handleSwiped(profileId: string, action: SwipeAction) {
     setBusy(true);
@@ -110,23 +116,6 @@ export default function Discover() {
     }
   }
 
-  function bringToFront(profileId: string) {
-    setDeck((prev) => {
-      if (!prev) return prev;
-      const target = prev.find((p) => p.id === profileId);
-      if (!target) return prev;
-      return [target, ...prev.filter((p) => p.id !== profileId)];
-    });
-  }
-
-  function openPassport() {
-    if (!profile?.is_gold) {
-      router.push("/(app)/gold");
-      return;
-    }
-    router.push("/(app)/discovery-preferences");
-  }
-
   if (error) {
     return (
       <ScreenContainer>
@@ -143,105 +132,42 @@ export default function Discover() {
     );
   }
 
-  const orderedDeck = topPicksActive ? [...deck].sort((a, b) => b.matchScore - a.matchScore) : deck;
-  const visible = orderedDeck.slice(0, 3);
-  const stripCandidates = orderedDeck.slice(0, 8);
+  const visible = deck.slice(0, 3);
 
+  // Structure matches design/stitch_just_spark_ui_kit/discover/code.html: no
+  // header, no quick-access row — just the card (16px inset, 112px reserved
+  // at the bottom) with the 5 action buttons overlaid on top of it. The
+  // filter icon is the one addition beyond the literal export — nothing in
+  // the kit puts filter access anywhere reachable while actively swiping, so
+  // it's a minimal circular icon button matching the kit's own header-button
+  // style (e.g. the notification bell on Messages/Profile) rather than new
+  // chrome.
   return (
-    <ScreenContainer>
-      <View style={{ flex: 1, paddingTop: theme.spacing.sm }}>
-        <View
+    <ScreenContainer padded={false}>
+      <View style={{ flex: 1 }}>
+        <Pressable
+          onPress={() => router.push("/(app)/preference-filter")}
+          accessibilityRole="button"
+          accessibilityLabel="Discovery filters"
           style={{
-            flexDirection: "row",
+            position: "absolute",
+            top: theme.spacing.md,
+            right: theme.spacing.md,
+            zIndex: 30,
+            width: 40,
+            height: 40,
+            borderRadius: 20,
+            backgroundColor: theme.color.surfaceSecondary,
             alignItems: "center",
-            justifyContent: "space-between",
-            paddingBottom: theme.spacing.sm,
+            justifyContent: "center",
           }}
         >
-          <TopBarIconButton iconName="options-outline" onPress={() => router.push("/(app)/preference-filter")} />
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-            <View
-              style={{
-                width: 28,
-                height: 28,
-                borderRadius: 14,
-                backgroundColor: theme.color.primary,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Ionicons name="flame" size={16} color="#FFFFFF" />
-            </View>
-            <Text style={[theme.typography.title, { color: theme.color.textPrimary, fontStyle: "italic" }]}>
-              Spark
-            </Text>
-          </View>
-          <TopBarIconButton iconName="flash" color={theme.swipe.boost} onPress={() => router.push("/(app)/boost")} />
-        </View>
+          <Ionicons name="options-outline" size={20} color={theme.color.textPrimary} />
+        </Pressable>
 
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ gap: 12, paddingBottom: theme.spacing.sm, alignItems: "center" }}
-        >
-          <QuickAccessCircle
-            label="Top Picks"
-            iconName="star"
-            gradient={theme.color.goldGradient}
-            active={topPicksActive}
-            onPress={() => setTopPicksActive((v) => !v)}
-          />
-          <QuickAccessCircle
-            label="Passport"
-            iconName="globe-outline"
-            gradient={[theme.swipe.superlike, theme.swipe.boost]}
-            labelColor={theme.swipe.boost}
-            onPress={openPassport}
-          />
-          <QuickAccessCircle
-            label="Events"
-            iconName="flash"
-            gradient={[theme.swipe.like, "#1FBE7A"]}
-            onPress={() => router.push("/(app)/queue")}
-          />
-          {stripCandidates.map((c) => (
-            <Pressable key={c.id} onPress={() => bringToFront(c.id)} style={{ alignItems: "center", gap: 4, width: 64 }}>
-              <View
-                style={{
-                  width: 56,
-                  height: 56,
-                  borderRadius: 28,
-                  borderWidth: 2,
-                  borderColor: c.isOnline ? theme.swipe.like : theme.color.border,
-                  overflow: "hidden",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  backgroundColor: theme.color.surface,
-                }}
-              >
-                {c.photoUrls[0] ? (
-                  <Image source={{ uri: c.photoUrls[0] }} style={{ width: "100%", height: "100%" }} />
-                ) : (
-                  <Text style={{ color: theme.color.textSecondary, fontWeight: "700" }}>
-                    {c.first_name?.[0]?.toUpperCase() ?? "?"}
-                  </Text>
-                )}
-              </View>
-              <Text numberOfLines={1} style={[theme.typography.caption, { color: theme.color.textSecondary }]}>
-                {c.first_name ?? "—"}
-              </Text>
-            </Pressable>
-          ))}
-        </ScrollView>
-
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, padding: theme.spacing.md, paddingBottom: 112 }}>
           {visible.length === 0 ? (
-            <EmptyState
-              title="You're all caught up"
-              description="No new people right now — check back soon, or widen your discovery preferences."
-              actionLabel="Refresh"
-              onAction={load}
-            />
+            <NoMorePeople onExpand={() => router.push("/(app)/discovery-preferences")} onBoost={() => router.push("/(app)/boost")} />
           ) : (
             [...visible].reverse().map((p, i) => {
               const isTop = i === visible.length - 1;
@@ -260,12 +186,24 @@ export default function Discover() {
         </View>
 
         {visible.length > 0 ? (
-          <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 16, paddingVertical: theme.spacing.lg }}>
-            <ActionButton iconName="arrow-undo" color={theme.swipe.rewind} size={44} onPress={() => {}} disabled />
-            <ActionButton iconName="close" color={theme.swipe.pass} size={56} onPress={() => !busy && topCardRef.current?.swipe("pass")} />
-            <ActionButton iconName="star" color={theme.swipe.superlike} size={44} onPress={() => !busy && topCardRef.current?.swipe("superlike")} />
-            <ActionButton iconName="heart" color={theme.swipe.like} size={56} onPress={() => !busy && topCardRef.current?.swipe("like")} />
-            <ActionButton iconName="flash" color={theme.swipe.boost} size={44} onPress={() => router.push("/(app)/boost")} />
+          <View
+            style={{
+              position: "absolute",
+              bottom: theme.spacing.lg,
+              left: 0,
+              right: 0,
+              paddingHorizontal: theme.spacing.lg,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              zIndex: 20,
+            }}
+          >
+            <ActionButton iconName="time-outline" color={theme.swipe.rewind} size={48} onPress={() => {}} disabled />
+            <ActionButton iconName="close" color={theme.swipe.pass} size={64} onPress={() => !busy && topCardRef.current?.swipe("pass")} />
+            <ActionButton iconName="star" color={theme.swipe.superlike} size={48} onPress={() => !busy && topCardRef.current?.swipe("superlike")} />
+            <ActionButton iconName="heart" color={theme.swipe.like} size={64} filled onPress={() => !busy && topCardRef.current?.swipe("like")} />
+            <ActionButton iconName="flash" color={theme.swipe.boost} size={48} onPress={() => router.push("/(app)/boost")} />
           </View>
         ) : null}
       </View>
@@ -273,60 +211,26 @@ export default function Discover() {
   );
 }
 
-function QuickAccessCircle({
-  label,
-  iconName,
-  gradient,
-  active,
-  labelColor,
-  onPress,
-}: {
-  label: string;
-  iconName: keyof typeof Ionicons.glyphMap;
-  gradient: readonly [string, string];
-  active?: boolean;
-  labelColor?: string;
-  onPress: () => void;
-}) {
-  const theme = useTheme();
-  return (
-    <Pressable onPress={onPress} style={{ alignItems: "center", gap: 4, width: 64 }}>
-      <LinearGradient
-        colors={gradient}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={{
-          width: 56,
-          height: 56,
-          borderRadius: 28,
-          alignItems: "center",
-          justifyContent: "center",
-          borderWidth: active ? 3 : 0,
-          borderColor: "#FFFFFF",
-        }}
-      >
-        <Ionicons name={iconName} size={24} color="#FFFFFF" />
-      </LinearGradient>
-      <Text numberOfLines={1} style={[theme.typography.caption, { color: labelColor ?? theme.color.textSecondary, fontWeight: "700" }]}>
-        {label}
-      </Text>
-    </Pressable>
-  );
-}
-
+// White circle + tinted icon for every action except Like, which is the
+// export's one solid-fill button (bg-primary-container, white icon) — the
+// single action that matters gets the same "filled" treatment Button.tsx
+// gives its primary variant.
 function ActionButton({
   iconName,
   color,
   size,
   onPress,
   disabled,
+  filled,
 }: {
   iconName: keyof typeof Ionicons.glyphMap;
   color: string;
   size: number;
   onPress: () => void;
   disabled?: boolean;
+  filled?: boolean;
 }) {
+  const theme = useTheme();
   return (
     <Pressable
       onPress={onPress}
@@ -337,43 +241,55 @@ function ActionButton({
         borderRadius: size / 2,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: color + "26",
+        backgroundColor: filled ? color : theme.color.surface,
         opacity: disabled ? 0.4 : 1,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 6,
+        shadowColor: filled ? color : "#000",
+        shadowOffset: { width: 0, height: filled ? 8 : 2 },
+        shadowOpacity: filled ? 0.3 : 0.12,
+        shadowRadius: filled ? 16 : 6,
         elevation: 3,
       }}
     >
-      <Ionicons name={iconName} size={size * 0.42} color={color} />
+      <Ionicons name={iconName} size={size * 0.42} color={filled ? "#FFFFFF" : color} />
     </Pressable>
   );
 }
 
-function TopBarIconButton({
-  iconName,
-  color,
-  onPress,
-}: {
-  iconName: keyof typeof Ionicons.glyphMap;
-  color?: string;
-  onPress: () => void;
-}) {
+// Matches design/stitch_just_spark_ui_kit/discover_no_more_people/code.html:
+// a decorative icon medallion, "You've Seen Everyone!", and two real ways
+// forward (widen the discovery filters, or boost to get seen by more
+// people) instead of a single generic "Refresh" button.
+function NoMorePeople({ onExpand, onBoost }: { onExpand: () => void; onBoost: () => void }) {
   const theme = useTheme();
   return (
-    <Pressable
-      onPress={onPress}
-      style={{
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: theme.color.surface,
-      }}
-    >
-      <Ionicons name={iconName} size={19} color={color ?? theme.color.textPrimary} />
-    </Pressable>
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: theme.spacing.xl, paddingHorizontal: theme.spacing.md }}>
+      <View
+        style={{
+          width: 128,
+          height: 128,
+          borderRadius: 64,
+          backgroundColor: theme.color.surfaceSecondary,
+          alignItems: "center",
+          justifyContent: "center",
+          ...theme.shadow.floating,
+        }}
+      >
+        <Ionicons name="compass" size={56} color={theme.color.primary} />
+      </View>
+
+      <View style={{ gap: 8 }}>
+        <Text style={[theme.typography.display, { color: theme.color.textPrimary, textAlign: "center" }]}>
+          You've Seen Everyone!
+        </Text>
+        <Text style={[theme.typography.bodyLg, { color: theme.color.textSecondary, textAlign: "center", maxWidth: 280 }]}>
+          You're all caught up in your area. Cast a wider net to find more kind connections.
+        </Text>
+      </View>
+
+      <View style={{ width: "100%", gap: theme.spacing.sm }}>
+        <Button label="Expand Discovery" onPress={onExpand} fullWidth />
+        <Button label="Boost My Profile" variant="secondary" onPress={onBoost} fullWidth />
+      </View>
+    </View>
   );
 }

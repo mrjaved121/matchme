@@ -170,6 +170,30 @@ export default function DiscoveryPreferences() {
           onChange={(v) => goldGate(() => setPrefs((prev) => (prev ? { ...prev, global_mode: v } : prev)))}
         />
 
+        <Pressable
+          onPress={() => goldGate(() => router.push("/(app)/passport"))}
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            backgroundColor: theme.color.surface,
+            borderRadius: theme.radius.card,
+            padding: theme.spacing.md,
+          }}
+        >
+          <View style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: 10 }}>
+            <Text style={{ fontSize: 16 }}>✈️</Text>
+            <View style={{ flex: 1 }}>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                <Text style={[theme.typography.body, { color: theme.color.textPrimary }]}>Passport</Text>
+                {!isGold ? <Text style={{ color: theme.color.gold, fontSize: 11, fontWeight: "800" }}>GOLD</Text> : null}
+              </View>
+              <Text style={[theme.typography.caption, { color: theme.color.textSecondary }]}>Set your discovery location to any city</Text>
+            </View>
+          </View>
+          <Text style={{ color: theme.color.textSecondary, fontSize: 18 }}>›</Text>
+        </Pressable>
+
         <View style={{ gap: theme.spacing.sm }}>
           <Text
             style={[

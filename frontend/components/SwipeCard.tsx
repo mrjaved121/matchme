@@ -4,6 +4,7 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../theme/useTheme";
 import type { SwipeAction } from "../lib/discover";
+import { interestIcon } from "../lib/interestIcon";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.28;
@@ -106,8 +107,6 @@ export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
     : { transform: [{ scale: 0.96 }], top: 10 };
 
   const currentPhoto = profile.photoUrls[photoIndex];
-  const matchColor =
-    profile.matchScore >= 75 ? theme.swipe.like : profile.matchScore >= 45 ? theme.color.gold : theme.color.textSecondary;
 
   const content = (
     <Animated.View style={[styles.card, { backgroundColor: theme.color.surface }, cardStyle]}>
@@ -135,17 +134,6 @@ export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
         </View>
       ) : null}
 
-      <View style={[styles.badge, styles.matchBadge, { backgroundColor: matchColor + "CC" }]}>
-        <Text style={styles.badgeText}>{profile.matchScore}% match</Text>
-      </View>
-
-      {profile.isOnline ? (
-        <View style={[styles.badge, styles.onlineBadge, { backgroundColor: theme.swipe.like + "CC" }]}>
-          <View style={styles.onlineDot} />
-          <Text style={styles.badgeText}>Online</Text>
-        </View>
-      ) : null}
-
       {isTop ? (
         <>
           <Animated.View style={[styles.stamp, styles.likeStamp, { opacity: likeOpacity }]}>
@@ -166,47 +154,36 @@ export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
             {profile.first_name ?? "Spark user"}{profile.age ? `, ${profile.age}` : ""}
           </Text>
           {profile.is_verified ? (
-            <View style={[styles.verifiedBadge, { backgroundColor: theme.swipe.superlike }]}>
-              <Ionicons name="checkmark" size={12} color="#FFFFFF" />
-            </View>
+            <Ionicons name="checkmark-circle" size={22} color={theme.swipe.superlike} />
           ) : null}
         </View>
         {profile.job_title || profile.distanceLabel ? (
           <View style={{ flexDirection: "row", alignItems: "center", gap: 14, marginTop: 2 }}>
-            {profile.distanceLabel ? (
-              <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-                <Ionicons name="location" size={13} color="rgba(255,255,255,0.85)" />
-                <Text style={styles.subline}>{profile.distanceLabel}</Text>
-              </View>
-            ) : null}
             {profile.job_title ? (
               <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-                <Ionicons name="briefcase-outline" size={13} color="rgba(255,255,255,0.85)" />
+                <Ionicons name="briefcase-outline" size={16} color="rgba(255,255,255,0.9)" />
                 <Text style={styles.subline}>{profile.job_title}</Text>
               </View>
             ) : null}
-          </View>
-        ) : null}
-        {profile.bio ? (
-          <Text style={styles.bio} numberOfLines={2}>
-            {profile.bio}
-          </Text>
-        ) : null}
-        {profile.loveLanguage ? (
-          <View style={styles.promptBox}>
-            <Text style={[styles.promptLabel, { color: theme.color.gold }]}>My love language is...</Text>
-            <Text style={styles.promptAnswer} numberOfLines={2}>
-              {profile.loveLanguage}
-            </Text>
-          </View>
-        ) : null}
-        <View style={{ flexDirection: "row", alignItems: "flex-end", marginTop: 8 }}>
-          <View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
-            {profile.interest_tags.slice(0, 4).map((tag) => (
-              <View key={tag} style={styles.cardTag}>
-                <Text style={styles.cardTagText}>{tag.charAt(0).toUpperCase() + tag.slice(1)}</Text>
+            {profile.distanceLabel ? (
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                <Ionicons name="location-outline" size={16} color="rgba(255,255,255,0.9)" />
+                <Text style={styles.subline}>{profile.distanceLabel}</Text>
               </View>
-            ))}
+            ) : null}
+          </View>
+        ) : null}
+        <View style={{ flexDirection: "row", alignItems: "flex-end", marginTop: 12 }}>
+          <View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
+            {profile.interest_tags.slice(0, 4).map((tag) => {
+              const icon = interestIcon(tag);
+              return (
+                <View key={tag} style={styles.cardTag}>
+                  {icon ? <Ionicons name={icon} size={14} color="#FFFFFF" /> : null}
+                  <Text style={styles.cardTagText}>{tag.charAt(0).toUpperCase() + tag.slice(1)}</Text>
+                </View>
+              );
+            })}
           </View>
           {onViewProfile ? (
             <Pressable onPress={onViewProfile} style={styles.infoButton}>
@@ -250,20 +227,6 @@ const styles = StyleSheet.create({
     height: 3,
     borderRadius: 2,
   },
-  badge: {
-    position: "absolute",
-    top: 22,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 999,
-  },
-  matchBadge: { left: 12 },
-  onlineBadge: { right: 12 },
-  onlineDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: "#FFFFFF" },
-  badgeText: { color: "#FFFFFF", fontWeight: "800", fontSize: 12 },
   infoOverlay: {
     position: "absolute",
     left: 0,
@@ -278,17 +241,11 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     color: "#FFFFFF",
   },
-  verifiedBadge: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1.5,
-    borderColor: "#FFFFFF",
-  },
   cardTag: {
-    backgroundColor: "rgba(255,255,255,0.16)",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: "rgba(255,255,255,0.2)",
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 999,
@@ -310,28 +267,6 @@ const styles = StyleSheet.create({
   subline: {
     fontSize: 14,
     color: "rgba(255,255,255,0.85)",
-  },
-  bio: {
-    fontSize: 14,
-    color: "rgba(255,255,255,0.85)",
-    marginTop: 8,
-  },
-  promptBox: {
-    marginTop: 10,
-    backgroundColor: "rgba(255,255,255,0.14)",
-    borderRadius: 12,
-    padding: 10,
-  },
-  promptLabel: {
-    fontSize: 12,
-    fontWeight: "700",
-    color: "rgba(255,255,255,0.65)",
-  },
-  promptAnswer: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#FFFFFF",
-    marginTop: 2,
   },
   stamp: {
     position: "absolute",

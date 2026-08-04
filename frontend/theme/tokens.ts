@@ -1,78 +1,113 @@
-// Design tokens per docs/product-prompt.md §2. Keep this the single source
-// of truth for color/spacing/type so every screen stays visually consistent.
-
-// "Warm Signal" — same structure as the original spec, warmer skin: a warm
-// blush ground instead of stark white/near-black, a coral→peach gradient on
-// the one action that matters per screen, and a warmer success green.
+// Design tokens — single source of truth for color / spacing / type so every
+// screen stays visually consistent.
+//
+// Palette extracted verbatim from the Just Spark Stitch export
+// (design/stitch_just_spark_ui_kit, cross-checked across all screens). Light
+// theme is the product default. NO green anywhere — matching the export, which
+// conveys positive / verified states with its tertiary blue (#2F96F7) and
+// coral/gold, not green. Primary button label is 16/600 (the export tagged
+// buttons label-md 14/600, which reads small on a full-width pill CTA).
 export const palette = {
   light: {
-    background: "#FBF3EE",
+    background: "#FCF8FF",
     surface: "#FFFFFF",
-    textPrimary: "#2B1B1F",
-    textSecondary: "#8C7178",
-    border: "#F0DDD5",
+    surfaceSecondary: "#FBEAF0",
+    // "surface-container-low" in the export — the fill for input boxes,
+    // distinct from card white.
+    inputFill: "#F5F2FF",
+    textPrimary: "#1A1A2E",
+    textSecondary: "#675B60",
+    border: "#E2BEBD",
+    // "outline" in the export — muted icon color for neutral secondary
+    // buttons (e.g. the Rewind action), distinct from body text-secondary.
+    outline: "#8E706F",
+    // "surface-variant" — progress-bar track color, a shade darker than
+    // surfaceSecondary/inputFill.
+    surfaceVariant: "#E2E0FC",
   },
   dark: {
-    background: "#0C0C10",
-    surface: "#18181E",
+    background: "#141019",
+    surface: "#1E1A24",
+    surfaceSecondary: "#2A222A",
+    // No dark variant in the export — derived to sit one step lighter than
+    // dark surface, mirroring the light theme's input-vs-card relationship.
+    inputFill: "#26202D",
     textPrimary: "#F5F3F2",
-    textSecondary: "#9C98A3",
-    border: "#2A2A32",
+    textSecondary: "#A99BA1",
+    border: "#3A2E33",
+    outline: "#9C8B85",
+    surfaceVariant: "#332B39",
   },
   brand: {
-    primary: "#FF4D6D",
-    primaryDark: "#E63E5C",
-    gradientEnd: "#FF8A5B",
-    gold: "#F0B429",
-    goldGradientEnd: "#F7D774",
+    primary: "#FF5864",
+    primaryDark: "#B62135",
+    gradientEnd: "#FF7A84",
+    gold: "#FFD166",
+    goldGradientEnd: "#FFE1A3",
   },
+  // No green. The "online" dot is the export's primary coral (confirmed on
+  // the messages screen's avatar strip: bg-primary, white ring). Verified
+  // uses tertiary blue. Premium uses gold; errors use the export's error red.
   status: {
-    success: "#2E9C7B",
+    success: "#2F96F7",
+    online: "#FF5864",
     warning: "#F5A623",
-    error: "#E74C3C",
+    error: "#BA1A1A",
+    verified: "#2F96F7",
+    verifiedDark: "#0060A8",
   },
-  // Swipe-card action buttons — kept distinct from the single brand accent
-  // used elsewhere so Like/Pass/Superlike/Boost stay instantly recognizable.
+  // Icon colors for the discover action row, confirmed against the export's
+  // discover screen markup: rewind = outline, pass = error, superlike =
+  // tertiary-container, like = primary-container (filled), boost = primary
+  // (the darker token, not primary-container).
   swipe: {
-    rewind: "#F0B429",
-    pass: "#E74C3C",
-    superlike: "#3B82F6",
-    like: "#2E9C7B",
-    boost: "#A855F7",
+    rewind: "#8E706F",
+    pass: "#BA1A1A",
+    superlike: "#2F96F7",
+    like: "#FF5864",
+    boost: "#B62135",
   },
-  // Read-only tag chips (e.g. interest tags on a profile) cycle through
-  // these — distinct from the single brand accent used for actions.
+  // Read-only interest chips cycle through these — all hexes from the export's
+  // soft container palette.
   tags: [
-    { bg: "#FFE0D6", fg: "#C2402F" },
-    { bg: "#E4F5EE", fg: "#2E9C7B" },
-    { bg: "#FDE8C9", fg: "#A66A0B" },
-    { bg: "#F1E3FA", fg: "#7A44B3" },
-    { bg: "#DCEBFB", fg: "#2B6CB0" },
+    { bg: "#FBEAF0", fg: "#B62135" },
+    { bg: "#FFDAD9", fg: "#93000A" },
+    { bg: "#E8E5FF", fg: "#2F2E43" },
+    { bg: "#D3E4FF", fg: "#004880" },
+    { bg: "#EFDEE4", fg: "#5A4040" },
   ],
 };
 
+// Extracted scale: 4 / 8 / 12 / 16 / 24 / 32, mobile screen margin 20.
 export const spacing = {
   xs: 4,
   sm: 8,
+  smd: 12,
   md: 16,
+  screen: 20,
   lg: 24,
   xl: 32,
   xxl: 48,
 };
 
+// Cards 24, inputs 16, buttons full pill.
 export const radius = {
-  input: 12,
-  card: 20,
+  input: 16,
+  card: 24,
   pill: 999,
 };
 
+// Inter. Roles map to the export's type scale.
 export const typography = {
+  displayLg: { fontSize: 40, fontWeight: "700" as const, lineHeight: 48 },
   display: { fontSize: 28, fontWeight: "700" as const, lineHeight: 34 },
-  title: { fontSize: 22, fontWeight: "700" as const, lineHeight: 28 },
-  body: { fontSize: 17, fontWeight: "400" as const, lineHeight: 24 },
-  subtext: { fontSize: 15, fontWeight: "400" as const, lineHeight: 20 },
-  caption: { fontSize: 13, fontWeight: "400" as const, lineHeight: 18 },
-  button: { fontSize: 17, fontWeight: "700" as const, lineHeight: 22 },
+  title: { fontSize: 24, fontWeight: "600" as const, lineHeight: 30 },
+  bodyLg: { fontSize: 18, fontWeight: "400" as const, lineHeight: 26 },
+  body: { fontSize: 16, fontWeight: "400" as const, lineHeight: 24 },
+  subtext: { fontSize: 14, fontWeight: "400" as const, lineHeight: 20 },
+  label: { fontSize: 14, fontWeight: "600" as const, lineHeight: 20 },
+  caption: { fontSize: 12, fontWeight: "400" as const, lineHeight: 16 },
+  button: { fontSize: 16, fontWeight: "600" as const, lineHeight: 22 },
 };
 
 export const motion = {
@@ -81,6 +116,13 @@ export const motion = {
 };
 
 export const shadow = {
+  card: {
+    shadowColor: "#000000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
+  },
   floating: {
     shadowColor: "#000000",
     shadowOffset: { width: 0, height: 4 },

@@ -64,13 +64,16 @@ function AppTabs({ userId, theme }: { userId: string; theme: ReturnType<typeof u
     >
       <Tabs.Screen
         name="discover"
-        options={{ title: "Discover", tabBarIcon: (p) => <TabIcon name="flame" {...p} /> }}
+        options={{
+          title: "Discover",
+          tabBarIcon: (p) => <TabIcon name={p.focused ? "compass" : "compass-outline"} {...p} />,
+        }}
       />
       <Tabs.Screen
         name="matches/index"
         options={{
-          title: "Matches",
-          tabBarIcon: (p) => <TabIcon name={p.focused ? "heart" : "heart-outline"} {...p} />,
+          title: "Messages",
+          tabBarIcon: (p) => <TabIcon name={p.focused ? "chatbubble" : "chatbubble-outline"} {...p} />,
           tabBarBadge: unreadCount > 0 ? unreadCount : undefined,
           tabBarBadgeStyle: { backgroundColor: theme.color.primary },
         }}
@@ -89,7 +92,6 @@ function AppTabs({ userId, theme }: { userId: string; theme: ReturnType<typeof u
       <Tabs.Screen name="match-confirmation/[matchId]" options={{ href: null }} />
       <Tabs.Screen name="matches/[matchId]" options={{ href: null }} />
       <Tabs.Screen name="profile/edit" options={{ href: null }} />
-      <Tabs.Screen name="profile/photos" options={{ href: null }} />
       <Tabs.Screen name="profile/preview" options={{ href: null }} />
       <Tabs.Screen name="profile/share" options={{ href: null }} />
       <Tabs.Screen name="profile/[userId]" options={{ href: null }} />
@@ -103,6 +105,9 @@ function AppTabs({ userId, theme }: { userId: string; theme: ReturnType<typeof u
       <Tabs.Screen name="settings/help" options={{ href: null }} />
       <Tabs.Screen name="report/[targetUserId]" options={{ href: null }} />
       <Tabs.Screen name="gold" options={{ href: null }} />
+      <Tabs.Screen name="gold-success" options={{ href: null }} />
+      <Tabs.Screen name="boost-active" options={{ href: null }} />
+      <Tabs.Screen name="passport" options={{ href: null }} />
       <Tabs.Screen name="boost" options={{ href: null }} />
       <Tabs.Screen name="liked-you" options={{ href: null }} />
       <Tabs.Screen name="discovery-preferences" options={{ href: null }} />

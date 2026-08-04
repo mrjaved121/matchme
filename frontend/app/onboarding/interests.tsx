@@ -57,10 +57,10 @@ export default function OnboardingInterests() {
 
   return (
     <OnboardingStepLayout
-      step={8}
-      totalSteps={11}
+      step={9}
+      totalSteps={12}
       title="What are you into?"
-      subtitle={`Pick at least ${MIN_INTERESTS} — this powers your match score.`}
+      subtitle={`Pick at least ${MIN_INTERESTS} to help us find better matches.`}
       onNext={handleNext}
       nextDisabled={loading}
       nextLoading={loading}

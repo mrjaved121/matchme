@@ -1,0 +1,86 @@
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-secondary-container":"#6d6166","surface-variant":"#e20fc","tertiary-fixed":"#d3e4ff","surface-container-low":"#f5f2ff","surface-container-highest":"#e2e0fc",outline:"#8e706f","on-secondary-fixed":"#22191d","secondary-fixed":"#efdee4","inverse-primary":"#ffb3b3",secondary:"#675b60","outline-variant":"#e2bebd","inverse-surface":"#2f2e43","primary-fixed":"#ffdad9","on-tertiary":"#ffffff","on-error-container":"#93000a","on-background":"#1a1a2e","on-surface":"#1a1a2e","tertiary-container":"#2f96f7","on-secondary":"#ffffff","primary-container":"#ff5864","surface-container-high":"#e8e5ff","on-tertiary-container":"#002d53","secondary-fixed-dim":"#d2c2c8","on-tertiary-fixed":"#001c38",error:"#ba1a1a","on-tertiary-fixed-variant":"#004880","error-container":"#ffdad6","surface-dim":"#dad7f3","primary-fixed-dim":"#ffb3b3","on-secondary-fixed-variant":"#4f4449","on-error":"#ffffff","tertiary-fixed-dim":"#a1c9ff","surface-bright":"#fcf8ff","inverse-on-surface":"#f2efff",primary:"#b62135",background:"#fcf8ff","on-primary-fixed-variant":"#920021","on-primary-container":"#5f0012","surface-container":"#efecff","on-surface-variant":"#5a4040",tertiary:"#0060a8",surface:"#fcf8ff","surface-container-lowest":"#ffffff","secondary-container":"#efdee4","on-primary":"#ffffff","surface-tint":"#b62135","on-primary-fixed":"#400009"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{lg:"24px","margin-desktop":"40px",xs:"8px",md:"16px",sm:"12px","margin-mobile":"20px",gutter:"16px",xl:"32px",base:"4px"},fontFamily:{"headline-md":["Inter"],"body-md":["Inter"],"headline-lg":["Inter"],display:["Inter"],"body-lg":["Inter"],"headline-lg-mobile":["Inter"],caption:["Inter"],"label-md":["Inter"]},fontSize:{"headline-md":["24px",{lineHeight:"32px",fontWeight:"600"}],"body-md":["16px",{lineHeight:"24px",fontWeight:"400"}],"headline-lg":["32px",{lineHeight:"40px",letterSpacing:"-0.01em",fontWeight:"700"}],display:["40px",{lineHeight:"48px",letterSpacing:"-0.02em",fontWeight:"700"}],"body-lg":["18px",{lineHeight:"28px",fontWeight:"400"}],"headline-lg-mobile":["28px",{lineHeight:"34px",fontWeight:"700"}],caption:["12px",{lineHeight:"16px",fontWeight:"400"}],"label-md":["14px",{lineHeight:"20px",letterSpacing:"0.05em",fontWeight:"600"}]}}}}</script><style>@layer base{.pb-safe{padding-bottom:env(safe-area-inset-bottom,0)}.pt-safe{padding-top:env(safe-area-inset-top,0)}body{overscroll-behavior:none}}::-webkit-scrollbar{display:none}</style></head><body class="bg-background font-body-md text-on-background min-h-screen flex flex-col pt-safe pb-safe"><main class="flex-1 flex flex-col relative w-full"><div class="flex flex-col w-full px-margin-mobile gap-lg h-full relative bg-surface">
+<div class="flex items-center gap-sm pt-4">
+<button aria-label="Go back" class="p-2 text-on-surface hover:bg-surface-variant rounded-full transition-colors">
+<span class="material-symbols-outlined text-2xl">arrow_back</span>
+</button>
+<div class="flex-1 h-1 bg-surface-variant rounded-full overflow-hidden relative">
+<div class="absolute top-0 left-0 h-full w-[60%] bg-primary rounded-full transition-all duration-500 ease-out"></div>
+</div>
+<span class="text-caption text-on-surface-variant font-label-md w-8 text-right">3/5</span>
+</div>
+<div class="flex flex-col gap-xs mt-4">
+<h1 class="font-headline-lg-mobile text-on-background tracking-tight">Where are you located?</h1>
+<p class="text-body-md text-on-surface-variant">We use your location to show people nearby. You can always adjust your search distance later.</p>
+</div>
+<div class="flex flex-col gap-md mt-6">
+<div class="bg-secondary-container rounded-3xl p-6 flex flex-col items-center justify-center gap-4 cursor-pointer hover:bg-secondary-fixed transition-colors group">
+<div class="w-16 h-16 bg-surface-bright rounded-full flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-300">
+<span class="material-symbols-outlined text-3xl text-primary" style="font-variation-settings: 'FILL' 1;">my_location</span>
+</div>
+<div class="text-center">
+<p class="font-label-md text-on-secondary-container mb-1">Current Location</p>
+<p class="text-body-lg font-headline-md text-on-background">Detect Automatically</p>
+</div>
+<p class="text-caption text-on-surface-variant flex items-center gap-1 opacity-70">
+<span class="material-symbols-outlined" style="font-size: 14px;">check_circle</span>
+                 Most accurate for nearby matches
+             </p>
+</div>
+<div class="flex items-center gap-4 my-2">
+<div class="h-px bg-surface-variant flex-1"></div>
+<span class="text-caption text-on-surface-variant uppercase tracking-widest font-label-md">or enter manually</span>
+<div class="h-px bg-surface-variant flex-1"></div>
+</div>
+<div class="relative w-full">
+<div class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-xl">search</span>
+</div>
+<input class="w-full bg-surface-container-low text-on-surface font-body-md pl-12 pr-4 py-4 rounded-2xl outline-none focus:ring-2 focus:ring-primary transition-shadow placeholder:text-on-surface-variant/50" placeholder="e.g. San Francisco, CA" type="text"/>
+</div>
+<div class="hidden flex-col gap-2 px-2 mt-2" id="search-suggestions">
+<div class="flex items-center gap-3 py-2 cursor-pointer group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">location_city</span>
+<p class="text-body-md text-on-surface group-hover:text-primary transition-colors">San Francisco, CA</p>
+</div>
+<div class="flex items-center gap-3 py-2 cursor-pointer group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">location_city</span>
+<p class="text-body-md text-on-surface group-hover:text-primary transition-colors">San Diego, CA</p>
+</div>
+</div>
+</div>
+<div class="mt-auto pt-8 pb-4">
+<button class="w-full bg-gradient-to-b from-primary-container to-primary text-on-primary font-headline-md py-4 rounded-full shadow-[0px_12px_32px_rgba(255,88,100,0.2)] hover:opacity-95 active:scale-[0.98] transition-all transform flex justify-center items-center gap-2">
+            Continue
+        </button>
+</div>
+</div>
+<script>
+    const input = document.querySelector('input[type="text"]');
+    const suggestions = document.getElementById('search-suggestions');
+    
+    input.addEventListener('focus', () => {
+        if(input.value.length > 0) {
+            suggestions.classList.remove('hidden');
+            suggestions.classList.add('flex');
+        }
+    });
+    
+    input.addEventListener('input', (e) => {
+        if(e.target.value.length > 0) {
+            suggestions.classList.remove('hidden');
+            suggestions.classList.add('flex');
+        } else {
+            suggestions.classList.add('hidden');
+            suggestions.classList.remove('flex');
+        }
+    });
+    
+    input.addEventListener('blur', () => {
+        setTimeout(() => {
+            suggestions.classList.add('hidden');
+            suggestions.classList.remove('flex');
+        }, 200);
+    });
+</script></main></body></html>

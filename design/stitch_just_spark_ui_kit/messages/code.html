@@ -1,0 +1,103 @@
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-secondary-container":"#6d6166","surface-variant":"#e20fc","tertiary-fixed":"#d3e4ff","surface-container-low":"#f5f2ff","surface-container-highest":"#e2e0fc",outline:"#8e706f","on-secondary-fixed":"#22191d","secondary-fixed":"#efdee4","inverse-primary":"#ffb3b3",secondary:"#675b60","outline-variant":"#e2bebd","inverse-surface":"#2f2e43","primary-fixed":"#ffdad9","on-tertiary":"#ffffff","on-error-container":"#93000a","on-background":"#1a1a2e","on-surface":"#1a1a2e","tertiary-container":"#2f96f7","on-secondary":"#ffffff","primary-container":"#ff5864","surface-container-high":"#e8e5ff","on-tertiary-container":"#002d53","secondary-fixed-dim":"#d2c2c8","on-tertiary-fixed":"#001c38",error:"#ba1a1a","on-tertiary-fixed-variant":"#004880","error-container":"#ffdad6","surface-dim":"#dad7f3","primary-fixed-dim":"#ffb3b3","on-secondary-fixed-variant":"#4f4449","on-error":"#ffffff","tertiary-fixed-dim":"#a1c9ff","surface-bright":"#fcf8ff","inverse-on-surface":"#f2efff",primary:"#b62135",background:"#fcf8ff","on-primary-fixed-variant":"#920021","on-primary-container":"#5f0012","surface-container":"#efecff","on-surface-variant":"#5a4040",tertiary:"#0060a8",surface:"#fcf8ff","surface-container-lowest":"#ffffff","secondary-container":"#efdee4","on-primary":"#ffffff","surface-tint":"#b62135","on-primary-fixed":"#400009"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{lg:"24px","margin-desktop":"40px",xs:"8px",md:"16px",sm:"12px","margin-mobile":"20px",gutter:"16px",xl:"32px",base:"4px"},fontFamily:{"headline-md":["Inter"],"body-md":["Inter"],"headline-lg":["Inter"],display:["Inter"],"body-lg":["Inter"],"headline-lg-mobile":["Inter"],caption:["Inter"],"label-md":["Inter"]},fontSize:{"headline-md":["24px",{lineHeight:"32px",fontWeight:"600"}],"body-md":["16px",{lineHeight:"24px",fontWeight:"400"}],"headline-lg":["32px",{lineHeight:"40px",letterSpacing:"-0.01em",fontWeight:"700"}],display:["40px",{lineHeight:"48px",letterSpacing:"-0.02em",fontWeight:"700"}],"body-lg":["18px",{lineHeight:"28px",fontWeight:"400"}],"headline-lg-mobile":["28px",{lineHeight:"34px",fontWeight:"700"}],caption:["12px",{lineHeight:"16px",fontWeight:"400"}],"label-md":["14px",{lineHeight:"20px",letterSpacing:"0.05em",fontWeight:"600"}]}}}}</script><style>@layer base{.pb-safe{padding-bottom:env(safe-area-inset-bottom,0)}.pt-safe{padding-top:env(safe-area-inset-top,0)}body{overscroll-behavior:none}}::-webkit-scrollbar{display:none}</style></head><body class="bg-background font-body-md text-on-background min-h-screen flex flex-col"><header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl pt-safe"><div class="h-16 flex items-center justify-between px-margin-mobile"><h1 class="text-headline-md text-primary font-bold tracking-tight uppercase">Messages</h1><button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-high"><span class="material-symbols-outlined text-on-surface">notifications</span></button></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-20"><div class="flex flex-col w-full h-full bg-surface-container-lowest pb-[80px]">
+<div class="px-margin-mobile pt-md pb-xs">
+<div class="relative w-full h-12 bg-surface-container rounded-full flex items-center px-4 transition-all duration-300 focus-within:ring-2 focus-within:ring-primary shadow-sm">
+<span class="material-symbols-outlined text-on-surface-variant mr-3 text-[20px]">search</span>
+<input class="w-full bg-transparent border-none outline-none text-body-md text-on-background placeholder:text-on-surface-variant font-body-md" placeholder="Search matches" type="text"/>
+</div>
+</div>
+<div class="mt-md px-margin-mobile">
+<h2 class="text-label-md text-on-surface-variant uppercase tracking-wider mb-sm">New Matches</h2>
+<div class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory hide-scrollbar">
+<div class="flex flex-col items-center gap-1 min-w-[72px] snap-center cursor-pointer group">
+<div class="w-16 h-16 rounded-full overflow-hidden bg-surface-container ring-2 ring-primary ring-offset-2 ring-offset-surface-container-lowest shadow-[0_8px_24px_rgba(255,88,100,0.15)] transition-transform duration-300 group-hover:scale-105 group-active:scale-95">
+<img class="w-full h-full object-cover" data-alt="Close up headshot of Emily, a vibrant 25 year old woman with curly hair laughing outdoors in warm sunlight, soft focus background, perfect for dating app new match avatar." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgxEMU7-TRhllgyt1tFH9AThfjCqKSxmFyApKLbOmW1CTqMpXjDGET1M0BlJx4ck7gUncRD3uqGIGTP8R0LK6lTbDctRtIfgh1yp1QpQY9q9sLX836VKIo-xTjibXEVo4ZuiLxUfma-X9rOJmRaTQJfRT6tD1Y57bFJnHmA63wmEogLCuvKn-wf-kmQ17EXGArmBgd1aOQ0WLwfU97yu6rHQDZa3h5uG88DLtCxtIGI6z-aIO6UPUdrA"/>
+</div>
+<span class="text-caption font-semibold text-on-background mt-1 group-hover:text-primary transition-colors">Emily</span>
+</div>
+<div class="flex flex-col items-center gap-1 min-w-[72px] snap-center cursor-pointer group">
+<div class="w-16 h-16 rounded-full overflow-hidden bg-surface-container ring-2 ring-primary ring-offset-2 ring-offset-surface-container-lowest shadow-[0_8px_24px_rgba(255,88,100,0.15)] transition-transform duration-300 group-hover:scale-105 group-active:scale-95">
+<img class="w-full h-full object-cover" data-alt="Portrait of James, a handsome young man in a casual denim jacket, smiling softly in a coffee shop setting with warm ambient light, high quality dating profile picture." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOpLozOvhSKKf1tE8EAYPGQE7jnAxNgqK5DFJZYHcUSv1Rk4SO0ZfAkx3Wy5SzMl9qPy2ndg-K_Cn9DfWgWpgNFIwRJN4E1nrbIK0fw46xqikjxKFL1DJxiSv9ZTbNZllOaOz8WOZvty7-X2U41tJ1gCbMcoLVRdUfc3U5KTWPP85lKxhjSrpfAlGFieRrA6VpEZ484bHATkb1JQPNIV10qHOk44Cf17FN6aoGJ0-xGsTcOyqA7-6pEg"/>
+</div>
+<span class="text-caption font-semibold text-on-background mt-1 group-hover:text-primary transition-colors">James</span>
+</div>
+<div class="flex flex-col items-center gap-1 min-w-[72px] snap-center cursor-pointer group">
+<div class="w-16 h-16 rounded-full overflow-hidden bg-surface-container ring-2 ring-primary ring-offset-2 ring-offset-surface-container-lowest shadow-[0_8px_24px_rgba(255,88,100,0.15)] transition-transform duration-300 group-hover:scale-105 group-active:scale-95">
+<img class="w-full h-full object-cover" data-alt="Artistic profile photo of Sophia, an elegant woman looking slightly away from camera, soft sunset lighting, blurred city background, warm and inviting dating app avatar." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAiFiTGRSwcSlnHuaFfqr16UuxUR5dMAu3BUx842_DK-h_w1W1miMCfBHsurbOe20UEw5eJfSd58prxg6UB59ZAdz-tgmI_xSrF4VY2d3_PGLfmj_NFEPzdv0gLDjDu-G7AaWniX4DbIKpB5D7ihFq6RKeffN-T57jWe0tQi57ZeWBIluRxu5XIPegYRmkiX_oDu-yHyFFpdXUgpt8Wt0N9P8ZrsX6Yrhi8hKwD3wzt4eAfhsNz5udv1Q"/>
+</div>
+<span class="text-caption font-semibold text-on-background mt-1 group-hover:text-primary transition-colors">Sophia</span>
+</div>
+<div class="flex flex-col items-center gap-1 min-w-[72px] snap-center cursor-pointer group opacity-60">
+<div class="w-16 h-16 rounded-full overflow-hidden bg-surface-container-high flex items-center justify-center transition-transform duration-300 group-hover:scale-105 group-active:scale-95">
+<span class="material-symbols-outlined text-[32px] text-on-surface-variant">favorite</span>
+</div>
+<span class="text-caption text-on-surface-variant mt-1">12 Likes</span>
+</div>
+</div>
+</div>
+<div class="mt-xs">
+<h2 class="text-label-md text-on-surface-variant uppercase tracking-wider mb-2 px-margin-mobile">Messages</h2>
+<div class="flex flex-col w-full">
+<div class="relative w-full px-margin-mobile py-3 flex items-center gap-4 bg-surface-container-lowest hover:bg-surface-container-low active:bg-surface-container transition-colors cursor-pointer group">
+<div class="relative">
+<div class="w-[56px] h-[56px] rounded-full overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.06)] group-hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-shadow">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLtOTuz9vxvvwG_bCpcalaUwWJQWpHbgCR78h0DmYtK2sqRrFDAMvkOHnuZVe9pS6ub8WWJKFVRxv_4HkH0CSzuCEezMygB3fOW6jpQr4GIIWCB6w94lwR2nU9C5VxeCWMNiLyNWzbsjtrqKoJxQu_UlBAr7eLu1xUfBz-tGTf54YmmxagyI61kMrybuoG0FPGdvajwrw-j6osPn-uXQ3239C4PQFn0smn16Cz4Rruxy_qJHpcuh9MKc2J0"/>
+</div>
+<div class="absolute bottom-0 right-0 w-4 h-4 bg-primary border-[2px] border-surface-container-lowest rounded-full z-10"></div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-0.5">
+<h3 class="text-body-md font-semibold text-on-background truncate">Sarah</h3>
+<span class="text-caption text-primary font-medium ml-2 whitespace-nowrap">2m</span>
+</div>
+<p class="text-body-md text-on-background font-medium truncate">I love that coffee shop too!</p>
+</div>
+</div>
+<div class="w-full h-[1px] bg-outline-variant/30 ml-[96px]"></div>
+<div class="relative w-full px-margin-mobile py-3 flex items-center gap-4 bg-surface-container-lowest hover:bg-surface-container-low active:bg-surface-container transition-colors cursor-pointer group">
+<div class="relative">
+<div class="w-[56px] h-[56px] rounded-full overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.06)] group-hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-shadow">
+<img class="w-full h-full object-cover" data-alt="Headshot of Marcus, a friendly guy in his late 20s wearing a beanie and a flannel shirt, outdoors in a park, soft natural lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBuEdNtNPXge05Cr9TKyk4d1wKliJZfhQF6Xd2W8hr6NJHThiFvohUB20CLgDdGSuBIJCAspO2wA4pIUmQxxXpOWGDe8V0C4G1V8bEesjrVEjgs9fN4oV013bY-8CQeXZXdwfwrlI4fdiElL4_W86qiXCmCve35SYHOWHT55jU5kf6GqS4tevB_JLE94PK8_OBb1D3c5zj69GkfhD4rsdkzPdZp6-oysHkrnletvjl9skFmlu_nuI89kA"/>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-0.5">
+<h3 class="text-body-md font-semibold text-on-background truncate">Marcus</h3>
+<span class="text-caption text-on-surface-variant ml-2 whitespace-nowrap">1h</span>
+</div>
+<p class="text-body-md text-on-surface-variant truncate">Hey, how's your weekend going?</p>
+</div>
+</div>
+<div class="w-full h-[1px] bg-outline-variant/30 ml-[96px]"></div>
+<div class="relative w-full px-margin-mobile py-3 flex items-center gap-4 bg-surface-container-lowest hover:bg-surface-container-low active:bg-surface-container transition-colors cursor-pointer group">
+<div class="relative">
+<div class="w-[56px] h-[56px] rounded-full overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.06)] group-hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-shadow">
+<img class="w-full h-full object-cover" data-alt="Portrait of Elena, stylish woman with glasses laughing enthusiastically, colorful mural background, bright and cheerful dating app avatar." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVBcvWmLyNIA3sTii3otbuENr3MSc6PVrQ1NOXRJQL6Xy6Ar9pphBmBXLSuxTRzNr90Vhd3AS9_4fnYr2szv_8GdUD8ckyqhtvoE2ere9BT5EZE53TfaPMhSzck4SKSLntesDbaqDYq5Xw8uioRTZYBsP1jFQYEFOtvPYPByuoqQnYy27SNls2cfJQFLjuShTTXobdxHiZElKDgmBC8YTDID9AXdEfjZYGP585P3HreHOym0Az8eUydA"/>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-0.5">
+<h3 class="text-body-md font-semibold text-on-background truncate">Elena</h3>
+<span class="text-caption text-on-surface-variant ml-2 whitespace-nowrap">Yesterday</span>
+</div>
+<p class="text-body-md text-on-surface-variant truncate">That sounds like a plan!</p>
+</div>
+</div>
+<div class="w-full h-[1px] bg-outline-variant/30 ml-[96px]"></div>
+<div class="relative w-full px-margin-mobile py-4 flex flex-col items-center justify-center gap-2 mt-8 opacity-60">
+<span class="material-symbols-outlined text-[48px] text-on-surface-variant font-light">chat_bubble_outline</span>
+<p class="text-body-md text-on-surface-variant text-center max-w-[240px]">Keep swiping to discover more kind connections.</p>
+</div>
+</div>
+</div>
+</div>
+<style>
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style></main><nav class="fixed bottom-0 w-full z-50 bg-surface/90 backdrop-blur-xl border-t border-outline-variant/10 pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.03)]" data-active-classes="text-primary"><div class="h-16 flex items-center justify-around px-2"><a class="flex flex-col items-center justify-center w-full h-full gap-1 text-secondary transition-colors duration-200" data-path="discover"><span class="material-symbols-outlined text-[24px]">explore</span><span class="text-caption font-medium">Discover</span></a><a aria-current="page" class="flex flex-col items-center justify-center w-full h-full gap-1 transition-colors duration-200 text-primary" data-path="messages"><span class="material-symbols-outlined text-[24px]">chat_bubble</span><span class="text-caption font-medium">Messages</span></a><a class="flex flex-col items-center justify-center w-full h-full gap-1 text-secondary transition-colors duration-200" data-path="profile"><span class="material-symbols-outlined text-[24px]">person</span><span class="text-caption font-medium">Profile</span></a></div></nav></body></html>

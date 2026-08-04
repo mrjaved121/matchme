@@ -1,14 +1,15 @@
 import { useEffect, useRef, useState } from "react";
-import { Alert, FlatList, KeyboardAvoidingView, Platform, Pressable, Text, View } from "react-native";
+import { Alert, FlatList, Image, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useQueryClient } from "@tanstack/react-query";
 import { ScreenContainer } from "../../../components/ScreenContainer";
-import { TextField } from "../../../components/TextField";
 import { ErrorState, LoadingState } from "../../../components/StateViews";
 import { useTheme } from "../../../theme/useTheme";
 import { supabase } from "../../../lib/supabase";
 import { useAuthStore } from "../../../store/authStore";
+import { publicPhotoUrl } from "../../../lib/photoUrl";
 
 type Message = {
   id: string;
@@ -19,6 +20,14 @@ type Message = {
   read_at: string | null;
 };
 
+// Matches design/stitch_just_spark_ui_kit/chat_with_marcus/code.html: a
+// header with a back button + small avatar-with-online-dot + presence
+// caption, asymmetric-corner message bubbles (incoming: light, tail
+// bottom-left / outgoing: primary, tail bottom-right) each with an avatar
+// and a timestamp, a "Today" date divider, and a pill input with a send
+// button that only lights up once there's text. The export's checkmark
+// (single = sent, double primary = read) is wired to this app's real
+// read_at/read_receipts data instead of being decorative.
 export default function Chat() {
   const theme = useTheme();
   const { matchId } = useLocalSearchParams<{ matchId: string }>();
@@ -27,6 +36,7 @@ export default function Chat() {
 
   const [otherName, setOtherName] = useState<string | null>(null);
   const [otherId, setOtherId] = useState<string | null>(null);
+  const [otherPhoto, setOtherPhoto] = useState<string | null>(null);
   const [otherReadReceipts, setOtherReadReceipts] = useState(true);
   const [messages, setMessages] = useState<Message[]>([]);
   const [draft, setDraft] = useState("");
@@ -58,8 +68,15 @@ export default function Chat() {
       const other = match.user_a_id === myId ? match.user_b_id : match.user_a_id;
       setOtherId(other);
 
-      const [{ data: profile }, { data: initialMessages }] = await Promise.all([
+      const [{ data: profile }, { data: photo }, { data: initialMessages }] = await Promise.all([
         supabase.from("profiles").select("first_name, read_receipts").eq("id", other).single(),
+        supabase
+          .from("profile_photos")
+          .select("storage_path")
+          .eq("profile_id", other)
+          .order("position", { ascending: true })
+          .limit(1)
+          .maybeSingle(),
         supabase
           .from("messages")
           .select("*")
@@ -70,10 +87,11 @@ export default function Chat() {
       if (cancelled) return;
 
       setOtherName(profile?.first_name ?? null);
+      setOtherPhoto(photo?.storage_path ? publicPhotoUrl(photo.storage_path) : null);
       // Whether the OTHER person has Read Receipts enabled — controls
-      // whether I get to see "Seen" on messages I sent them. read_at itself
-      // is always recorded regardless, so the reader's own unread badge
-      // (computed from read_at elsewhere) stays accurate either way.
+      // whether I get to see "Seen"/double-check on messages I sent them.
+      // read_at itself is always recorded regardless, so the reader's own
+      // unread badge (computed from read_at elsewhere) stays accurate either way.
       setOtherReadReceipts(profile?.read_receipts ?? true);
       setMessages(initialMessages ?? []);
       setLoading(false);
@@ -194,40 +212,90 @@ export default function Chat() {
     );
   }
 
+  const canSend = draft.trim().length > 0;
+
   return (
-    <ScreenContainer>
+    <ScreenContainer padded={false}>
       <View
         style={{
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-between",
+          paddingHorizontal: theme.spacing.screen,
           paddingVertical: theme.spacing.sm,
-          borderBottomWidth: 1,
-          borderBottomColor: theme.color.border,
         }}
       >
         <Pressable
-          onPress={() => otherId && router.push({ pathname: "/(app)/profile/[userId]", params: { userId: otherId } })}
+          onPress={() => router.back()}
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: 20,
+            backgroundColor: theme.color.inputFill,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
         >
-          <Text style={[theme.typography.title, { color: theme.color.textPrimary }]}>
-            {otherName ?? "Chat"}
-          </Text>
-          {otherTyping ? (
-            <Text style={[theme.typography.caption, { color: theme.color.textSecondary }]}>
-              typing…
-            </Text>
-          ) : null}
+          <Ionicons name="arrow-back" size={20} color={theme.color.textPrimary} />
         </Pressable>
-        <View style={{ flexDirection: "row", gap: theme.spacing.md }}>
-          <Pressable onPress={confirmUnmatch}>
-            <Text style={[theme.typography.subtext, { color: theme.color.textSecondary }]}>Unmatch</Text>
-          </Pressable>
-          <Pressable
-            onPress={() => otherId && router.push({ pathname: "/(app)/report/[targetUserId]", params: { targetUserId: otherId } })}
-          >
-            <Text style={[theme.typography.subtext, { color: theme.color.error }]}>Report</Text>
-          </Pressable>
-        </View>
+
+        <Pressable
+          onPress={() => otherId && router.push({ pathname: "/(app)/profile/[userId]", params: { userId: otherId } })}
+          style={{ alignItems: "center" }}
+        >
+          <View style={{ width: 44, height: 44, marginBottom: 2 }}>
+            <View style={{ width: 44, height: 44, borderRadius: 22, overflow: "hidden", backgroundColor: theme.color.surfaceSecondary }}>
+              {otherPhoto ? (
+                <Image source={{ uri: otherPhoto }} style={{ width: "100%", height: "100%" }} />
+              ) : (
+                <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+                  <Text style={{ fontWeight: "700", color: theme.color.primary }}>{otherName?.[0]?.toUpperCase() ?? "?"}</Text>
+                </View>
+              )}
+            </View>
+            <View
+              style={{
+                position: "absolute",
+                bottom: 0,
+                right: 0,
+                width: 13,
+                height: 13,
+                borderRadius: 7,
+                backgroundColor: theme.color.online,
+                borderWidth: 2,
+                borderColor: theme.color.background,
+              }}
+            />
+          </View>
+          <Text style={[theme.typography.label, { color: theme.color.textPrimary }]}>{otherName ?? "Chat"}</Text>
+          <Text style={[theme.typography.caption, { color: theme.color.textSecondary }]}>
+            {otherTyping ? "typing…" : "Active now"}
+          </Text>
+        </Pressable>
+
+        <Pressable
+          onPress={() =>
+            Alert.alert(otherName ?? "Options", undefined, [
+              { text: "Unmatch", style: "destructive", onPress: confirmUnmatch },
+              {
+                text: "Report",
+                style: "destructive",
+                onPress: () => otherId && router.push({ pathname: "/(app)/report/[targetUserId]", params: { targetUserId: otherId } }),
+              },
+              { text: "Cancel", style: "cancel" },
+            ])
+          }
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: 20,
+            backgroundColor: theme.color.inputFill,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Ionicons name="ellipsis-vertical" size={18} color={theme.color.textPrimary} />
+        </Pressable>
       </View>
 
       <KeyboardAvoidingView
@@ -239,63 +307,91 @@ export default function Chat() {
           ref={listRef}
           data={messages}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{ gap: theme.spacing.xs, paddingVertical: theme.spacing.md }}
+          contentContainerStyle={{ gap: theme.spacing.md, padding: theme.spacing.screen }}
           onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: true })}
-          ListFooterComponent={
-            messages.length > 0 &&
-            messages[messages.length - 1].sender_id === myId &&
-            messages[messages.length - 1].read_at &&
-            otherReadReceipts ? (
-              <Text
-                style={[
-                  theme.typography.caption,
-                  { color: theme.color.textSecondary, textAlign: "right", marginTop: 2 },
-                ]}
-              >
-                Seen
-              </Text>
+          ListHeaderComponent={
+            messages.length > 0 ? (
+              <View style={{ alignItems: "center", marginBottom: theme.spacing.sm }}>
+                <View style={{ backgroundColor: theme.color.inputFill, paddingHorizontal: 12, paddingVertical: 4, borderRadius: theme.radius.pill }}>
+                  <Text style={[theme.typography.caption, { color: theme.color.textSecondary }]}>Today</Text>
+                </View>
+              </View>
             ) : null
           }
           renderItem={({ item }) => {
             const mine = item.sender_id === myId;
+            const time = new Date(item.created_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+            const read = mine && otherReadReceipts && !!item.read_at;
+
             return (
-              <View
-                style={{
-                  alignSelf: mine ? "flex-end" : "flex-start",
-                  maxWidth: "80%",
-                  backgroundColor: mine ? theme.color.primary : theme.color.surface,
-                  borderWidth: mine ? 0 : 1,
-                  borderColor: theme.color.border,
-                  borderRadius: theme.radius.card,
-                  paddingHorizontal: theme.spacing.md,
-                  paddingVertical: theme.spacing.sm,
-                }}
-              >
-                <Text style={[theme.typography.body, { color: mine ? "#FFFFFF" : theme.color.textPrimary }]}>
-                  {item.content}
-                </Text>
+              <View style={{ flexDirection: "row", alignItems: "flex-end", gap: 8, alignSelf: mine ? "flex-end" : "flex-start", maxWidth: "85%" }}>
+                {!mine ? (
+                  <View style={{ width: 28, height: 28, borderRadius: 14, overflow: "hidden", backgroundColor: theme.color.surfaceSecondary }}>
+                    {otherPhoto ? <Image source={{ uri: otherPhoto }} style={{ width: "100%", height: "100%" }} /> : null}
+                  </View>
+                ) : null}
+                <View style={{ alignItems: mine ? "flex-end" : "flex-start", gap: 4 }}>
+                  <View
+                    style={{
+                      backgroundColor: mine ? theme.color.primary : theme.color.inputFill,
+                      borderRadius: 18,
+                      borderBottomRightRadius: mine ? 4 : 18,
+                      borderBottomLeftRadius: mine ? 18 : 4,
+                      paddingHorizontal: theme.spacing.md,
+                      paddingVertical: theme.spacing.sm,
+                      ...(mine ? theme.shadow.floating : theme.shadow.card),
+                    }}
+                  >
+                    <Text style={[theme.typography.body, { color: mine ? "#FFFFFF" : theme.color.textPrimary }]}>{item.content}</Text>
+                  </View>
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                    <Text style={[theme.typography.caption, { color: theme.color.textSecondary }]}>{time}</Text>
+                    {mine ? (
+                      <Ionicons name={read ? "checkmark-done" : "checkmark"} size={14} color={read ? theme.color.primary : theme.color.textSecondary} />
+                    ) : null}
+                  </View>
+                </View>
               </View>
             );
           }}
         />
 
-        <View style={{ flexDirection: "row", gap: theme.spacing.sm, paddingVertical: theme.spacing.sm }}>
-          <View style={{ flex: 1 }}>
-            <TextField placeholder="Message" value={draft} onChangeText={handleDraftChange} onSubmitEditing={handleSend} />
-          </View>
-          <Pressable
-            onPress={handleSend}
+        <View style={{ paddingHorizontal: theme.spacing.screen, paddingVertical: theme.spacing.sm }}>
+          <View
             style={{
-              width: 52,
-              height: 52,
-              borderRadius: theme.radius.pill,
-              backgroundColor: theme.color.primary,
+              flexDirection: "row",
               alignItems: "center",
-              justifyContent: "center",
+              gap: theme.spacing.sm,
+              backgroundColor: theme.color.inputFill,
+              borderRadius: theme.radius.pill,
+              paddingLeft: theme.spacing.sm,
+              paddingRight: 4,
+              paddingVertical: 4,
             }}
           >
-            <Text style={{ color: "#FFFFFF", fontSize: 18 }}>➤</Text>
-          </Pressable>
+            <TextInput
+              placeholder="Type a message..."
+              placeholderTextColor={theme.color.textSecondary}
+              value={draft}
+              onChangeText={handleDraftChange}
+              onSubmitEditing={handleSend}
+              style={[theme.typography.body, { flex: 1, color: theme.color.textPrimary, paddingHorizontal: theme.spacing.sm, paddingVertical: theme.spacing.sm }]}
+            />
+            <Pressable
+              onPress={handleSend}
+              disabled={!canSend}
+              style={{
+                width: 44,
+                height: 44,
+                borderRadius: 22,
+                backgroundColor: canSend ? theme.color.primary : theme.color.surfaceSecondary,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Ionicons name="send" size={18} color={canSend ? "#FFFFFF" : theme.color.textSecondary} />
+            </Pressable>
+          </View>
         </View>
       </KeyboardAvoidingView>
     </ScreenContainer>

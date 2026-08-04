@@ -1,4 +1,5 @@
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../theme/useTheme";
 import { Button } from "./Button";
 
@@ -7,12 +8,29 @@ type EmptyStateProps = {
   description?: string;
   actionLabel?: string;
   onAction?: () => void;
+  /** Stands in for an illustration — the export uses a large filled icon in a soft-pink circle, not artwork. */
+  icon?: keyof typeof Ionicons.glyphMap;
 };
 
-export function EmptyState({ title, description, actionLabel, onAction }: EmptyStateProps) {
+export function EmptyState({ title, description, actionLabel, onAction, icon }: EmptyStateProps) {
   const theme = useTheme();
   return (
     <View style={[styles.center, { gap: theme.spacing.sm }]}>
+      {icon ? (
+        <View
+          style={{
+            width: 96,
+            height: 96,
+            borderRadius: 48,
+            backgroundColor: theme.color.surfaceSecondary,
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: theme.spacing.xs,
+          }}
+        >
+          <Ionicons name={icon} size={44} color={theme.color.primary} />
+        </View>
+      ) : null}
       <Text style={[theme.typography.title, { color: theme.color.textPrimary, textAlign: "center" }]}>
         {title}
       </Text>

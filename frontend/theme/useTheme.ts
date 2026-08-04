@@ -14,8 +14,11 @@ function buildTheme(scheme: "light" | "dark") {
       gold: palette.brand.gold,
       goldGradient: [palette.brand.gold, palette.brand.goldGradientEnd] as const,
       success: palette.status.success,
+      online: palette.status.online,
       warning: palette.status.warning,
       error: palette.status.error,
+      verified: palette.status.verified,
+      verifiedDark: palette.status.verifiedDark,
     },
     tags: palette.tags,
     swipe: palette.swipe,
@@ -27,10 +30,9 @@ function buildTheme(scheme: "light" | "dark") {
   };
 }
 
-// The swipe/discovery UI (card stack, Gold, Boosts) is designed as an
-// always-dark experience — same reasoning real swipe apps use: photos read
-// better against black, and it's a deliberate brand choice, not a
-// light/dark-adaptive one. Light stays in tokens.ts if that ever changes.
+// Just Spark is a light-first product (matching the Stitch export). The whole
+// app renders in light mode; a dark palette exists in tokens.ts for a future
+// system-driven dark pass, but light is the deliberate default.
 export function useTheme(): Theme {
-  return buildTheme("dark");
+  return buildTheme("light");
 }

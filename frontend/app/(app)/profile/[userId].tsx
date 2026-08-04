@@ -12,6 +12,7 @@ import { useAuthStore } from "../../../store/authStore";
 import { publicPhotoUrl } from "../../../lib/photoUrl";
 import { calculateAge, formatDistance, isRecentlyOnline } from "../../../lib/discover";
 import { LOOKING_FOR_OPTIONS } from "../../../lib/constants";
+import { interestIcon } from "../../../lib/interestIcon";
 
 type TargetProfile = {
   first_name: string | null;
@@ -205,7 +206,7 @@ export default function ViewProfile() {
             <Section title="Common Interests">
               <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
                 {commonTags.map((tag, i) => (
-                  <Tag key={tag} label={capitalize(tag)} index={i} />
+                  <Tag key={tag} label={capitalize(tag)} index={i} icon={interestIcon(tag)} />
                 ))}
               </View>
             </Section>
@@ -215,7 +216,7 @@ export default function ViewProfile() {
             <Section title="Interests">
               <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
                 {otherTags.map((tag, i) => (
-                  <Tag key={tag} label={capitalize(tag)} index={commonTags.length + i} />
+                  <Tag key={tag} label={capitalize(tag)} index={commonTags.length + i} icon={interestIcon(tag)} />
                 ))}
               </View>
             </Section>
