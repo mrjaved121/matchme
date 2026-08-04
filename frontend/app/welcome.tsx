@@ -27,7 +27,7 @@ export default function Welcome() {
     <ScreenContainer>
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center", gap: theme.spacing.sm }}>
         <Text style={{ fontSize: 56 }}>◈</Text>
-        <Text style={[theme.typography.display, { color: theme.color.textPrimary }]}>MatchMe</Text>
+        <Text style={[theme.typography.display, { color: theme.color.textPrimary }]}>Spark</Text>
         <Text style={[theme.typography.body, { color: theme.color.textSecondary, textAlign: "center" }]}>
           Real, timed chats — no endless swiping.
         </Text>

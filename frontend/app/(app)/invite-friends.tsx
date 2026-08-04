@@ -32,7 +32,7 @@ export default function InviteFriends() {
     return () => clearTimeout(t);
   }, [copied]);
 
-  const link = code ? `https://matchme.app/welcome?ref=${code}` : null;
+  const link = code ? `https://spark.app/welcome?ref=${code}` : null;
   const joinedCount = history?.filter((h) => h.onboarding_completed).length ?? 0;
   const weeksEarned = joinedCount; // 1 week of Gold per completed referral
 
@@ -45,7 +45,7 @@ export default function InviteFriends() {
   async function shareLink() {
     if (!link) return;
     try {
-      await Share.share({ message: `Join me on MatchMe — use my invite link: ${link}` });
+      await Share.share({ message: `Join me on Spark — use my invite link: ${link}` });
     } catch {
       // User dismissed the native share sheet — nothing to do.
     }

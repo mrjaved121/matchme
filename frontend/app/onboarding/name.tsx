@@ -55,7 +55,7 @@ export default function OnboardingName() {
       step={1}
       totalSteps={11}
       title="What's your name?"
-      subtitle="This is how you'll appear to other people on MatchMe."
+      subtitle="This is how you'll appear to other people on Spark."
       onNext={handleNext}
       nextDisabled={loading}
       nextLoading={loading}

@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { supabase } from "./supabase";
 
-const PENDING_CODE_KEY = "matchme_pending_referral_code";
+const PENDING_CODE_KEY = "spark_pending_referral_code";
 
 export async function storePendingReferralCode(code: string): Promise<void> {
   await AsyncStorage.setItem(PENDING_CODE_KEY, code.trim().toUpperCase());

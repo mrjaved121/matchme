@@ -51,7 +51,7 @@ export default function LoginPage() {
         onSubmit={handleSubmit}
         className="w-full max-w-sm rounded-2xl border border-border bg-surface p-8 shadow-sm"
       >
-        <h1 className="text-2xl font-bold text-foreground">MatchMe Admin</h1>
+        <h1 className="text-2xl font-bold text-foreground">Spark Admin</h1>
         <p className="mt-1 text-sm text-foreground-secondary">
           Sign in with your admin account.
         </p>

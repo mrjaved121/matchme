@@ -87,7 +87,7 @@ export default function GoldPaywall() {
       <ScrollView contentContainerStyle={{ paddingBottom: theme.spacing.xl }} showsVerticalScrollIndicator={false}>
         <View style={{ paddingHorizontal: theme.spacing.lg, paddingTop: theme.spacing.xl }}>
           <Text style={[theme.typography.display, { color: theme.color.gold, textAlign: "center" }]}>
-            MatchMe Gold
+            Spark Gold
           </Text>
           <Text
             style={[
@@ -208,7 +208,7 @@ export default function GoldPaywall() {
 
         <View style={{ marginTop: theme.spacing.lg, marginHorizontal: theme.spacing.lg, gap: theme.spacing.sm }}>
           <Button
-            label={loading ? "Upgrading…" : "👑 Get MatchMe Gold"}
+            label={loading ? "Upgrading…" : "👑 Get Spark Gold"}
             onPress={subscribe}
             loading={loading}
             gradientColors={theme.color.goldGradient}

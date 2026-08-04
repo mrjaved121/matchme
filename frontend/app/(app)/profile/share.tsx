@@ -73,7 +73,7 @@ export default function ShareProfile() {
     return () => clearTimeout(t);
   }, [copied]);
 
-  const link = slug ? `https://matchme.app/u/${slug}` : null;
+  const link = slug ? `https://spark.app/u/${slug}` : null;
 
   async function copyLink() {
     if (!link) return;
@@ -84,7 +84,7 @@ export default function ShareProfile() {
   async function shareLink() {
     if (!link) return;
     try {
-      await Share.share({ message: `Check out my MatchMe profile: ${link}` });
+      await Share.share({ message: `Check out my Spark profile: ${link}` });
     } catch {
       Alert.alert("Couldn't open share sheet");
     }
@@ -127,7 +127,7 @@ export default function ShareProfile() {
           }}
         >
           <Text style={[theme.typography.title, { color: theme.color.textPrimary }]}>
-            {profile.first_name ?? "MatchMe user"}
+            {profile.first_name ?? "Spark user"}
             {profile.age ? `, ${profile.age}` : ""}
           </Text>
           {profile.city || profile.job_title ? (
@@ -170,13 +170,13 @@ export default function ShareProfile() {
                   borderColor: "#FFFFFF",
                 }}
               >
-                <Text style={{ color: "#FFFFFF", fontWeight: "800" }}>M</Text>
+                <Text style={{ color: "#FFFFFF", fontWeight: "800" }}>S</Text>
               </View>
             </View>
           ) : null}
 
           <Text style={[theme.typography.caption, { color: theme.color.textSecondary, marginTop: theme.spacing.sm }]}>
-            Scan to view my MatchMe profile
+            Scan to view my Spark profile
           </Text>
         </View>
 

@@ -38,7 +38,7 @@ export default function ManageSubscription() {
 
       <View style={{ backgroundColor: theme.color.surface, borderRadius: theme.radius.card, padding: theme.spacing.md, gap: 8 }}>
         <Text style={[theme.typography.body, { color: theme.color.textPrimary, fontWeight: "700" }]}>
-          {profile?.is_gold ? "👑 MatchMe Gold — Active" : "No active subscription"}
+          {profile?.is_gold ? "👑 Spark Gold — Active" : "No active subscription"}
         </Text>
         <Text style={[theme.typography.subtext, { color: theme.color.textSecondary }]}>
           {profile?.is_gold

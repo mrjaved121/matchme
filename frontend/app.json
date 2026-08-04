@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "MatchMe",
-    "slug": "matchme",
-    "scheme": "matchme",
+    "name": "Spark",
+    "slug": "spark",
+    "scheme": "spark",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -24,17 +24,17 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "MatchMe uses your location to show you people nearby."
+          "locationAlwaysAndWhenInUsePermission": "Spark uses your location to show you people nearby."
         }
       ]
     ],
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSPhotoLibraryUsageDescription": "MatchMe needs photo library access so you can add profile photos.",
+        "NSPhotoLibraryUsageDescription": "Spark needs photo library access so you can add profile photos.",
         "ITSAppUsesNonExemptEncryption": false
       },
-      "bundleIdentifier": "com.matchmedatingapp.matchme"
+      "bundleIdentifier": "com.sparkdatingapp.spark"
     },
     "android": {
       "adaptiveIcon": {
@@ -44,7 +44,7 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.matchmedatingapp.matchme",
+      "package": "com.sparkdatingapp.spark",
       "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
     },
     "web": {

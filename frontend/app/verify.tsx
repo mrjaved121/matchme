@@ -54,7 +54,7 @@ export default function Verify() {
     setResending(true);
     await supabase.auth.signInWithOtp({
       email,
-      options: { shouldCreateUser: true, emailRedirectTo: "matchme://auth-callback" },
+      options: { shouldCreateUser: true, emailRedirectTo: "spark://auth-callback" },
     });
     setResending(false);
     setCooldown(RESEND_COOLDOWN_SECONDS);

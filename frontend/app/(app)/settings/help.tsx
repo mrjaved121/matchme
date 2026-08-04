@@ -5,7 +5,7 @@ import { useTheme } from "../../../theme/useTheme";
 
 const FAQS = [
   { q: "How does matching work?", a: "Swipe through Discover, or jump into a live timed speed date from the Discover header. Mutual likes and speed-date yeses both create a match." },
-  { q: "Why can't I see who liked me?", a: "That's a MatchMe Gold feature. Upgrade from your Profile tab to see and match with everyone who's liked you." },
+  { q: "Why can't I see who liked me?", a: "That's a Spark Gold feature. Upgrade from your Profile tab to see and match with everyone who's liked you." },
   { q: "How do I report someone?", a: "Open their chat and tap Report, or tap Report from the post-date decision screen. Every report is reviewed by our team." },
   { q: "Can I get my account deleted?", a: "Yes — go to Settings → Privacy & account → Delete my account. This is permanent." },
 ];
@@ -32,7 +32,7 @@ export default function HelpAndSupport() {
         <Button
           label="Email support"
           variant="secondary"
-          onPress={() => Linking.openURL("mailto:support@matchme.app")}
+          onPress={() => Linking.openURL("mailto:support@spark.app")}
           style={{ marginTop: theme.spacing.lg }}
         />
       </ScrollView>

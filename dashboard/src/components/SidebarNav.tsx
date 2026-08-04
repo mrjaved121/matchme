@@ -28,7 +28,7 @@ export function SidebarNav({ adminName }: { adminName: string }) {
   return (
     <aside className="flex w-60 flex-col justify-between border-r border-border bg-surface p-6">
       <div>
-        <p className="text-lg font-bold text-foreground">MatchMe</p>
+        <p className="text-lg font-bold text-foreground">Spark</p>
         <p className="text-sm text-foreground-secondary">Admin</p>
 
         <nav className="mt-8 flex flex-col gap-1">

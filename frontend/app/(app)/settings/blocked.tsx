@@ -106,7 +106,7 @@ export default function BlockedUsers() {
                 </View>
               )}
               <Text style={[theme.typography.body, { color: theme.color.textPrimary, flex: 1 }]}>
-                {item.name ?? "MatchMe user"}
+                {item.name ?? "Spark user"}
               </Text>
               <Button label="Unblock" variant="ghost" onPress={() => unblock(item.id)} />
             </View>

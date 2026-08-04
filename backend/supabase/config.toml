@@ -247,7 +247,7 @@ otp_expiry = 3600
 # template needs to surface {{ .Token }} — Supabase's default magic-link
 # template only shows the link.
 [auth.email.template.magic_link]
-subject = "Your MatchMe verification code"
+subject = "Your Spark verification code"
 content_path = "./supabase/templates/magic_link.html"
 
 # Uncomment to customize email template

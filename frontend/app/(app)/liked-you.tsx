@@ -130,7 +130,7 @@ export default function LikedYou() {
                   }}
                 >
                   <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 13 }} numberOfLines={1}>
-                    {item.first_name ?? "MatchMe user"}
+                    {item.first_name ?? "Spark user"}
                   </Text>
                 </View>
               )}

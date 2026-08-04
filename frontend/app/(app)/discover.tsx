@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
 import { ScreenContainer } from "../../components/ScreenContainer";
@@ -156,26 +157,14 @@ export default function Discover() {
             paddingBottom: theme.spacing.sm,
           }}
         >
-          <Text style={[theme.typography.title, { color: theme.color.textPrimary }]}>Discover</Text>
-          <Pressable
-            onPress={() => router.push("/(app)/preference-filter")}
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 4,
-              paddingHorizontal: 12,
-              paddingVertical: 6,
-              borderRadius: theme.radius.pill,
-              backgroundColor: theme.color.surface,
-              borderWidth: 1,
-              borderColor: theme.color.border,
-            }}
-          >
-            <Text style={{ fontSize: 14 }}>⏱</Text>
-            <Text style={[theme.typography.caption, { color: theme.color.textPrimary, fontWeight: "700" }]}>
-              Speed Date
+          <TopBarIconButton icon="▤" onPress={() => router.push("/(app)/preference-filter")} />
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+            <Text style={{ fontSize: 20 }}>🔥</Text>
+            <Text style={[theme.typography.title, { color: theme.color.textPrimary, fontStyle: "italic" }]}>
+              Spark
             </Text>
-          </Pressable>
+          </View>
+          <TopBarIconButton icon="⚡" color={theme.swipe.boost} onPress={() => router.push("/(app)/boost")} />
         </View>
 
         <ScrollView
@@ -186,11 +175,22 @@ export default function Discover() {
           <QuickAccessCircle
             label="Top Picks"
             icon="★"
-            iconColor={theme.color.gold}
+            gradient={theme.color.goldGradient}
             active={topPicksActive}
             onPress={() => setTopPicksActive((v) => !v)}
           />
-          <QuickAccessCircle label="Passport" icon="🌐" iconColor={theme.swipe.superlike} onPress={openPassport} />
+          <QuickAccessCircle
+            label="Passport"
+            icon="🌐"
+            gradient={[theme.swipe.superlike, theme.swipe.boost]}
+            onPress={openPassport}
+          />
+          <QuickAccessCircle
+            label="Events"
+            icon="⚡"
+            gradient={[theme.swipe.like, "#1FBE7A"]}
+            onPress={() => router.push("/(app)/queue")}
+          />
           {stripCandidates.map((c) => (
             <Pressable key={c.id} onPress={() => bringToFront(c.id)} style={{ alignItems: "center", gap: 4, width: 64 }}>
               <View
@@ -239,6 +239,7 @@ export default function Discover() {
                   profile={p}
                   isTop={isTop}
                   onSwiped={(action) => handleSwiped(p.id, action)}
+                  onViewProfile={() => router.push({ pathname: "/(app)/profile/[userId]", params: { userId: p.id } })}
                 />
               );
             })
@@ -262,33 +263,35 @@ export default function Discover() {
 function QuickAccessCircle({
   label,
   icon,
-  iconColor,
+  gradient,
   active,
   onPress,
 }: {
   label: string;
   icon: string;
-  iconColor: string;
+  gradient: readonly [string, string];
   active?: boolean;
   onPress: () => void;
 }) {
   const theme = useTheme();
   return (
     <Pressable onPress={onPress} style={{ alignItems: "center", gap: 4, width: 64 }}>
-      <View
+      <LinearGradient
+        colors={gradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
         style={{
           width: 56,
           height: 56,
           borderRadius: 28,
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: active ? iconColor + "33" : theme.color.surface,
-          borderWidth: active ? 2 : 0,
-          borderColor: iconColor,
+          borderWidth: active ? 3 : 0,
+          borderColor: "#FFFFFF",
         }}
       >
-        <Text style={{ fontSize: 22, color: iconColor }}>{icon}</Text>
-      </View>
+        <Text style={{ fontSize: 22, color: "#FFFFFF" }}>{icon}</Text>
+      </LinearGradient>
       <Text numberOfLines={1} style={[theme.typography.caption, { color: theme.color.textSecondary, fontWeight: "700" }]}>
         {label}
       </Text>
@@ -309,7 +312,6 @@ function ActionButton({
   onPress: () => void;
   disabled?: boolean;
 }) {
-  const theme = useTheme();
   return (
     <Pressable
       onPress={onPress}
@@ -320,7 +322,7 @@ function ActionButton({
         borderRadius: size / 2,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: theme.color.surface,
+        backgroundColor: color + "26",
         opacity: disabled ? 0.4 : 1,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
@@ -330,6 +332,25 @@ function ActionButton({
       }}
     >
       <Text style={{ fontSize: size * 0.4, color }}>{symbol}</Text>
+    </Pressable>
+  );
+}
+
+function TopBarIconButton({ icon, color, onPress }: { icon: string; color?: string; onPress: () => void }) {
+  const theme = useTheme();
+  return (
+    <Pressable
+      onPress={onPress}
+      style={{
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: theme.color.surface,
+      }}
+    >
+      <Text style={{ fontSize: 18, color: color ?? theme.color.textPrimary }}>{icon}</Text>
     </Pressable>
   );
 }

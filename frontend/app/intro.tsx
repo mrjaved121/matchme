@@ -6,7 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Button } from "../components/Button";
 import { useTheme } from "../theme/useTheme";
 
-const SEEN_KEY = "matchme_intro_seen_v1";
+const SEEN_KEY = "spark_intro_seen_v1";
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 type Slide = {

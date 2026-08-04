@@ -250,7 +250,7 @@ function NewMatchAvatar({ item }: { item: MatchListItem }) {
         numberOfLines={1}
         style={[theme.typography.caption, { color: theme.color.textPrimary, marginTop: 4, fontWeight: "600" }]}
       >
-        {item.otherName ?? "MatchMe user"}
+        {item.otherName ?? "Spark user"}
       </Text>
     </Pressable>
   );
@@ -299,7 +299,7 @@ function MatchRow({ item }: { item: MatchListItem }) {
       <View style={{ flex: 1, gap: 2 }}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
           <Text style={[theme.typography.body, { color: theme.color.textPrimary, fontWeight: "700" }]}>
-            {item.otherName ?? "MatchMe user"}
+            {item.otherName ?? "Spark user"}
           </Text>
           {activeLabel ? (
             <Text

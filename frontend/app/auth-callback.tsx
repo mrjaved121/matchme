@@ -5,7 +5,7 @@ import { LoadingState } from "../components/StateViews";
 
 const FALLBACK_TIMEOUT_MS = 10_000;
 
-// Landing spot for the matchme://auth-callback link tapped from a magic-link
+// Landing spot for the spark://auth-callback link tapped from a magic-link
 // email. The actual session handling happens in the root layout's Linking
 // listener (it needs the raw URL including the #access_token fragment,
 // which this screen's own route params wouldn't include) — this just gives

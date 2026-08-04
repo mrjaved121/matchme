@@ -164,9 +164,13 @@ export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
             <Text style={styles.name}>
-              {profile.first_name ?? "MatchMe user"}{profile.age ? `, ${profile.age}` : ""}
+              {profile.first_name ?? "Spark user"}{profile.age ? `, ${profile.age}` : ""}
             </Text>
-            {profile.is_verified ? <Text style={{ fontSize: 18 }}>✓</Text> : null}
+            {profile.is_verified ? (
+              <View style={[styles.verifiedBadge, { backgroundColor: theme.swipe.superlike }]}>
+                <Text style={styles.verifiedCheck}>✓</Text>
+              </View>
+            ) : null}
           </View>
           {onViewProfile ? (
             <Pressable
@@ -186,7 +190,9 @@ export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
         </View>
         {profile.job_title || profile.distanceLabel ? (
           <Text style={styles.subline}>
-            {[profile.distanceLabel, profile.job_title].filter(Boolean).join(" · ")}
+            {[profile.distanceLabel && `📍 ${profile.distanceLabel}`, profile.job_title && `💼 ${profile.job_title}`]
+              .filter(Boolean)
+              .join("   ·   ")}
           </Text>
         ) : null}
         {profile.bio ? (
@@ -196,7 +202,7 @@ export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
         ) : null}
         {profile.loveLanguage ? (
           <View style={styles.promptBox}>
-            <Text style={styles.promptLabel}>My love language is...</Text>
+            <Text style={[styles.promptLabel, { color: theme.color.gold }]}>💬 My love language is...</Text>
             <Text style={styles.promptAnswer} numberOfLines={2}>
               {profile.loveLanguage}
             </Text>
@@ -270,6 +276,20 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 26,
+    fontWeight: "800",
+    color: "#FFFFFF",
+  },
+  verifiedBadge: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1.5,
+    borderColor: "#FFFFFF",
+  },
+  verifiedCheck: {
+    fontSize: 11,
     fontWeight: "800",
     color: "#FFFFFF",
   },

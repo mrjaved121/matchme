@@ -3,7 +3,7 @@ import { supabase } from "./supabase";
 /** Supabase's default (non-customizable) magic-link email only offers a
  * tap-able "Sign in" link, not a typeable code — since editing that
  * template requires custom SMTP or a paid plan we're avoiding for now.
- * This parses the tokens out of that link's redirect (matchme://auth-callback#access_token=...)
+ * This parses the tokens out of that link's redirect (spark://auth-callback#access_token=...)
  * and establishes the session directly, so tapping the email link signs
  * the user in without ever needing the code-entry screen. */
 export async function handleAuthDeepLink(url: string | null): Promise<boolean> {

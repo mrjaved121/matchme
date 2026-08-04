@@ -6,7 +6,7 @@ import { useTheme } from "../../../theme/useTheme";
 
 const TIPS = [
   { icon: "📍", title: "Meet in public", body: "For any in-person meetup, choose a public place and tell a friend where you'll be." },
-  { icon: "🔍", title: "Video chat first", body: "Use MatchMe's live speed-date sessions to talk before ever sharing personal contact info." },
+  { icon: "🔍", title: "Video chat first", body: "Use Spark's live speed-date sessions to talk before ever sharing personal contact info." },
   { icon: "🚩", title: "Trust your instincts", body: "If something feels off, end the conversation. You never owe anyone your time." },
   { icon: "🚫", title: "Report and block", body: "Every report is reviewed by our team. Blocking is instant and the other person is never notified." },
 ];

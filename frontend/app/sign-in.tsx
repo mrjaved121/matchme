@@ -34,7 +34,7 @@ export default function SignIn() {
 
     const { error: otpError } = await supabase.auth.signInWithOtp({
       email: email.trim(),
-      options: { shouldCreateUser: true, emailRedirectTo: "matchme://auth-callback" },
+      options: { shouldCreateUser: true, emailRedirectTo: "spark://auth-callback" },
     });
 
     setLoading(false);
@@ -83,11 +83,10 @@ export default function SignIn() {
         <View style={{ gap: theme.spacing.sm }}>
           <SocialButton label="Continue with Apple" icon="" onPress={() => notConfigured("Apple")} />
           <SocialButton label="Continue with Google" icon="G" onPress={() => notConfigured("Google")} />
-          <SocialButton label="Continue with Phone" icon="☎" onPress={() => notConfigured("Phone")} />
         </View>
 
         <Text style={[theme.typography.caption, { color: theme.color.textSecondary, textAlign: "center" }]}>
-          By continuing you agree to MatchMe's community guidelines, our{" "}
+          By continuing you agree to Spark's community guidelines, our{" "}
           <Text style={{ textDecorationLine: "underline" }} onPress={() => router.push("/legal/terms")}>
             Terms of Service
           </Text>{" "}
@@ -95,7 +94,7 @@ export default function SignIn() {
           <Text style={{ textDecorationLine: "underline" }} onPress={() => router.push("/legal/privacy")}>
             Privacy Policy
           </Text>
-          . You must be 18+ to use MatchMe.
+          . You must be 18+ to use Spark.
         </Text>
       </View>
     </ScreenContainer>

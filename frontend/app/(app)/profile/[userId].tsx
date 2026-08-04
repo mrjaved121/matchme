@@ -178,7 +178,7 @@ export default function ViewProfile() {
         <View style={{ paddingHorizontal: theme.spacing.md, marginTop: theme.spacing.md }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
             <Text style={[theme.typography.title, { color: theme.color.textPrimary }]}>
-              {target.first_name ?? "MatchMe user"}
+              {target.first_name ?? "Spark user"}
               {age ? `, ${age}` : ""}
             </Text>
             {target.is_verified ? <Text style={{ fontSize: 16 }}>🛡️</Text> : null}

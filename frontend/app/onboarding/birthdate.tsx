@@ -56,7 +56,7 @@ export default function OnboardingBirthdate() {
     }
 
     if (calculateAge(y, m, d) < 18) {
-      setError("You must be 18 or older to use MatchMe.");
+      setError("You must be 18 or older to use Spark.");
       return;
     }
 
@@ -87,7 +87,7 @@ export default function OnboardingBirthdate() {
       step={2}
       totalSteps={11}
       title="When's your birthday?"
-      subtitle="You must be 18+ to use MatchMe. This won't be shown on your profile."
+      subtitle="You must be 18+ to use Spark. This won't be shown on your profile."
       onNext={handleNext}
       nextDisabled={loading}
       nextLoading={loading}

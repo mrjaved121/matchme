@@ -27,7 +27,7 @@ export default function PermissionsLocation() {
           Find people nearby
         </Text>
         <Text style={[theme.typography.body, { color: theme.color.textSecondary, textAlign: "center" }]}>
-          MatchMe uses your location to show distance and find matches close to you. You can change this anytime in
+          Spark uses your location to show distance and find matches close to you. You can change this anytime in
           Settings.
         </Text>
       </View>

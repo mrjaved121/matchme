@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MatchMe Admin",
-  description: "MatchMe moderation and analytics dashboard",
+  title: "Spark Admin",
+  description: "Spark moderation and analytics dashboard",
 };
 
 export default function RootLayout({

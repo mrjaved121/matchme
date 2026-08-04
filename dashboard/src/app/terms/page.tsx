@@ -4,7 +4,7 @@ const SECTIONS: { heading: string; body: string }[] = [
   {
     heading: "Eligibility",
     body:
-      "You must be at least 18 years old to create a MatchMe account. By signing up you confirm the " +
+      "You must be at least 18 years old to create a Spark account. By signing up you confirm the " +
       "birthdate you provide is accurate. We may suspend or ban accounts we reasonably believe belong to " +
       "someone under 18.",
   },
@@ -16,7 +16,7 @@ const SECTIONS: { heading: string; body: string }[] = [
       "are not allowed and will result in a ban. One account per person.",
   },
   {
-    heading: "How MatchMe works",
+    heading: "How Spark works",
     body:
       "You join a live queue and are matched instantly with a compatible person for a short, timed text " +
       "chat. At the end of the timer, both people privately decide yes or no — a mutual yes unlocks an " +
@@ -48,7 +48,7 @@ const SECTIONS: { heading: string; body: string }[] = [
   {
     heading: "Disclaimer",
     body:
-      "MatchMe is provided \"as is.\" We work to keep the platform safe and available but don't guarantee " +
+      "Spark is provided \"as is.\" We work to keep the platform safe and available but don't guarantee " +
       "uninterrupted service, and we're not responsible for the conduct of other users on or off the app. " +
       "Meeting people always carries inherent risk — use good judgment, especially before meeting someone " +
       "in person.",
@@ -56,7 +56,7 @@ const SECTIONS: { heading: string; body: string }[] = [
   {
     heading: "Changes",
     body:
-      "We may update these terms as the product changes. Continued use of MatchMe after an update means " +
+      "We may update these terms as the product changes. Continued use of Spark after an update means " +
       "you accept the revised terms.",
   },
 ];

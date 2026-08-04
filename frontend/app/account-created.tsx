@@ -26,7 +26,7 @@ export default function AccountCreated() {
           You're all set!
         </Text>
         <Text style={[theme.typography.body, { color: theme.color.textSecondary, textAlign: "center" }]}>
-          Your MatchMe account is ready. Just a couple of quick permissions and you're in.
+          Your Spark account is ready. Just a couple of quick permissions and you're in.
         </Text>
       </View>
 

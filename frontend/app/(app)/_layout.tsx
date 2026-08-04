@@ -55,7 +55,7 @@ function AppTabs({ userId, theme }: { userId: string; theme: ReturnType<typeof u
     >
       <Tabs.Screen
         name="discover"
-        options={{ title: "Discover", tabBarIcon: (p) => <TabIcon symbol="◈" {...p} /> }}
+        options={{ title: "Discover", tabBarIcon: (p) => <TabIcon symbol="🔥" {...p} /> }}
       />
       <Tabs.Screen
         name="matches/index"
