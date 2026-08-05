@@ -201,7 +201,7 @@ export default function Discover() {
           <Ionicons name="options-outline" size={20} color={theme.color.textPrimary} />
         </Pressable>
 
-        <View style={{ flex: 1, padding: theme.spacing.md, paddingBottom: 112 }}>
+        <View style={{ flex: 1 }}>
           {visible.length === 0 ? (
             <NoMorePeople onExpand={() => router.push("/(app)/discovery-preferences")} onBoost={() => router.push("/(app)/boost")} />
           ) : (

@@ -101,16 +101,28 @@ export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
   const passOpacity = position.x.interpolate({ inputRange: [-SWIPE_THRESHOLD, -20], outputRange: [1, 0], extrapolate: "clamp" });
   const superlikeOpacity = position.y.interpolate({ inputRange: [-SWIPE_THRESHOLD, -20], outputRange: [1, 0], extrapolate: "clamp" });
 
+  // Absolutely-positioned siblings need their own numeric insets — a
+  // parent's `padding` has no effect on an absolutely-positioned child in
+  // React Native/Yoga, so the margin and the bottom clearance for the
+  // Discover action-button row both live here instead.
+  const cardPosition = {
+    position: "absolute" as const,
+    left: theme.spacing.md,
+    right: theme.spacing.md,
+    top: isTop ? theme.spacing.md : theme.spacing.md + 10,
+    bottom: 130,
+  };
+
   const cardStyle = isTop
     ? {
         transform: [{ translateX: position.x }, { translateY: position.y }, { rotate }],
       }
-    : { transform: [{ scale: 0.96 }], top: 10 };
+    : { transform: [{ scale: 0.96 }] };
 
   const currentPhoto = profile.photoUrls[photoIndex];
 
   const content = (
-    <Animated.View style={[styles.card, { backgroundColor: theme.color.surface }, cardStyle]}>
+    <Animated.View style={[styles.card, cardPosition, { backgroundColor: theme.color.surface }, cardStyle]}>
       {currentPhoto ? (
         <Image source={{ uri: currentPhoto }} style={styles.photo} />
       ) : (
@@ -207,9 +219,6 @@ export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
 
 const styles = StyleSheet.create({
   card: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
     borderRadius: 24,
     overflow: "hidden",
   },
