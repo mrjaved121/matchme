@@ -121,8 +121,21 @@ export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
 
   const currentPhoto = profile.photoUrls[photoIndex];
 
+  // Split into a shadow-casting outer box and a rounded-and-clipped inner
+  // box: `overflow: "hidden"` (needed to clip the photo to the rounded
+  // corners) also clips the shadow on Android if it's on the same View as
+  // `elevation`, which is why the card was rendering flat instead of
+  // floating like the design.
   const content = (
-    <Animated.View style={[styles.card, cardPosition, { backgroundColor: theme.color.surface }, cardStyle]}>
+    <Animated.View
+      style={[
+        styles.cardShadow,
+        { borderRadius: 24, backgroundColor: theme.color.surface, ...theme.shadow.floating },
+        cardPosition,
+        cardStyle,
+      ]}
+    >
+    <View style={[styles.card, { backgroundColor: theme.color.surface }]}>
       {currentPhoto ? (
         <Image source={{ uri: currentPhoto }} style={styles.photo} />
       ) : (
@@ -189,8 +202,8 @@ export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
           </View>
         ) : null}
         <View style={{ flexDirection: "row", alignItems: "flex-end", marginTop: 12 }}>
-          <View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
-            {profile.interest_tags.slice(0, 4).map((tag) => {
+          <View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap", gap: 6, maxHeight: 38, overflow: "hidden" }}>
+            {profile.interest_tags.slice(0, 3).map((tag) => {
               const icon = interestIcon(tag);
               return (
                 <View key={tag} style={styles.cardTag}>
@@ -207,6 +220,7 @@ export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
           ) : null}
         </View>
       </View>
+    </View>
     </Animated.View>
   );
 
@@ -218,7 +232,9 @@ export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
 });
 
 const styles = StyleSheet.create({
+  cardShadow: {},
   card: {
+    flex: 1,
     borderRadius: 24,
     overflow: "hidden",
   },
