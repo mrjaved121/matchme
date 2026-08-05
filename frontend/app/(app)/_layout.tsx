@@ -84,11 +84,6 @@ function AppTabs({ userId, theme }: { userId: string; theme: ReturnType<typeof u
       />
 
       {/* Reachable via router.push, hidden from the tab bar */}
-      <Tabs.Screen name="home" options={{ href: null }} />
-      <Tabs.Screen name="queue" options={{ href: null }} />
-      <Tabs.Screen name="preference-filter" options={{ href: null }} />
-      <Tabs.Screen name="date/[sessionId]" options={{ href: null }} />
-      <Tabs.Screen name="decision/[sessionId]" options={{ href: null }} />
       <Tabs.Screen name="match-confirmation/[matchId]" options={{ href: null }} />
       <Tabs.Screen name="matches/[matchId]" options={{ href: null }} />
       <Tabs.Screen name="profile/edit" options={{ href: null }} />
@@ -113,6 +108,8 @@ function AppTabs({ userId, theme }: { userId: string; theme: ReturnType<typeof u
       <Tabs.Screen name="discovery-preferences" options={{ href: null }} />
       <Tabs.Screen name="out-of-likes" options={{ href: null }} />
       <Tabs.Screen name="invite-friends" options={{ href: null }} />
+      <Tabs.Screen name="favorites" options={{ href: null }} />
+      <Tabs.Screen name="notifications" options={{ href: null }} />
     </Tabs>
   );
 }

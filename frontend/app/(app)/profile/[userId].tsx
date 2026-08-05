@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
-import { useQuery } from "@tanstack/react-query";
+import { Ionicons } from "@expo/vector-icons";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ScreenContainer } from "../../../components/ScreenContainer";
 import { Tag } from "../../../components/Tag";
 import { Button } from "../../../components/Button";
@@ -13,6 +14,7 @@ import { publicPhotoUrl } from "../../../lib/photoUrl";
 import { calculateAge, formatDistance, isRecentlyOnline } from "../../../lib/discover";
 import { LOOKING_FOR_OPTIONS } from "../../../lib/constants";
 import { interestIcon } from "../../../lib/interestIcon";
+import { addFavorite, isFavorited, removeFavorite } from "../../../lib/favorites";
 
 type TargetProfile = {
   first_name: string | null;
@@ -42,6 +44,29 @@ export default function ViewProfile() {
   const theme = useTheme();
   const { userId } = useLocalSearchParams<{ userId: string }>();
   const myId = useAuthStore((s) => s.session!.user.id);
+  const queryClient = useQueryClient();
+  const [favoriteBusy, setFavoriteBusy] = useState(false);
+
+  const { data: favorited } = useQuery({
+    queryKey: ["is-favorited", myId, userId],
+    queryFn: () => isFavorited(myId, userId),
+  });
+
+  async function toggleFavorite() {
+    if (favoriteBusy) return;
+    setFavoriteBusy(true);
+    try {
+      if (favorited) {
+        await removeFavorite(myId, userId);
+      } else {
+        await addFavorite(myId, userId);
+      }
+      await queryClient.invalidateQueries({ queryKey: ["is-favorited", myId, userId] });
+      await queryClient.invalidateQueries({ queryKey: ["favorites", myId] });
+    } finally {
+      setFavoriteBusy(false);
+    }
+  }
 
   const { data: photos } = useQuery({
     queryKey: ["view-profile-photos", userId],
@@ -157,23 +182,46 @@ export default function ViewProfile() {
             <Text style={{ color: "#FFFFFF", fontSize: 18 }}>‹</Text>
           </Pressable>
 
-          <Pressable
-            onPress={() => router.push({ pathname: "/(app)/report/[targetUserId]", params: { targetUserId: userId } })}
+          <View
             style={{
               position: "absolute",
               top: theme.spacing.sm,
               right: theme.spacing.sm,
-              width: 36,
-              height: 36,
-              borderRadius: 18,
-              backgroundColor: "rgba(0,0,0,0.5)",
-              alignItems: "center",
-              justifyContent: "center",
+              flexDirection: "row",
+              gap: 8,
               marginTop: photos && photos.length > 1 ? 14 : 0,
             }}
           >
-            <Text style={{ color: "#FFFFFF", fontSize: 16 }}>⋯</Text>
-          </Pressable>
+            <Pressable
+              onPress={toggleFavorite}
+              disabled={favoriteBusy}
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: 18,
+                backgroundColor: "rgba(0,0,0,0.5)",
+                alignItems: "center",
+                justifyContent: "center",
+                opacity: favoriteBusy ? 0.6 : 1,
+              }}
+            >
+              <Ionicons name={favorited ? "bookmark" : "bookmark-outline"} size={18} color="#FFFFFF" />
+            </Pressable>
+
+            <Pressable
+              onPress={() => router.push({ pathname: "/(app)/report/[targetUserId]", params: { targetUserId: userId } })}
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: 18,
+                backgroundColor: "rgba(0,0,0,0.5)",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text style={{ color: "#FFFFFF", fontSize: 16 }}>⋯</Text>
+            </Pressable>
+          </View>
         </View>
 
         <View style={{ paddingHorizontal: theme.spacing.md, marginTop: theme.spacing.md }}>

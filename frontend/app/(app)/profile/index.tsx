@@ -15,6 +15,7 @@ import { useAuthStore } from "../../../store/authStore";
 import { publicPhotoUrl } from "../../../lib/photoUrl";
 import { calculateAge } from "../../../lib/discover";
 import { interestIcon } from "../../../lib/interestIcon";
+import { fetchUnreadNotificationCount } from "../../../lib/notifications";
 
 const MAX_PHOTOS = 6;
 const RING_SIZE = 128;
@@ -87,6 +88,12 @@ export default function MyProfile() {
         interest_tags: data?.interest_tags ?? [],
       };
     },
+  });
+
+  const { data: unreadNotifications } = useQuery({
+    queryKey: ["notifications-unread", myId],
+    queryFn: () => fetchUnreadNotificationCount(myId),
+    refetchInterval: 30_000,
   });
 
   const { data: stats } = useQuery({
@@ -198,19 +205,62 @@ export default function MyProfile() {
             <IconPill icon="eye-outline" label="Preview" onPress={() => router.push("/(app)/profile/preview")} />
             <IconPill icon="share-social-outline" label="Share" onPress={() => router.push("/(app)/profile/share")} />
           </View>
-          <Pressable
-            onPress={() => router.push("/(app)/settings")}
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: 18,
-              backgroundColor: theme.color.surfaceSecondary,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Ionicons name="settings-outline" size={18} color={theme.color.textPrimary} />
-          </Pressable>
+          <View style={{ flexDirection: "row", gap: 8 }}>
+            <Pressable
+              onPress={() => router.push("/(app)/notifications")}
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: 18,
+                backgroundColor: theme.color.surfaceSecondary,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Ionicons name="notifications-outline" size={18} color={theme.color.textPrimary} />
+              {unreadNotifications ? (
+                <View
+                  style={{
+                    position: "absolute",
+                    top: 4,
+                    right: 4,
+                    width: 9,
+                    height: 9,
+                    borderRadius: 5,
+                    backgroundColor: theme.color.error,
+                    borderWidth: 1.5,
+                    borderColor: theme.color.surfaceSecondary,
+                  }}
+                />
+              ) : null}
+            </Pressable>
+            <Pressable
+              onPress={() => router.push("/(app)/favorites")}
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: 18,
+                backgroundColor: theme.color.surfaceSecondary,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Ionicons name="bookmark-outline" size={18} color={theme.color.textPrimary} />
+            </Pressable>
+            <Pressable
+              onPress={() => router.push("/(app)/settings")}
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: 18,
+                backgroundColor: theme.color.surfaceSecondary,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Ionicons name="settings-outline" size={18} color={theme.color.textPrimary} />
+            </Pressable>
+          </View>
         </View>
 
         {photosLoading ? (
