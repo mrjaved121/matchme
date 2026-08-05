@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "../lib/supabase/client";
 
-const LINKS = [
+const ADMIN_LINKS = [
   { href: "/", label: "Overview" },
   { href: "/activity", label: "Activity" },
   { href: "/users", label: "Users" },
@@ -14,9 +14,23 @@ const LINKS = [
   { href: "/app-config", label: "App Config" },
 ];
 
-export function SidebarNav({ adminName }: { adminName: string }) {
+export function SidebarNav({
+  userName,
+  isAdmin = false,
+  isOperator = false,
+}: {
+  userName: string;
+  isAdmin?: boolean;
+  isOperator?: boolean;
+}) {
   const pathname = usePathname();
   const router = useRouter();
+
+  const links = [
+    ...(isAdmin ? ADMIN_LINKS : []),
+    ...(isAdmin || isOperator ? [{ href: "/inbox", label: "Inbox" }] : []),
+    ...(isAdmin ? [{ href: "/inbox/all", label: "All conversations" }] : []),
+  ];
 
   async function handleSignOut() {
     const supabase = createClient();
@@ -29,10 +43,10 @@ export function SidebarNav({ adminName }: { adminName: string }) {
     <aside className="flex w-60 flex-col justify-between border-r border-border bg-surface p-6">
       <div>
         <p className="text-lg font-bold text-foreground">Spark</p>
-        <p className="text-sm text-foreground-secondary">Admin</p>
+        <p className="text-sm text-foreground-secondary">{isAdmin ? "Admin" : "Operator"}</p>
 
         <nav className="mt-8 flex flex-col gap-1">
-          {LINKS.map((link) => {
+          {links.map((link) => {
             const active = pathname === link.href;
             return (
               <Link
@@ -52,7 +66,7 @@ export function SidebarNav({ adminName }: { adminName: string }) {
       </div>
 
       <div className="flex flex-col gap-2">
-        <p className="truncate text-sm text-foreground-secondary">{adminName}</p>
+        <p className="truncate text-sm text-foreground-secondary">{userName}</p>
         <button
           onClick={handleSignOut}
           className="rounded-xl border border-border px-3 py-2 text-left text-sm font-medium text-foreground transition hover:bg-background"
