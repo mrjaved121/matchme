@@ -1,11 +1,16 @@
 // One-off data backfill: most demo/seed profiles have zero rows in
 // profile_photos, so their Discover/Matches cards fall back to a plain
-// letter-avatar placeholder. Gives each photo-less profile a real portrait
-// photo from randomuser.me (a public API purpose-built for exactly this —
-// realistic demo/placeholder headshots, gender-matched, no licensing
-// concerns since these are fake test users, not the real app's marketing
-// imagery). Requires the passthrough added to lib/photoUrl.ts so these full
-// URLs aren't mistaken for a Supabase Storage path.
+// letter-avatar placeholder. Gives each photo-less profile a real,
+// gender-matched portrait from xsgames.co's avatar set (separate male/
+// female folders, 1-78 each, 256x256 — a real resolution bump over
+// randomuser.me's 128x128 "large" photos, which were gender-matched but
+// visibly blurry once stretched across a full swipe-card hero; see
+// upgrade-seed-photos.mjs for how the first backfill batch was migrated
+// off both randomuser.me and a pravatar.cc detour that traded gender
+// matching for sharpness). No licensing concerns since these are fake test
+// users, not the real app's marketing imagery. Requires the passthrough
+// added to lib/photoUrl.ts so these full URLs aren't mistaken for a
+// Supabase Storage path.
 import { Client } from 'pg';
 import fs from 'fs';
 import path from 'path';
@@ -22,12 +27,14 @@ if (!connectionString) {
   process.exit(1);
 }
 
+const POOL_SIZE = 78;
+
 const client = new Client({ connectionString, ssl: { rejectUnauthorized: false } });
 
 function photoUrlFor(gender, index) {
-  const pool = gender === 'male' ? 'men' : 'women';
-  const n = index % 100;
-  return `https://randomuser.me/api/portraits/${pool}/${n}.jpg`;
+  const pool = gender === 'male' ? 'male' : 'female';
+  const n = (index % POOL_SIZE) + 1;
+  return `https://xsgames.co/randomusers/assets/avatars/${pool}/${n}.jpg`;
 }
 
 (async () => {

@@ -1,6 +1,7 @@
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { Animated, Dimensions, Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../theme/useTheme";
 import type { SwipeAction } from "../lib/discover";
@@ -148,6 +149,8 @@ export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
         </>
       ) : null}
 
+      <LinearGradient colors={["transparent", "rgba(0,0,0,0.75)"]} style={styles.gradientOverlay} pointerEvents="none" />
+
       <View style={styles.infoOverlay}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
           <Text style={styles.name}>
@@ -227,6 +230,13 @@ const styles = StyleSheet.create({
     height: 3,
     borderRadius: 2,
   },
+  gradientOverlay: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: "60%",
+  },
   infoOverlay: {
     position: "absolute",
     left: 0,
@@ -234,7 +244,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     padding: 20,
     paddingTop: 60,
-    backgroundColor: "rgba(0,0,0,0.55)",
   },
   name: {
     fontSize: 26,
