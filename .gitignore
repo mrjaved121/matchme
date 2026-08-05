@@ -20,7 +20,7 @@ dashboard/out/
 backend/supabase/.branches/
 backend/supabase/.temp/
 backend/supabase/credentials*.csv
-backend/supabase/seed_pk_in.sql
+backend/supabase/seed*.sql
 
 # env
 .env
