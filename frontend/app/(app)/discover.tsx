@@ -182,7 +182,7 @@ export default function Discover() {
     <ScreenContainer padded={false}>
       <View style={{ flex: 1 }}>
         <Pressable
-          onPress={() => router.push("/(app)/preference-filter")}
+          onPress={() => router.push("/(app)/discovery-preferences")}
           accessibilityRole="button"
           accessibilityLabel="Discovery filters"
           style={{
