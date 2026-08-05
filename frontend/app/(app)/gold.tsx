@@ -88,7 +88,7 @@ export default function GoldPaywall() {
 
   return (
     <ScreenContainer padded={false}>
-      <ScrollView contentContainerStyle={{ paddingBottom: theme.spacing.xxl + 96 }} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={{ paddingBottom: theme.spacing.xxl + 140 }} showsVerticalScrollIndicator={false}>
         <View style={{ alignItems: "center", paddingHorizontal: theme.spacing.lg, paddingTop: theme.spacing.lg }}>
           <View
             style={{
