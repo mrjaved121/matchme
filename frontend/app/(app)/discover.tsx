@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Alert, Pressable, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useFocusEffect } from "expo-router";
 import * as Haptics from "expo-haptics";
@@ -22,22 +22,29 @@ import {
   formatDistance,
   isRecentlyOnline,
   recordSwipe,
+  rewindLastSwipe,
   type SwipeAction,
 } from "../../lib/discover";
+
+const FREE_REWINDS_PER_SESSION = 1;
 
 export default function Discover() {
   const theme = useTheme();
   const myId = useAuthStore((s) => s.session!.user.id);
+  const isGold = useAuthStore((s) => s.profile?.is_gold ?? false);
 
   const [deck, setDeck] = useState<SwipeCardProfile[] | null>(null);
   const [error, setError] = useState(false);
   const isOnline = useIsOnline();
   const [busy, setBusy] = useState(false);
   const topCardRef = useRef<SwipeCardHandle>(null);
+  const [lastSwiped, setLastSwiped] = useState<SwipeCardProfile | null>(null);
+  const rewindsUsed = useRef(0);
 
   const load = useCallback(async () => {
     setError(false);
     setDeck(null);
+    setLastSwiped(null);
     try {
       const [rawCandidates, me] = await Promise.all([fetchDiscoverCandidates(20), fetchMySnapshot(myId)]);
       const candidates = applyAdvancedFilters(me, rawCandidates);
@@ -90,6 +97,7 @@ export default function Discover() {
 
   async function handleSwiped(profileId: string, action: SwipeAction) {
     setBusy(true);
+    setLastSwiped(deck?.find((p) => p.id === profileId) ?? null);
     setDeck((prev) => (prev ? prev.filter((p) => p.id !== profileId) : prev));
 
     try {
@@ -110,6 +118,34 @@ export default function Discover() {
         router.push({ pathname: "/(app)/out-of-likes", params: { type: "superlike" } });
       } else if (message.includes("daily_like_limit_reached")) {
         router.push({ pathname: "/(app)/out-of-likes", params: { type: "like" } });
+      }
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleRewind() {
+    if (busy || !lastSwiped) return;
+
+    if (!isGold && rewindsUsed.current >= FREE_REWINDS_PER_SESSION) {
+      router.push("/(app)/gold");
+      return;
+    }
+
+    setBusy(true);
+    const profile = lastSwiped;
+    try {
+      await rewindLastSwipe();
+      rewindsUsed.current += 1;
+      setLastSwiped(null);
+      setDeck((prev) => (prev ? [profile, ...prev] : prev));
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    } catch (e) {
+      const message = e instanceof Error ? e.message : "";
+      if (message.includes("cannot_rewind_a_match")) {
+        Alert.alert("Can't rewind", "You already matched with this person.");
+      } else if (!message.includes("no_swipe_to_rewind")) {
+        Alert.alert("Couldn't rewind", "Please try again.");
       }
     } finally {
       setBusy(false);
@@ -199,7 +235,7 @@ export default function Discover() {
               zIndex: 20,
             }}
           >
-            <ActionButton iconName="time-outline" color={theme.swipe.rewind} size={48} onPress={() => {}} disabled />
+            <ActionButton iconName="time-outline" color={theme.swipe.rewind} size={48} onPress={handleRewind} disabled={!lastSwiped} />
             <ActionButton iconName="close" color={theme.swipe.pass} size={64} onPress={() => !busy && topCardRef.current?.swipe("pass")} />
             <ActionButton iconName="star" color={theme.swipe.superlike} size={48} onPress={() => !busy && topCardRef.current?.swipe("superlike")} />
             <ActionButton iconName="heart" color={theme.swipe.like} size={64} filled onPress={() => !busy && topCardRef.current?.swipe("like")} />

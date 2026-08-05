@@ -144,6 +144,14 @@ export async function recordSwipe(swipedId: string, action: SwipeAction) {
   return data as { matched: boolean; match_id: string | null };
 }
 
+/** Undoes the caller's most recent swipe server-side. Returns the swiped
+ * profile's id so the card can be restored to the top of the local deck. */
+export async function rewindLastSwipe(): Promise<string> {
+  const { data, error } = await supabase.rpc("rewind_last_swipe");
+  if (error) throw error;
+  return data as string;
+}
+
 /** Best-effort: silently no-ops if permission is denied, since distance
  * filtering already degrades gracefully when a profile has no coordinates. */
 export async function captureAndSaveLocation(userId: string): Promise<void> {
