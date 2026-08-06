@@ -37,7 +37,8 @@
             "buildArchs": ["arm64-v8a"]
           }
         }
-      ]
+      ],
+      "./plugins/withAndroidResConfigs"
     ],
     "ios": {
       "supportsTablet": true,

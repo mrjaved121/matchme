@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export const GENDER_OPTIONS = [
   { label: "Women", value: "female" },

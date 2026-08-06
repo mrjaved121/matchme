@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { INTEREST_OPTIONS } from "./constants";
 
 // Matches the export's interest chips, which each carry a small icon (e.g.
