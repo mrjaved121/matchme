@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Alert, Animated, Dimensions, Image, Pressable, Text, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ScreenContainer } from "../components/ScreenContainer";
 import { useTheme } from "../theme/useTheme";

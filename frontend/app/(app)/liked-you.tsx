@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FlatList, Image, Pressable, Text, View } from "react-native";
 import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useQuery } from "@tanstack/react-query";
 import { ScreenContainer } from "../../components/ScreenContainer";

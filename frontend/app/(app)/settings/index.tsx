@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Image, Pressable, ScrollView, Switch, Text, View } from "react-native";
 import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useQuery } from "@tanstack/react-query";
 import { ScreenContainer } from "../../../components/ScreenContainer";
 import { useTheme } from "../../../theme/useTheme";

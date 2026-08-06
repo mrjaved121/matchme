@@ -3,7 +3,7 @@ import { Image, Pressable, Text, View } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { decode as decodeBase64 } from "base64-arraybuffer";
 import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { OnboardingStepLayout } from "../../components/OnboardingStepLayout";
 import { useTheme } from "../../theme/useTheme";
 import { supabase } from "../../lib/supabase";

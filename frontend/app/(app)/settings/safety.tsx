@@ -1,6 +1,6 @@
 import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { ScreenContainer } from "../../../components/ScreenContainer";
 import { Button } from "../../../components/Button";
 import { useTheme } from "../../../theme/useTheme";
