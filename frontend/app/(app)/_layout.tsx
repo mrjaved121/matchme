@@ -110,6 +110,7 @@ function AppTabs({ userId, theme }: { userId: string; theme: ReturnType<typeof u
       <Tabs.Screen name="invite-friends" options={{ href: null }} />
       <Tabs.Screen name="favorites" options={{ href: null }} />
       <Tabs.Screen name="notifications" options={{ href: null }} />
+      <Tabs.Screen name="my-likes" options={{ href: null }} />
     </Tabs>
   );
 }
