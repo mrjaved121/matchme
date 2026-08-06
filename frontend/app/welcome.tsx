@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Alert, Animated, Dimensions, Image, Pressable, Text, View } from "react-native";
+import { Alert, Animated, Dimensions, Pressable, Text, View } from "react-native";
+import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -72,7 +73,7 @@ export default function Welcome() {
     <ScreenContainer padded={false}>
       <View style={{ flex: 1 }}>
         <View style={{ width: "100%", height: "42%", borderBottomLeftRadius: 48, borderBottomRightRadius: 48, overflow: "hidden" }}>
-          <Image source={{ uri: HERO_PHOTO }} style={{ width: "100%", height: "100%" }} />
+          <Image source={{ uri: HERO_PHOTO }} style={{ width: "100%", height: "100%" }} cachePolicy="memory-disk" />
           <LinearGradient
             colors={["transparent", theme.color.background]}
             style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: "50%" }}

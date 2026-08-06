@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Animated, Image, Text, View } from "react-native";
+import { Animated, Text, View } from "react-native";
+import { Image } from "expo-image";
 import * as Haptics from "expo-haptics";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router, useLocalSearchParams } from "expo-router";
@@ -26,6 +27,7 @@ function Avatar({ person, size, borderColor }: { person: Person | null; size: nu
     <Image
       source={{ uri: publicPhotoUrl(person.photoPath) }}
       style={{ width: size, height: size, borderRadius: size / 2, borderWidth: 3, borderColor }}
+      cachePolicy="memory-disk"
     />
   ) : (
     <View

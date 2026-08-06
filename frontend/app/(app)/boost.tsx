@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Alert, Image, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Pressable, ScrollView, Text, View } from "react-native";
+import { Image } from "expo-image";
 import { router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useQuery } from "@tanstack/react-query";
@@ -96,7 +97,7 @@ export default function Boost() {
               }}
             >
               {photo ? (
-                <Image source={{ uri: photo }} style={{ width: "100%", height: "100%" }} />
+                <Image source={{ uri: photo }} style={{ width: "100%", height: "100%" }} cachePolicy="memory-disk" />
               ) : (
                 <View style={{ flex: 1, backgroundColor: theme.color.surface }} />
               )}

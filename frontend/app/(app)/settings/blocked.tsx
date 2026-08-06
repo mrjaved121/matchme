@@ -1,4 +1,5 @@
-import { FlatList, Image, Text, View } from "react-native";
+import { FlatList, Text, View } from "react-native";
+import { Image } from "expo-image";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ScreenContainer } from "../../../components/ScreenContainer";
 import { Button } from "../../../components/Button";
@@ -90,7 +91,7 @@ export default function BlockedUsers() {
               }}
             >
               {item.photoPath ? (
-                <Image source={{ uri: publicPhotoUrl(item.photoPath) }} style={{ width: 48, height: 48, borderRadius: 24 }} />
+                <Image source={{ uri: publicPhotoUrl(item.photoPath) }} style={{ width: 48, height: 48, borderRadius: 24 }} cachePolicy="memory-disk" />
               ) : (
                 <View
                   style={{

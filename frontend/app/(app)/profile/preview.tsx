@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Image, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
+import { Image } from "expo-image";
 import { router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -94,7 +95,7 @@ export default function ProfilePreview() {
               }}
               style={{ width: "100%", height: "100%" }}
             >
-              <Image source={{ uri: publicPhotoUrl(currentPhoto.storage_path) }} style={{ width: "100%", height: "100%" }} />
+              <Image source={{ uri: publicPhotoUrl(currentPhoto.storage_path) }} style={{ width: "100%", height: "100%" }} cachePolicy="memory-disk" />
             </Pressable>
           ) : (
             <View style={{ width: "100%", height: "100%", backgroundColor: theme.color.surfaceSecondary }} />

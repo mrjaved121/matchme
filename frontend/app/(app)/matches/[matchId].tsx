@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Alert, FlatList, Image, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from "react-native";
+import { Alert, FlatList, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from "react-native";
+import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as Haptics from "expo-haptics";
@@ -267,7 +268,7 @@ export default function Chat() {
           <View style={{ width: 44, height: 44, marginBottom: 2 }}>
             <View style={{ width: 44, height: 44, borderRadius: 22, overflow: "hidden", backgroundColor: theme.color.surfaceSecondary }}>
               {otherPhoto ? (
-                <Image source={{ uri: otherPhoto }} style={{ width: "100%", height: "100%" }} />
+                <Image source={{ uri: otherPhoto }} style={{ width: "100%", height: "100%" }} cachePolicy="memory-disk" />
               ) : (
                 <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                   <Text style={{ fontWeight: "700", color: theme.color.primary }}>{otherName?.[0]?.toUpperCase() ?? "?"}</Text>
@@ -348,7 +349,7 @@ export default function Chat() {
               <View style={{ flexDirection: "row", alignItems: "flex-end", gap: 8, alignSelf: mine ? "flex-end" : "flex-start", maxWidth: "85%" }}>
                 {!mine ? (
                   <View style={{ width: 28, height: 28, borderRadius: 14, overflow: "hidden", backgroundColor: theme.color.surfaceSecondary }}>
-                    {otherPhoto ? <Image source={{ uri: otherPhoto }} style={{ width: "100%", height: "100%" }} /> : null}
+                    {otherPhoto ? <Image source={{ uri: otherPhoto }} style={{ width: "100%", height: "100%" }} cachePolicy="memory-disk" /> : null}
                   </View>
                 ) : null}
                 <View style={{ alignItems: mine ? "flex-end" : "flex-start", gap: 4 }}>

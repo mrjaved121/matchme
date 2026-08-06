@@ -1,4 +1,5 @@
-import { FlatList, Image, Pressable, Text, View } from "react-native";
+import { FlatList, Pressable, Text, View } from "react-native";
+import { Image } from "expo-image";
 import { router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -107,7 +108,7 @@ function LikeCard({ item, onOpen }: { item: SentLike; onOpen: () => void }) {
     >
       <View style={{ width: "100%", aspectRatio: 4 / 5 }}>
         {item.photoPath ? (
-          <Image source={{ uri: publicPhotoUrl(item.photoPath) }} style={{ width: "100%", height: "100%" }} />
+          <Image source={{ uri: publicPhotoUrl(item.photoPath) }} style={{ width: "100%", height: "100%" }} cachePolicy="memory-disk" />
         ) : (
           <View style={{ width: "100%", height: "100%", backgroundColor: theme.color.surfaceSecondary }} />
         )}

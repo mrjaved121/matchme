@@ -1,4 +1,5 @@
-import { Image, Text, View } from "react-native";
+import { Text, View } from "react-native";
+import { Image } from "expo-image";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useTheme } from "../theme/useTheme";
 
@@ -31,7 +32,7 @@ export function Avatar({ uri, name, size, online, verified }: Props) {
         }}
       >
         {uri ? (
-          <Image source={{ uri }} style={{ width: "100%", height: "100%" }} />
+          <Image source={{ uri }} style={{ width: "100%", height: "100%" }} cachePolicy="memory-disk" />
         ) : (
           <Text style={{ fontSize: size * 0.36, fontWeight: "700", color: theme.color.primary }}>
             {name?.[0]?.toUpperCase() ?? "?"}

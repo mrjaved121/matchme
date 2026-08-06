@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Alert, Image, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Pressable, ScrollView, Text, View } from "react-native";
+import { Image } from "expo-image";
 import { router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -114,7 +115,7 @@ export default function GoldPaywall() {
 
         <View style={{ paddingHorizontal: theme.spacing.lg, marginTop: theme.spacing.lg }}>
           <View style={{ width: "100%", height: 192, borderRadius: 24, overflow: "hidden" }}>
-            <Image source={{ uri: BANNER_PHOTO }} style={{ width: "100%", height: "100%" }} />
+            <Image source={{ uri: BANNER_PHOTO }} style={{ width: "100%", height: "100%" }} cachePolicy="memory-disk" />
             <LinearGradient colors={["transparent", "rgba(20,16,25,0.5)"]} style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "60%" }} />
             <View style={{ position: "absolute", bottom: 12, left: 12, right: 12, flexDirection: "row", justifyContent: "flex-end" }}>
               <View style={{ flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: theme.color.primary, paddingHorizontal: 10, paddingVertical: 5, borderRadius: theme.radius.pill }}>

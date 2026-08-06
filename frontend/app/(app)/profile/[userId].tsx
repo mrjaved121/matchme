@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Image, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
+import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -147,7 +148,7 @@ export default function ViewProfile() {
                 setPhotoIndex((i) => (i + 1) % photos.length);
               }}
             >
-              <Image source={{ uri: publicPhotoUrl(currentPhoto.storage_path) }} style={{ width: "100%", aspectRatio: 4 / 5 }} />
+              <Image source={{ uri: publicPhotoUrl(currentPhoto.storage_path) }} style={{ width: "100%", aspectRatio: 4 / 5 }} cachePolicy="memory-disk" />
             </Pressable>
           ) : (
             <View style={{ width: "100%", aspectRatio: 4 / 5, backgroundColor: theme.color.surface }} />

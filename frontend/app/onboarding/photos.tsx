@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Image, Pressable, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
+import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { decode as decodeBase64 } from "base64-arraybuffer";
 import { router } from "expo-router";
@@ -176,7 +177,7 @@ export default function OnboardingPhotos() {
 
             return (
               <View key={key} style={{ width: tileSize, aspectRatio: 3 / 4, borderRadius: 24, overflow: "hidden" }}>
-                <Image source={{ uri }} style={{ width: "100%", height: "100%" }} />
+                <Image source={{ uri }} style={{ width: "100%", height: "100%" }} cachePolicy="memory-disk" />
                 {i === 0 ? (
                   <View
                     style={{

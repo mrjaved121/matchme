@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Image, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
+import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { decode as decodeBase64 } from "base64-arraybuffer";
 import { router } from "expo-router";
@@ -317,7 +318,7 @@ export default function MyProfile() {
                   }}
                 >
                   {primaryPhotoUri ? (
-                    <Image source={{ uri: primaryPhotoUri }} style={{ width: "100%", height: "100%" }} />
+                    <Image source={{ uri: primaryPhotoUri }} style={{ width: "100%", height: "100%" }} cachePolicy="memory-disk" />
                   ) : (
                     <Text style={{ fontSize: 36, fontWeight: "700", color: theme.color.primary }}>
                       {profile?.first_name?.[0]?.toUpperCase() ?? "?"}
@@ -427,7 +428,7 @@ export default function MyProfile() {
                       key={photo.id}
                       style={{ width: tileWidth, aspectRatio: 4 / 5, borderRadius: theme.radius.input, overflow: "hidden", ...theme.shadow.card }}
                     >
-                      <Image source={{ uri: publicPhotoUrl(photo.storage_path) }} style={{ width: "100%", height: "100%" }} />
+                      <Image source={{ uri: publicPhotoUrl(photo.storage_path) }} style={{ width: "100%", height: "100%" }} cachePolicy="memory-disk" />
                       <Pressable
                         onPress={() => removePhoto(photo)}
                         disabled={busy}

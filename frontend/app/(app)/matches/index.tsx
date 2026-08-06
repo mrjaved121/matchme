@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { FlatList, Image, Pressable, RefreshControl, Text, TextInput, View } from "react-native";
+import { FlatList, Pressable, RefreshControl, Text, TextInput, View } from "react-native";
+import { Image } from "expo-image";
 import { router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useQuery } from "@tanstack/react-query";
@@ -238,7 +239,7 @@ function NewMatchAvatar({ item }: { item: MatchListItem }) {
     >
       <View style={{ width: 64, height: 64, borderRadius: 32, borderWidth: 2, borderColor: theme.color.primary }}>
         {item.photoPath ? (
-          <Image source={{ uri: publicPhotoUrl(item.photoPath) }} style={{ width: "100%", height: "100%", borderRadius: 30, margin: 2 }} />
+          <Image source={{ uri: publicPhotoUrl(item.photoPath) }} style={{ width: "100%", height: "100%", borderRadius: 30, margin: 2 }} cachePolicy="memory-disk" />
         ) : (
           <View
             style={{
@@ -274,7 +275,7 @@ function MatchRow({ item, isLast }: { item: MatchListItem; isLast: boolean }) {
     >
       <View style={{ width: 56, height: 56, borderRadius: 28, overflow: "hidden" }}>
         {item.photoPath ? (
-          <Image source={{ uri: publicPhotoUrl(item.photoPath) }} style={{ width: "100%", height: "100%" }} />
+          <Image source={{ uri: publicPhotoUrl(item.photoPath) }} style={{ width: "100%", height: "100%" }} cachePolicy="memory-disk" />
         ) : (
           <View style={{ width: "100%", height: "100%", backgroundColor: theme.color.border, alignItems: "center", justifyContent: "center" }}>
             <Text style={{ fontSize: 20 }}>{item.otherName?.[0]?.toUpperCase() ?? "?"}</Text>

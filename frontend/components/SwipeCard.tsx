@@ -1,5 +1,6 @@
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
-import { Animated, Dimensions, Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Animated, Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
+import { Image } from "expo-image";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -137,7 +138,7 @@ export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
     >
     <View style={[styles.card, { backgroundColor: theme.color.surface }]}>
       {currentPhoto ? (
-        <Image source={{ uri: currentPhoto }} style={styles.photo} />
+        <Image source={{ uri: currentPhoto }} style={styles.photo} cachePolicy="memory-disk" transition={150} />
       ) : (
         <View style={[styles.photo, { alignItems: "center", justifyContent: "center", backgroundColor: theme.color.border }]}>
           <Text style={{ fontSize: 64, color: theme.color.textSecondary }}>

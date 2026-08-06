@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Image, Pressable, ScrollView, Switch, Text, View } from "react-native";
+import { Pressable, ScrollView, Switch, Text, View } from "react-native";
+import { Image } from "expo-image";
 import { router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useQuery } from "@tanstack/react-query";
@@ -119,7 +120,7 @@ export default function Settings() {
             }}
           >
             {summary?.photoUri ? (
-              <Image source={{ uri: summary.photoUri }} style={{ width: "100%", height: "100%" }} />
+              <Image source={{ uri: summary.photoUri }} style={{ width: "100%", height: "100%" }} cachePolicy="memory-disk" />
             ) : (
               <Text style={{ fontSize: 20, fontWeight: "700", color: theme.color.primary }}>
                 {summary?.first_name?.[0]?.toUpperCase() ?? "?"}
