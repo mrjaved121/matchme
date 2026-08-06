@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Alert, FlatList, Image, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import * as Haptics from "expo-haptics";
 import { useQueryClient } from "@tanstack/react-query";
 import { ScreenContainer } from "../../../components/ScreenContainer";
@@ -116,7 +116,8 @@ export default function Chat() {
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "messages", filter: `match_id=eq.${matchId}` },
         (payload) => {
-          setMessages((prev) => [...prev, payload.new as Message]);
+          const incoming = payload.new as Message;
+          setMessages((prev) => (prev.some((m) => m.id === incoming.id) ? prev : [...prev, incoming]));
         },
       )
       .on(
@@ -189,11 +190,31 @@ export default function Chat() {
     setDraft("");
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
 
-    const { error: sendError } = await supabase
-      .from("messages")
-      .insert({ match_id: matchId, sender_id: myId, content });
+    const tempId = `temp-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const optimisticMessage: Message = {
+      id: tempId,
+      match_id: matchId,
+      sender_id: myId,
+      content,
+      created_at: new Date().toISOString(),
+      read_at: null,
+    };
+    setMessages((prev) => [...prev, optimisticMessage]);
 
-    if (sendError) setError(sendError.message);
+    const { data, error: sendError } = await supabase
+      .from("messages")
+      .insert({ match_id: matchId, sender_id: myId, content })
+      .select()
+      .single();
+
+    if (sendError || !data) {
+      setMessages((prev) => prev.filter((m) => m.id !== tempId));
+      setDraft(content);
+      Alert.alert("Message not sent", sendError?.message ?? "Please try again.");
+      return;
+    }
+
+    setMessages((prev) => prev.map((m) => (m.id === tempId ? (data as Message) : m)));
   }
 
   if (loading) {
@@ -375,6 +396,7 @@ export default function Chat() {
               value={draft}
               onChangeText={handleDraftChange}
               onSubmitEditing={handleSend}
+              maxLength={2000}
               style={[theme.typography.body, { flex: 1, color: theme.color.textPrimary, paddingHorizontal: theme.spacing.sm, paddingVertical: theme.spacing.sm }]}
             />
             <Pressable
