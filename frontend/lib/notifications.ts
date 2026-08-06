@@ -2,7 +2,7 @@ import { supabase } from "./supabase";
 
 export type AppNotification = {
   id: string;
-  type: "match" | "message";
+  type: "match" | "message" | "referral";
   title: string;
   body: string;
   related_match_id: string | null;

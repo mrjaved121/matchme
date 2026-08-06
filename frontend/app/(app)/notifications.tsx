@@ -135,15 +135,20 @@ function NotificationRow({ item, isLast, onPress }: { item: AppNotification; isL
           width: 40,
           height: 40,
           borderRadius: 20,
-          backgroundColor: item.type === "match" ? theme.color.primary + "1A" : theme.color.surfaceSecondary,
+          backgroundColor:
+            item.type === "match"
+              ? theme.color.primary + "1A"
+              : item.type === "referral"
+                ? theme.color.gold + "1A"
+                : theme.color.surfaceSecondary,
           alignItems: "center",
           justifyContent: "center",
         }}
       >
         <Ionicons
-          name={item.type === "match" ? "heart" : "chatbubble-ellipses"}
+          name={item.type === "match" ? "heart" : item.type === "referral" ? "gift" : "chatbubble-ellipses"}
           size={18}
-          color={item.type === "match" ? theme.color.primary : theme.color.textSecondary}
+          color={item.type === "match" ? theme.color.primary : item.type === "referral" ? theme.color.gold : theme.color.textSecondary}
         />
       </View>
 

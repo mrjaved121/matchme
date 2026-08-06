@@ -80,6 +80,8 @@ export default function InviteFriends() {
           <StatTile label="Gold Weeks Earned" value={weeksEarned} icon="👑" />
         </View>
 
+        <MilestoneProgress joinedCount={joinedCount} />
+
         {link ? (
           <View
             style={{
@@ -170,6 +172,54 @@ export default function InviteFriends() {
         </Text>
       </ScrollView>
     </ScreenContainer>
+  );
+}
+
+const MILESTONE_TARGET = 10;
+
+// The 10th completed referral grants a bonus month of Gold, stacking on
+// the per-referral weeks earned along the way (see
+// grant_referral_reward in 20260806140000_referral_milestone_bonus.sql).
+function MilestoneProgress({ joinedCount }: { joinedCount: number }) {
+  const theme = useTheme();
+  const reached = joinedCount >= MILESTONE_TARGET;
+  const progress = Math.min(joinedCount, MILESTONE_TARGET) / MILESTONE_TARGET;
+
+  return (
+    <View
+      style={{
+        backgroundColor: reached ? theme.color.gold + "1A" : theme.color.surface,
+        borderRadius: theme.radius.card,
+        borderWidth: 1,
+        borderColor: reached ? theme.color.gold : theme.color.border,
+        padding: theme.spacing.md,
+        marginTop: theme.spacing.md,
+      }}
+    >
+      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+        <Text style={[theme.typography.label, { color: theme.color.textPrimary }]}>
+          {reached ? "🏆 Referral bonus unlocked" : "Referral bonus: 1 free month of Gold"}
+        </Text>
+        <Text style={[theme.typography.caption, { color: theme.color.textSecondary, fontWeight: "700" }]}>
+          {Math.min(joinedCount, MILESTONE_TARGET)}/{MILESTONE_TARGET}
+        </Text>
+      </View>
+      <View style={{ height: 8, borderRadius: 4, backgroundColor: theme.color.surfaceVariant, overflow: "hidden" }}>
+        <View
+          style={{
+            width: `${progress * 100}%`,
+            height: "100%",
+            borderRadius: 4,
+            backgroundColor: theme.color.gold,
+          }}
+        />
+      </View>
+      <Text style={[theme.typography.caption, { color: theme.color.textSecondary, marginTop: 6 }]}>
+        {reached
+          ? "You earned a bonus month of Gold for reaching 10 joined friends."
+          : `${MILESTONE_TARGET - joinedCount} more joined friend${MILESTONE_TARGET - joinedCount === 1 ? "" : "s"} to unlock a bonus month of Gold.`}
+      </Text>
+    </View>
   );
 }
 
