@@ -5,6 +5,7 @@ import { OnboardingStepLayout } from "../../components/OnboardingStepLayout";
 import { TextField } from "../../components/TextField";
 import { useTheme } from "../../theme/useTheme";
 import { supabase } from "../../lib/supabase";
+import { SAVE_ERROR_MESSAGE } from "../../lib/errorMessages";
 import { useAuthStore } from "../../store/authStore";
 
 function calculateAge(year: number, month: number, day: number): number {
@@ -75,7 +76,7 @@ export default function OnboardingBirthdate() {
     setLoading(false);
 
     if (updateError) {
-      setError(updateError.message);
+      setError(SAVE_ERROR_MESSAGE);
       return;
     }
 

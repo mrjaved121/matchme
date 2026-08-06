@@ -6,7 +6,7 @@ import { ScreenContainer } from "../../components/ScreenContainer";
 import { TextField } from "../../components/TextField";
 import { ChipSelect } from "../../components/ChipSelect";
 import { Button } from "../../components/Button";
-import { LoadingState } from "../../components/StateViews";
+import { ErrorState, LoadingState } from "../../components/StateViews";
 import { useTheme } from "../../theme/useTheme";
 import { supabase } from "../../lib/supabase";
 import { useAuthStore } from "../../store/authStore";
@@ -30,8 +30,10 @@ export default function DiscoveryPreferences() {
   const isGold = useAuthStore((s) => s.profile?.is_gold ?? false);
   const [prefs, setPrefs] = useState<Prefs | null>(null);
   const [saving, setSaving] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
-  useEffect(() => {
+  function loadPrefs() {
+    setLoadError(false);
     supabase
       .from("profiles")
       .select(
@@ -39,21 +41,27 @@ export default function DiscoveryPreferences() {
       )
       .eq("id", myId)
       .single()
-      .then(({ data }) => {
-        if (data) {
-          setPrefs({
-            interested_in: data.interested_in ?? [],
-            min_age_pref: data.min_age_pref,
-            max_age_pref: data.max_age_pref,
-            max_distance_km: data.max_distance_km ?? 50,
-            global_mode: data.global_mode ?? false,
-            filter_verified_only: data.filter_verified_only ?? false,
-            filter_online_only: data.filter_online_only ?? false,
-            filter_recently_active_only: data.filter_recently_active_only ?? false,
-            filter_new_members_only: data.filter_new_members_only ?? false,
-          });
+      .then(({ data, error: fetchError }) => {
+        if (fetchError || !data) {
+          setLoadError(true);
+          return;
         }
+        setPrefs({
+          interested_in: data.interested_in ?? [],
+          min_age_pref: data.min_age_pref,
+          max_age_pref: data.max_age_pref,
+          max_distance_km: data.max_distance_km ?? 50,
+          global_mode: data.global_mode ?? false,
+          filter_verified_only: data.filter_verified_only ?? false,
+          filter_online_only: data.filter_online_only ?? false,
+          filter_recently_active_only: data.filter_recently_active_only ?? false,
+          filter_new_members_only: data.filter_new_members_only ?? false,
+        });
       });
+  }
+
+  useEffect(() => {
+    loadPrefs();
   }, [myId]);
 
   function toggleGender(value: string) {
@@ -96,6 +104,14 @@ export default function DiscoveryPreferences() {
       .eq("id", myId);
     setSaving(false);
     router.back();
+  }
+
+  if (loadError) {
+    return (
+      <ScreenContainer>
+        <ErrorState onRetry={loadPrefs} />
+      </ScreenContainer>
+    );
   }
 
   if (!prefs) {

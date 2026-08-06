@@ -8,6 +8,7 @@ import { Button } from "../../../components/Button";
 import { useTheme } from "../../../theme/useTheme";
 import { supabase } from "../../../lib/supabase";
 import { useAuthStore } from "../../../store/authStore";
+import { ACTION_ERROR_MESSAGE } from "../../../lib/errorMessages";
 
 const REASONS = [
   { label: "Inappropriate behavior", value: "inappropriate_behavior" },
@@ -44,7 +45,7 @@ export default function ReportUser() {
     setSubmitting(false);
 
     if (error) {
-      Alert.alert("Couldn't submit report", error.message);
+      Alert.alert("Couldn't submit report", ACTION_ERROR_MESSAGE);
       return;
     }
 
@@ -53,13 +54,24 @@ export default function ReportUser() {
     ]);
   }
 
-  async function handleBlock() {
+  function handleBlock() {
+    Alert.alert(
+      "Block this user?",
+      "You won't see each other in Discover or Messages anymore, and any active conversation will end. This can't be undone.",
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Block", style: "destructive", onPress: confirmBlock },
+      ],
+    );
+  }
+
+  async function confirmBlock() {
     setSubmitting(true);
     const { error } = await supabase.from("blocks").insert({ blocker_id: myId, blocked_id: targetUserId });
     setSubmitting(false);
 
     if (error) {
-      Alert.alert("Couldn't block user", error.message);
+      Alert.alert("Couldn't block user", ACTION_ERROR_MESSAGE);
       return;
     }
 

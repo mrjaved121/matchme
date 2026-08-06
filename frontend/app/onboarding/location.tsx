@@ -7,6 +7,7 @@ import { OnboardingStepLayout } from "../../components/OnboardingStepLayout";
 import { TextField } from "../../components/TextField";
 import { useTheme } from "../../theme/useTheme";
 import { supabase } from "../../lib/supabase";
+import { SAVE_ERROR_MESSAGE } from "../../lib/errorMessages";
 import { useAuthStore } from "../../store/authStore";
 
 // Matches design/stitch_just_spark_ui_kit/onboarding_location/code.html: a
@@ -75,7 +76,7 @@ export default function OnboardingLocation() {
     setLoading(false);
 
     if (updateError) {
-      setError(updateError.message);
+      setError(SAVE_ERROR_MESSAGE);
       return;
     }
 

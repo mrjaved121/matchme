@@ -7,6 +7,7 @@ import { ChipSelect } from "../../components/ChipSelect";
 import { TextField } from "../../components/TextField";
 import { useTheme } from "../../theme/useTheme";
 import { supabase } from "../../lib/supabase";
+import { SAVE_ERROR_MESSAGE } from "../../lib/errorMessages";
 import { useAuthStore } from "../../store/authStore";
 import { LOOKING_FOR_OPTIONS } from "../../lib/constants";
 
@@ -94,7 +95,7 @@ export default function OnboardingPreferences() {
     setLoading(false);
 
     if (updateError) {
-      setError(updateError.message);
+      setError(SAVE_ERROR_MESSAGE);
       return;
     }
 

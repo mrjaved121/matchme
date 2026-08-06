@@ -137,9 +137,9 @@ function NotificationRow({ item, isLast, onPress }: { item: AppNotification; isL
           borderRadius: 20,
           backgroundColor:
             item.type === "match"
-              ? theme.color.primary + "1A"
+              ? theme.color.primarySoft
               : item.type === "referral"
-                ? theme.color.gold + "1A"
+                ? theme.color.goldSoft
                 : theme.color.surfaceSecondary,
           alignItems: "center",
           justifyContent: "center",

@@ -128,7 +128,7 @@ export default function SafetyCenter() {
           </Pressable>
         </View>
 
-        <View style={{ backgroundColor: theme.color.error + "18", borderRadius: theme.radius.card, padding: theme.spacing.lg, marginBottom: theme.spacing.xl }}>
+        <View style={{ backgroundColor: theme.color.errorSoft, borderRadius: theme.radius.card, padding: theme.spacing.lg, marginBottom: theme.spacing.xl }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: theme.spacing.sm, marginBottom: theme.spacing.md }}>
             <Ionicons name="warning" size={26} color={theme.color.error} />
             <Text style={[theme.typography.title, { color: theme.color.error }]}>Emergency Actions</Text>

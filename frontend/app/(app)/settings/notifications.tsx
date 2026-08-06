@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Switch, Text, View } from "react-native";
 import { ScreenContainer } from "../../../components/ScreenContainer";
-import { LoadingState } from "../../../components/StateViews";
+import { ErrorState, LoadingState } from "../../../components/StateViews";
 import { useTheme } from "../../../theme/useTheme";
 import { supabase } from "../../../lib/supabase";
 import { useAuthStore } from "../../../store/authStore";
@@ -22,14 +22,26 @@ export default function NotificationSettings() {
   const theme = useTheme();
   const myId = useAuthStore((s) => s.session!.user.id);
   const [prefs, setPrefs] = useState<Prefs | null>(null);
+  const [loadError, setLoadError] = useState(false);
 
-  useEffect(() => {
+  function loadPrefs() {
+    setLoadError(false);
     supabase
       .from("profiles")
       .select("notify_matches, notify_messages, notify_marketing")
       .eq("id", myId)
       .single()
-      .then(({ data }) => data && setPrefs(data));
+      .then(({ data, error }) => {
+        if (error || !data) {
+          setLoadError(true);
+          return;
+        }
+        setPrefs(data);
+      });
+  }
+
+  useEffect(() => {
+    loadPrefs();
   }, [myId]);
 
   async function toggle(key: keyof Prefs) {
@@ -37,6 +49,14 @@ export default function NotificationSettings() {
     const next = { ...prefs, [key]: !prefs[key] };
     setPrefs(next);
     await supabase.from("profiles").update({ [key]: next[key] }).eq("id", myId);
+  }
+
+  if (loadError) {
+    return (
+      <ScreenContainer>
+        <ErrorState onRetry={loadPrefs} />
+      </ScreenContainer>
+    );
   }
 
   if (!prefs) {

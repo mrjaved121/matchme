@@ -4,10 +4,11 @@ import * as ImagePicker from "expo-image-picker";
 import { decode as decodeBase64 } from "base64-arraybuffer";
 import { ScreenContainer } from "../../../components/ScreenContainer";
 import { Button } from "../../../components/Button";
-import { LoadingState } from "../../../components/StateViews";
+import { ErrorState, LoadingState } from "../../../components/StateViews";
 import { useTheme } from "../../../theme/useTheme";
 import { supabase } from "../../../lib/supabase";
 import { useAuthStore } from "../../../store/authStore";
+import { SAVE_ERROR_MESSAGE } from "../../../lib/errorMessages";
 
 type Status = "none" | "pending" | "approved" | "rejected";
 
@@ -37,14 +38,26 @@ export default function Verification() {
   const [status, setStatus] = useState<Status | null>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | undefined>();
+  const [loadError, setLoadError] = useState(false);
 
-  useEffect(() => {
+  function loadStatus() {
+    setLoadError(false);
     supabase
       .from("profiles")
       .select("verification_status")
       .eq("id", myId)
       .single()
-      .then(({ data }) => setStatus((data?.verification_status as Status) ?? "none"));
+      .then(({ data, error: fetchError }) => {
+        if (fetchError) {
+          setLoadError(true);
+          return;
+        }
+        setStatus((data?.verification_status as Status) ?? "none");
+      });
+  }
+
+  useEffect(() => {
+    loadStatus();
   }, [myId]);
 
   async function handleTakeSelfie() {
@@ -81,7 +94,7 @@ export default function Verification() {
 
     if (uploadError) {
       setUploading(false);
-      setError(uploadError.message);
+      setError(SAVE_ERROR_MESSAGE);
       return;
     }
 
@@ -93,11 +106,19 @@ export default function Verification() {
     setUploading(false);
 
     if (updateError) {
-      setError(updateError.message);
+      setError(SAVE_ERROR_MESSAGE);
       return;
     }
 
     setStatus("pending");
+  }
+
+  if (loadError) {
+    return (
+      <ScreenContainer>
+        <ErrorState onRetry={loadStatus} />
+      </ScreenContainer>
+    );
   }
 
   if (!status) {

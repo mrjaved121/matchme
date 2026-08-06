@@ -6,7 +6,7 @@ import * as Clipboard from "expo-clipboard";
 import { useQuery } from "@tanstack/react-query";
 import { ScreenContainer } from "../../components/ScreenContainer";
 import { Button } from "../../components/Button";
-import { LoadingState } from "../../components/StateViews";
+import { ErrorState, LoadingState } from "../../components/StateViews";
 import { useTheme } from "../../theme/useTheme";
 import { useAuthStore } from "../../store/authStore";
 import { ensureReferralCode, fetchReferralHistory } from "../../lib/referral";
@@ -16,12 +16,12 @@ export default function InviteFriends() {
   const myId = useAuthStore((s) => s.session!.user.id);
   const [copied, setCopied] = useState(false);
 
-  const { data: code, isLoading: codeLoading } = useQuery({
+  const { data: code, isLoading: codeLoading, isError: codeError, refetch: refetchCode } = useQuery({
     queryKey: ["my-referral-code", myId],
     queryFn: () => ensureReferralCode(myId),
   });
 
-  const { data: history, isLoading: historyLoading } = useQuery({
+  const { data: history, isLoading: historyLoading, isError: historyError, refetch: refetchHistory } = useQuery({
     queryKey: ["referral-history", myId],
     queryFn: () => fetchReferralHistory(myId),
   });
@@ -55,6 +55,19 @@ export default function InviteFriends() {
     return (
       <ScreenContainer>
         <LoadingState />
+      </ScreenContainer>
+    );
+  }
+
+  if (codeError || historyError) {
+    return (
+      <ScreenContainer>
+        <ErrorState
+          onRetry={() => {
+            if (codeError) refetchCode();
+            if (historyError) refetchHistory();
+          }}
+        />
       </ScreenContainer>
     );
   }
@@ -188,7 +201,7 @@ function MilestoneProgress({ joinedCount }: { joinedCount: number }) {
   return (
     <View
       style={{
-        backgroundColor: reached ? theme.color.gold + "1A" : theme.color.surface,
+        backgroundColor: reached ? theme.color.goldSoft : theme.color.surface,
         borderRadius: theme.radius.card,
         borderWidth: 1,
         borderColor: reached ? theme.color.gold : theme.color.border,

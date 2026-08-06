@@ -5,9 +5,10 @@ import { ScreenContainer } from "../../../components/ScreenContainer";
 import { TextField } from "../../../components/TextField";
 import { ChipSelect } from "../../../components/ChipSelect";
 import { Button } from "../../../components/Button";
-import { LoadingState } from "../../../components/StateViews";
+import { ErrorState, LoadingState } from "../../../components/StateViews";
 import { useTheme } from "../../../theme/useTheme";
 import { supabase } from "../../../lib/supabase";
+import { SAVE_ERROR_MESSAGE } from "../../../lib/errorMessages";
 import { useAuthStore } from "../../../store/authStore";
 import { INTEREST_OPTIONS, LOOKING_FOR_OPTIONS, ORIENTATION_OPTIONS } from "../../../lib/constants";
 
@@ -42,8 +43,10 @@ export default function EditProfile() {
   const [form, setForm] = useState<EditableProfile | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | undefined>();
+  const [loadError, setLoadError] = useState(false);
 
-  useEffect(() => {
+  function loadProfile() {
+    setLoadError(false);
     supabase
       .from("profiles")
       .select(
@@ -51,26 +54,32 @@ export default function EditProfile() {
       )
       .eq("id", myId)
       .single()
-      .then(({ data }) => {
-        if (data) {
-          setForm({
-            first_name: data.first_name ?? "",
-            city: data.city,
-            bio: data.bio ?? "",
-            interest_tags: data.interest_tags ?? [],
-            min_age_pref: data.min_age_pref,
-            max_age_pref: data.max_age_pref,
-            looking_for: data.looking_for,
-            orientation: data.orientation,
-            height_cm: data.height_cm ? String(data.height_cm) : "",
-            job_title: data.job_title ?? "",
-            education: data.education ?? "",
-            smokes: data.smokes,
-            drinks: data.drinks,
-            love_language: data.love_language ?? "",
-          });
+      .then(({ data, error: fetchError }) => {
+        if (fetchError || !data) {
+          setLoadError(true);
+          return;
         }
+        setForm({
+          first_name: data.first_name ?? "",
+          city: data.city,
+          bio: data.bio ?? "",
+          interest_tags: data.interest_tags ?? [],
+          min_age_pref: data.min_age_pref,
+          max_age_pref: data.max_age_pref,
+          looking_for: data.looking_for,
+          orientation: data.orientation,
+          height_cm: data.height_cm ? String(data.height_cm) : "",
+          job_title: data.job_title ?? "",
+          education: data.education ?? "",
+          smokes: data.smokes,
+          drinks: data.drinks,
+          love_language: data.love_language ?? "",
+        });
       });
+  }
+
+  useEffect(() => {
+    loadProfile();
   }, [myId]);
 
   function toggleInterest(value: string) {
@@ -116,12 +125,20 @@ export default function EditProfile() {
     setSaving(false);
 
     if (updateError) {
-      setError(updateError.message);
+      setError(SAVE_ERROR_MESSAGE);
       return;
     }
 
     await refreshProfile();
     router.back();
+  }
+
+  if (loadError) {
+    return (
+      <ScreenContainer>
+        <ErrorState onRetry={loadProfile} />
+      </ScreenContainer>
+    );
   }
 
   if (!form) {

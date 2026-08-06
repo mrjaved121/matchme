@@ -44,6 +44,7 @@ export default function Settings() {
   const myId = useAuthStore((s) => s.session!.user.id);
   const email = useAuthStore((s) => s.session!.user.email);
   const [prefs, setPrefs] = useState<Prefs | null>(null);
+  const [prefsError, setPrefsError] = useState(false);
 
   const { data: summary } = useQuery({
     queryKey: ["settings-summary", myId],
@@ -68,13 +69,24 @@ export default function Settings() {
     },
   });
 
-  useEffect(() => {
+  function loadPrefs() {
+    setPrefsError(false);
     supabase
       .from("profiles")
       .select("show_distance, show_age, push_enabled, email_enabled, read_receipts")
       .eq("id", myId)
       .single()
-      .then(({ data }) => data && setPrefs(data));
+      .then(({ data, error }) => {
+        if (error || !data) {
+          setPrefsError(true);
+          return;
+        }
+        setPrefs(data);
+      });
+  }
+
+  useEffect(() => {
+    loadPrefs();
   }, [myId]);
 
   async function toggle(key: keyof Prefs) {
@@ -164,6 +176,8 @@ export default function Settings() {
               />
               <ToggleRow label="Show My Age" value={prefs.show_age} onValueChange={() => toggle("show_age")} isLast />
             </>
+          ) : prefsError ? (
+            <PrefsLoadError onRetry={loadPrefs} />
           ) : null}
         </Section>
 
@@ -194,6 +208,8 @@ export default function Settings() {
                 onValueChange={() => toggle("read_receipts")}
               />
             </>
+          ) : prefsError ? (
+            <PrefsLoadError onRetry={loadPrefs} />
           ) : null}
           <NavRow label="Notification Settings" onPress={() => router.push(NAV_ROUTES.notifications)} isLast />
         </Section>
@@ -228,7 +244,7 @@ export default function Settings() {
               alignItems: "center",
               justifyContent: "center",
               gap: 8,
-              backgroundColor: theme.color.error + "18",
+              backgroundColor: theme.color.errorSoft,
               borderRadius: theme.radius.input,
               paddingVertical: theme.spacing.md,
             }}
@@ -314,6 +330,18 @@ function NavRow({
         <Ionicons name="chevron-forward" size={18} color={theme.color.textSecondary} />
       </RowShell>
     </Pressable>
+  );
+}
+
+function PrefsLoadError({ onRetry }: { onRetry: () => void }) {
+  const theme = useTheme();
+  return (
+    <RowShell isLast>
+      <Text style={[theme.typography.subtext, { color: theme.color.textSecondary }]}>Couldn't load these settings.</Text>
+      <Pressable onPress={onRetry}>
+        <Text style={[theme.typography.subtext, { color: theme.color.primary, fontWeight: "700" }]}>Retry</Text>
+      </Pressable>
+    </RowShell>
   );
 }
 

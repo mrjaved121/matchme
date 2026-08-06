@@ -11,6 +11,7 @@ import { useTheme } from "../../../theme/useTheme";
 import { supabase } from "../../../lib/supabase";
 import { useAuthStore } from "../../../store/authStore";
 import { publicPhotoUrl } from "../../../lib/photoUrl";
+import { ACTION_ERROR_MESSAGE } from "../../../lib/errorMessages";
 
 type Message = {
   id: string;
@@ -44,6 +45,7 @@ export default function Chat() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | undefined>();
   const [otherTyping, setOtherTyping] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
   const listRef = useRef<FlatList<Message>>(null);
   const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
   const typingClearTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -53,6 +55,9 @@ export default function Chat() {
     let cancelled = false;
 
     async function load() {
+      setLoading(true);
+      setError(undefined);
+
       const { data: match, error: matchError } = await supabase
         .from("matches")
         .select("id, user_a_id, user_b_id")
@@ -146,7 +151,7 @@ export default function Chat() {
       if (typingClearTimer.current) clearTimeout(typingClearTimer.current);
       if (typingSendTimer.current) clearTimeout(typingSendTimer.current);
     };
-  }, [matchId, myId]);
+  }, [matchId, myId, retryKey]);
 
   // Throttled to at most one broadcast per 1.5s while typing, rather than
   // one per keystroke.
@@ -177,7 +182,7 @@ export default function Chat() {
       .eq("id", matchId);
 
     if (unmatchError) {
-      Alert.alert("Couldn't unmatch", unmatchError.message);
+      Alert.alert("Couldn't unmatch", ACTION_ERROR_MESSAGE);
       return;
     }
 
@@ -211,7 +216,7 @@ export default function Chat() {
     if (sendError || !data) {
       setMessages((prev) => prev.filter((m) => m.id !== tempId));
       setDraft(content);
-      Alert.alert("Message not sent", sendError?.message ?? "Please try again.");
+      Alert.alert("Message not sent", ACTION_ERROR_MESSAGE);
       return;
     }
 
@@ -229,7 +234,7 @@ export default function Chat() {
   if (error && messages.length === 0) {
     return (
       <ScreenContainer>
-        <ErrorState message={error} onRetry={() => router.back()} />
+        <ErrorState message={error} onRetry={() => setRetryKey((k) => k + 1)} />
       </ScreenContainer>
     );
   }

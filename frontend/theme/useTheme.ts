@@ -19,6 +19,13 @@ function buildTheme(scheme: "light" | "dark") {
       error: palette.status.error,
       verified: palette.status.verified,
       verifiedDark: palette.status.verifiedDark,
+      // Tinted-background versions of the semantic colors -- for icon
+      // medallions (empty states, notification row icons) and warning-card
+      // fills. Replaces the `theme.color.x + "1A"` hand-rolled pattern that
+      // had drifted to several different alpha values across screens.
+      primarySoft: palette.brand.primary + "1A",
+      goldSoft: palette.brand.gold + "1A",
+      errorSoft: palette.status.error + "18",
     },
     tags: palette.tags,
     swipe: palette.swipe,

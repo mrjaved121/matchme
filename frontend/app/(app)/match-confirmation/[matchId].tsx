@@ -6,7 +6,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { router, useLocalSearchParams } from "expo-router";
 import { ScreenContainer } from "../../../components/ScreenContainer";
 import { Button } from "../../../components/Button";
-import { LoadingState } from "../../../components/StateViews";
+import { ErrorState, LoadingState } from "../../../components/StateViews";
 import { useTheme } from "../../../theme/useTheme";
 import { supabase } from "../../../lib/supabase";
 import { useAuthStore } from "../../../store/authStore";
@@ -63,6 +63,8 @@ export default function MatchConfirmation() {
   const [other, setOther] = useState<Person | null>(null);
   const [otherName, setOtherName] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
 
   const icebreaker = useMemo(() => ICEBREAKERS[Math.floor(Math.random() * ICEBREAKERS.length)], []);
 
@@ -70,13 +72,18 @@ export default function MatchConfirmation() {
     let cancelled = false;
 
     async function load() {
+      setLoading(true);
+      setLoadError(false);
+
       const { data: match } = await supabase
         .from("matches")
         .select("user_a_id, user_b_id")
         .eq("id", matchId)
         .single();
 
-      if (cancelled || !match) {
+      if (cancelled) return;
+      if (!match) {
+        setLoadError(true);
         setLoading(false);
         return;
       }
@@ -118,7 +125,7 @@ export default function MatchConfirmation() {
     return () => {
       cancelled = true;
     };
-  }, [matchId, myId]);
+  }, [matchId, myId, retryKey]);
 
   useEffect(() => {
     if (loading) return;
@@ -134,6 +141,14 @@ export default function MatchConfirmation() {
     return (
       <ScreenContainer>
         <LoadingState />
+      </ScreenContainer>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <ScreenContainer>
+        <ErrorState message="Couldn't load this match." onRetry={() => setRetryKey((k) => k + 1)} />
       </ScreenContainer>
     );
   }

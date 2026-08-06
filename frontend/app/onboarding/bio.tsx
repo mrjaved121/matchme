@@ -5,6 +5,7 @@ import { OnboardingStepLayout } from "../../components/OnboardingStepLayout";
 import { TextField } from "../../components/TextField";
 import { useTheme } from "../../theme/useTheme";
 import { supabase } from "../../lib/supabase";
+import { SAVE_ERROR_MESSAGE } from "../../lib/errorMessages";
 import { useAuthStore } from "../../store/authStore";
 
 const MAX_LENGTH = 500;
@@ -54,7 +55,7 @@ export default function OnboardingBio() {
     setLoading(false);
 
     if (updateError) {
-      setError(updateError.message);
+      setError(SAVE_ERROR_MESSAGE);
       return;
     }
 

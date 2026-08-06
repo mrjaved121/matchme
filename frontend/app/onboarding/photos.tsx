@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Alert, Pressable, Text, View } from "react-native";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { decode as decodeBase64 } from "base64-arraybuffer";
@@ -10,6 +10,7 @@ import { useTheme } from "../../theme/useTheme";
 import { supabase } from "../../lib/supabase";
 import { useAuthStore } from "../../store/authStore";
 import { publicPhotoUrl } from "../../lib/photoUrl";
+import { SAVE_ERROR_MESSAGE } from "../../lib/errorMessages";
 
 const MAX_PHOTOS = 6;
 const MIN_PHOTOS = 2;
@@ -78,12 +79,21 @@ export default function OnboardingPhotos() {
     setLocal((prev) => prev.filter((p) => p.uri !== uri));
   }
 
-  async function removeExisting(storagePath: string) {
-    setRemoving(storagePath);
-    await supabase.storage.from("profile-photos").remove([storagePath]);
-    await supabase.from("profile_photos").delete().eq("profile_id", session!.user.id).eq("storage_path", storagePath);
-    setExisting((prev) => prev.filter((p) => p.storage_path !== storagePath));
-    setRemoving(null);
+  function removeExisting(storagePath: string) {
+    Alert.alert("Remove this photo?", "This can't be undone.", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Remove",
+        style: "destructive",
+        onPress: async () => {
+          setRemoving(storagePath);
+          await supabase.storage.from("profile-photos").remove([storagePath]);
+          await supabase.from("profile_photos").delete().eq("profile_id", session!.user.id).eq("storage_path", storagePath);
+          setExisting((prev) => prev.filter((p) => p.storage_path !== storagePath));
+          setRemoving(null);
+        },
+      },
+    ]);
   }
 
   async function handleNext() {
@@ -117,7 +127,7 @@ export default function OnboardingPhotos() {
 
       router.push("/onboarding/bio");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not upload photos.");
+      setError(SAVE_ERROR_MESSAGE);
     } finally {
       setLoading(false);
     }

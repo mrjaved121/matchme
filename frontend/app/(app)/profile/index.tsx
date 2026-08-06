@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { decode as decodeBase64 } from "base64-arraybuffer";
@@ -17,6 +17,7 @@ import { publicPhotoUrl } from "../../../lib/photoUrl";
 import { calculateAge } from "../../../lib/discover";
 import { interestIcon } from "../../../lib/interestIcon";
 import { fetchUnreadNotificationCount } from "../../../lib/notifications";
+import { SAVE_ERROR_MESSAGE } from "../../../lib/errorMessages";
 
 const MAX_PHOTOS = 6;
 const RING_SIZE = 128;
@@ -166,23 +167,32 @@ export default function MyProfile() {
     }
   }
 
-  async function removePhoto(photo: Photo) {
+  function removePhoto(photo: Photo) {
     if (!photos || photos.length <= 1) {
       setPhotoError("You need at least one photo on your profile.");
       return;
     }
-    setBusyPhoto(photo.id);
-    setPhotoError(undefined);
+    Alert.alert("Remove this photo?", "This can't be undone.", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Remove",
+        style: "destructive",
+        onPress: async () => {
+          setBusyPhoto(photo.id);
+          setPhotoError(undefined);
 
-    const { error: deleteError } = await supabase.from("profile_photos").delete().eq("id", photo.id);
-    if (deleteError) {
-      setPhotoError(deleteError.message);
-      setBusyPhoto(null);
-      return;
-    }
-    await supabase.storage.from("profile-photos").remove([photo.storage_path]);
-    await reloadPhotos();
-    setBusyPhoto(null);
+          const { error: deleteError } = await supabase.from("profile_photos").delete().eq("id", photo.id);
+          if (deleteError) {
+            setPhotoError(SAVE_ERROR_MESSAGE);
+            setBusyPhoto(null);
+            return;
+          }
+          await supabase.storage.from("profile-photos").remove([photo.storage_path]);
+          await reloadPhotos();
+          setBusyPhoto(null);
+        },
+      },
+    ]);
   }
 
   const photoCount = photos?.length ?? 0;

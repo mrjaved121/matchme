@@ -4,6 +4,7 @@ import { router } from "expo-router";
 import { OnboardingStepLayout } from "../../components/OnboardingStepLayout";
 import { useTheme } from "../../theme/useTheme";
 import { supabase } from "../../lib/supabase";
+import { SAVE_ERROR_MESSAGE } from "../../lib/errorMessages";
 import { useAuthStore } from "../../store/authStore";
 
 const RULES = [
@@ -31,7 +32,7 @@ export default function OnboardingGuidelines() {
 
     if (updateError) {
       setLoading(false);
-      setError(updateError.message);
+      setError(SAVE_ERROR_MESSAGE);
       return;
     }
 

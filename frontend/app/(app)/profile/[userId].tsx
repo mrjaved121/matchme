@@ -89,7 +89,7 @@ export default function ViewProfile() {
     },
   });
 
-  const { data: target, isLoading, isError } = useQuery({
+  const { data: target, isLoading, isError, refetch } = useQuery({
     queryKey: ["view-profile", userId],
     queryFn: async (): Promise<TargetProfile> => {
       const { data } = await supabase
@@ -121,7 +121,7 @@ export default function ViewProfile() {
   if (isError) {
     return (
       <ScreenContainer>
-        <ErrorState message="Couldn't load this profile." />
+        <ErrorState message="Couldn't load this profile." onRetry={() => refetch()} />
       </ScreenContainer>
     );
   }

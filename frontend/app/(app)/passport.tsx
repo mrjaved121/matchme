@@ -5,6 +5,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { LinearGradient } from "expo-linear-gradient";
 import { ScreenContainer } from "../../components/ScreenContainer";
 import { Button } from "../../components/Button";
+import { LoadingState } from "../../components/StateViews";
 import { useTheme } from "../../theme/useTheme";
 import { supabase } from "../../lib/supabase";
 import { useAuthStore } from "../../store/authStore";
@@ -41,7 +42,11 @@ export default function Passport() {
   }, [isGold]);
 
   if (!isGold) {
-    return null;
+    return (
+      <ScreenContainer>
+        <LoadingState />
+      </ScreenContainer>
+    );
   }
 
   const filtered = POPULAR_DESTINATIONS.filter((d) => d.city.toLowerCase().includes(search.trim().toLowerCase()));

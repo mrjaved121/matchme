@@ -5,6 +5,7 @@ import { OnboardingStepLayout } from "../../components/OnboardingStepLayout";
 import { TextField } from "../../components/TextField";
 import { useAuthStore } from "../../store/authStore";
 import { supabase } from "../../lib/supabase";
+import { SAVE_ERROR_MESSAGE } from "../../lib/errorMessages";
 
 export default function OnboardingAboutYou() {
   const session = useAuthStore((s) => s.session);
@@ -44,7 +45,7 @@ export default function OnboardingAboutYou() {
     setLoading(false);
 
     if (updateError) {
-      setError(updateError.message);
+      setError(SAVE_ERROR_MESSAGE);
       return;
     }
 

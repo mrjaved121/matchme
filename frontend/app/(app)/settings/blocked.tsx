@@ -71,7 +71,11 @@ export default function BlockedUsers() {
       </Text>
 
       {!data || data.length === 0 ? (
-        <EmptyState title="No blocked users" description="Anyone you block will show up here so you can unblock them later." />
+        <EmptyState
+          icon="shield-checkmark-outline"
+          title="No blocked users"
+          description="Anyone you block will show up here so you can unblock them later."
+        />
       ) : (
         <FlatList
           data={data}

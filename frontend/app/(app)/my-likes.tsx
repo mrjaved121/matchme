@@ -64,7 +64,7 @@ export default function MyLikes() {
               width: 96,
               height: 96,
               borderRadius: 48,
-              backgroundColor: theme.color.primary + "1A",
+              backgroundColor: theme.color.primarySoft,
               alignItems: "center",
               justifyContent: "center",
             }}

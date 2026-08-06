@@ -5,6 +5,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { OnboardingStepLayout } from "../../components/OnboardingStepLayout";
 import { useTheme } from "../../theme/useTheme";
 import { supabase } from "../../lib/supabase";
+import { SAVE_ERROR_MESSAGE } from "../../lib/errorMessages";
 import { useAuthStore } from "../../store/authStore";
 
 const CORE_OPTIONS = [
@@ -55,7 +56,7 @@ export default function OnboardingGender() {
     setLoading(false);
 
     if (updateError) {
-      setError(updateError.message);
+      setError(SAVE_ERROR_MESSAGE);
       return;
     }
 

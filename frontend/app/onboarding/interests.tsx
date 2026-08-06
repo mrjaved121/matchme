@@ -6,6 +6,7 @@ import { ChipSelect } from "../../components/ChipSelect";
 import { useTheme } from "../../theme/useTheme";
 import { useAuthStore } from "../../store/authStore";
 import { supabase } from "../../lib/supabase";
+import { SAVE_ERROR_MESSAGE } from "../../lib/errorMessages";
 import { INTEREST_OPTIONS } from "../../lib/constants";
 
 const MIN_INTERESTS = 3;
@@ -48,7 +49,7 @@ export default function OnboardingInterests() {
     setLoading(false);
 
     if (updateError) {
-      setError(updateError.message);
+      setError(SAVE_ERROR_MESSAGE);
       return;
     }
 

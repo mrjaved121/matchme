@@ -5,6 +5,7 @@ import { TextField } from "../../components/TextField";
 import { supabase } from "../../lib/supabase";
 import { useAuthStore } from "../../store/authStore";
 import { applyPendingReferralCode } from "../../lib/referral";
+import { SAVE_ERROR_MESSAGE } from "../../lib/errorMessages";
 
 // Matches design/stitch_just_spark_ui_kit/onboarding_name/code.html exactly:
 // a single name field. City moved to its own step (onboarding_location has
@@ -43,7 +44,7 @@ export default function OnboardingName() {
     setLoading(false);
 
     if (updateError) {
-      setError(updateError.message);
+      setError(SAVE_ERROR_MESSAGE);
       return;
     }
 
