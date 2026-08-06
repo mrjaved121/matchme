@@ -235,6 +235,19 @@ export default function MyProfile() {
               ) : null}
             </Pressable>
             <Pressable
+              onPress={() => router.push("/(app)/my-likes")}
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: 18,
+                backgroundColor: theme.color.surfaceSecondary,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Ionicons name="heart-outline" size={18} color={theme.color.textPrimary} />
+            </Pressable>
+            <Pressable
               onPress={() => router.push("/(app)/favorites")}
               style={{
                 width: 36,

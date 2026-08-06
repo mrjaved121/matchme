@@ -8,6 +8,7 @@ import { Button } from "../../components/Button";
 import { ErrorState, LoadingState, NoInternetState } from "../../components/StateViews";
 import { useIsOnline } from "../../lib/useIsOnline";
 import { SwipeCard, type SwipeCardHandle, type SwipeCardProfile } from "../../components/SwipeCard";
+import { SwipeToast, useSwipeToast } from "../../components/SwipeToast";
 import { useTheme } from "../../theme/useTheme";
 import { supabase } from "../../lib/supabase";
 import { useAuthStore } from "../../store/authStore";
@@ -40,6 +41,7 @@ export default function Discover() {
   const topCardRef = useRef<SwipeCardHandle>(null);
   const [lastSwiped, setLastSwiped] = useState<SwipeCardProfile | null>(null);
   const rewindsUsed = useRef(0);
+  const toast = useSwipeToast();
 
   const load = useCallback(async () => {
     setError(false);
@@ -99,6 +101,7 @@ export default function Discover() {
     setBusy(true);
     setLastSwiped(deck?.find((p) => p.id === profileId) ?? null);
     setDeck((prev) => (prev ? prev.filter((p) => p.id !== profileId) : prev));
+    toast.show(action === "pass" ? "Passed" : action === "superlike" ? "Super Liked!" : "Liked!");
 
     try {
       const result = await recordSwipe(profileId, action);
@@ -107,7 +110,10 @@ export default function Discover() {
       }
       if (result.matched && result.match_id) {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-        router.push({ pathname: "/(app)/match-confirmation/[matchId]", params: { matchId: result.match_id } });
+        router.push({
+          pathname: "/(app)/match-confirmation/[matchId]",
+          params: { matchId: result.match_id, mutual: result.mutual ? "1" : "0" },
+        });
       }
     } catch (e) {
       // The card already flew off-screen visually; since the swipe was never
@@ -140,6 +146,7 @@ export default function Discover() {
       setLastSwiped(null);
       setDeck((prev) => (prev ? [profile, ...prev] : prev));
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+      toast.show("Rewound");
     } catch (e) {
       const message = e instanceof Error ? e.message : "";
       if (message.includes("cannot_rewind_a_match")) {
@@ -200,6 +207,8 @@ export default function Discover() {
         >
           <Ionicons name="options-outline" size={20} color={theme.color.textPrimary} />
         </Pressable>
+
+        <SwipeToast message={toast.message} opacity={toast.opacity} />
 
         <View style={{ flex: 1 }}>
           {visible.length === 0 ? (
