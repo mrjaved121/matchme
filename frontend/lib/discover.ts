@@ -141,7 +141,7 @@ export async function recordSwipe(swipedId: string, action: SwipeAction) {
     .rpc("record_swipe", { p_swiped_id: swipedId, p_action: action })
     .single();
   if (error) throw error;
-  return data as { matched: boolean; match_id: string | null };
+  return data as { matched: boolean; match_id: string | null; mutual: boolean };
 }
 
 /** Undoes the caller's most recent swipe server-side. Returns the swiped
@@ -217,6 +217,45 @@ export async function fetchWhoLikedMe(myId: string): Promise<Liker[]> {
       city: profile?.city ?? null,
       latitude: profile?.latitude ?? null,
       longitude: profile?.longitude ?? null,
+    };
+  });
+}
+
+export type SentLike = Liker & { likedAt: string; superlike: boolean };
+
+/** Everyone the caller has swiped like/superlike on, most recent first.
+ * Liking now unlocks a match immediately (see record_swipe), so this is a
+ * full history rather than a "pending" list -- anyone here may already
+ * have an active conversation in Messages too. */
+export async function fetchMyLikes(myId: string): Promise<SentLike[]> {
+  const { data: likes } = await supabase
+    .from("swipes")
+    .select("swiped_id, action, created_at")
+    .eq("swiper_id", myId)
+    .in("action", ["like", "superlike"])
+    .order("created_at", { ascending: false });
+
+  if (!likes || likes.length === 0) return [];
+
+  const likedIds = likes.map((l) => l.swiped_id);
+  const [{ data: profiles }, { data: photos }] = await Promise.all([
+    supabase.from("profiles").select("id, first_name, birthdate, city, latitude, longitude").in("id", likedIds),
+    supabase.from("profile_photos").select("profile_id, storage_path").in("profile_id", likedIds).eq("position", 0),
+  ]);
+
+  const photoById = new Map((photos ?? []).map((p) => [p.profile_id, p.storage_path]));
+  return likes.map((l) => {
+    const profile = profiles?.find((p) => p.id === l.swiped_id);
+    return {
+      id: l.swiped_id,
+      first_name: profile?.first_name ?? null,
+      photoPath: photoById.get(l.swiped_id) ?? null,
+      birthdate: profile?.birthdate ?? null,
+      city: profile?.city ?? null,
+      latitude: profile?.latitude ?? null,
+      longitude: profile?.longitude ?? null,
+      likedAt: l.created_at,
+      superlike: l.action === "superlike",
     };
   });
 }

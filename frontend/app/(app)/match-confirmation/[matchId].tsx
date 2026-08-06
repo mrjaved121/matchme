@@ -49,7 +49,8 @@ function Avatar({ person, size, borderColor }: { person: Person | null; size: nu
 
 export default function MatchConfirmation() {
   const theme = useTheme();
-  const { matchId } = useLocalSearchParams<{ matchId: string }>();
+  const { matchId, mutual } = useLocalSearchParams<{ matchId: string; mutual?: string }>();
+  const isMutual = mutual !== "0";
   const myId = useAuthStore((s) => s.session!.user.id);
 
   const leftSlide = useRef(new Animated.Value(-140)).current;
@@ -165,10 +166,12 @@ export default function MatchConfirmation() {
             { color: theme.color.primaryGradient[1], textAlign: "center", fontSize: 34, fontWeight: "800", opacity: textOpacity },
           ]}
         >
-          It's a Match!
+          {isMutual ? "It's a Match!" : "You Can Chat Now!"}
         </Animated.Text>
         <Animated.Text style={{ color: theme.color.textSecondary, fontSize: 16, textAlign: "center", opacity: textOpacity }}>
-          You and {otherName ?? "your match"} liked each other
+          {isMutual
+            ? `You and ${otherName ?? "your match"} liked each other`
+            : `Say hi to ${otherName ?? "them"} — your conversation is open`}
         </Animated.Text>
 
         {sharedTags.length > 0 ? (

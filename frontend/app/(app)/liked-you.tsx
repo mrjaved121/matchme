@@ -44,7 +44,10 @@ export default function LikedYou() {
     try {
       const result = await recordSwipe(id, "like");
       if (result.matched && result.match_id) {
-        router.replace({ pathname: "/(app)/match-confirmation/[matchId]", params: { matchId: result.match_id } });
+        router.replace({
+          pathname: "/(app)/match-confirmation/[matchId]",
+          params: { matchId: result.match_id, mutual: result.mutual ? "1" : "0" },
+        });
       } else {
         refetch();
       }
