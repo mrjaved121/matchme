@@ -82,14 +82,21 @@ export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
       }
     });
 
+  // A single-photo card has nothing to cycle to, so the tap would
+  // otherwise do nothing at all -- open the full profile instead, same as
+  // tapping the dedicated info button does for multi-photo cards.
   const tap = Gesture.Tap()
-    .enabled(isTop && profile.photoUrls.length > 1)
+    .enabled(isTop)
     .onEnd((e) => {
-      setPhotoIndex((prev) => {
-        const goingBack = e.x < SCREEN_WIDTH / 2;
-        const next = goingBack ? prev - 1 : prev + 1;
-        return Math.max(0, Math.min(profile.photoUrls.length - 1, next));
-      });
+      if (profile.photoUrls.length > 1) {
+        setPhotoIndex((prev) => {
+          const goingBack = e.x < SCREEN_WIDTH / 2;
+          const next = goingBack ? prev - 1 : prev + 1;
+          return Math.max(0, Math.min(profile.photoUrls.length - 1, next));
+        });
+      } else {
+        onViewProfile?.();
+      }
     });
 
   const composed = Gesture.Race(pan, tap);
