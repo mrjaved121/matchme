@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Pressable, Switch, Text, View } from "react-native";
+import { Pressable, ScrollView, Switch, Text, View } from "react-native";
 import { router } from "expo-router";
 import Slider from "@react-native-community/slider";
 import { ScreenContainer } from "../../components/ScreenContainer";
@@ -50,7 +50,7 @@ export default function DiscoveryPreferences() {
           interested_in: data.interested_in ?? [],
           min_age_pref: data.min_age_pref,
           max_age_pref: data.max_age_pref,
-          max_distance_km: data.max_distance_km ?? 50,
+          max_distance_km: data.max_distance_km ?? 500,
           global_mode: data.global_mode ?? false,
           filter_verified_only: data.filter_verified_only ?? false,
           filter_online_only: data.filter_online_only ?? false,
@@ -124,11 +124,12 @@ export default function DiscoveryPreferences() {
 
   return (
     <ScreenContainer>
-      <Text style={[theme.typography.title, { color: theme.color.textPrimary, marginTop: theme.spacing.md, marginBottom: theme.spacing.lg }]}>
-        Discovery Preferences
-      </Text>
+      <ScrollView contentContainerStyle={{ paddingBottom: theme.spacing.xl }} showsVerticalScrollIndicator={false}>
+        <Text style={[theme.typography.title, { color: theme.color.textPrimary, marginTop: theme.spacing.md, marginBottom: theme.spacing.lg }]}>
+          Discovery Preferences
+        </Text>
 
-      <View style={{ gap: theme.spacing.lg }}>
+        <View style={{ gap: theme.spacing.lg }}>
         <View>
           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
             <Text style={[theme.typography.subtext, { color: theme.color.textSecondary }]}>Maximum Distance</Text>
@@ -139,7 +140,7 @@ export default function DiscoveryPreferences() {
           <Slider
             style={{ marginTop: theme.spacing.sm }}
             minimumValue={1}
-            maximumValue={200}
+            maximumValue={500}
             step={1}
             value={prefs.max_distance_km}
             disabled={prefs.global_mode}
@@ -256,9 +257,10 @@ export default function DiscoveryPreferences() {
             }
           />
         </View>
-      </View>
+        </View>
 
-      <Button label="Apply Filters" onPress={handleSave} loading={saving} style={{ marginTop: theme.spacing.xl }} />
+        <Button label="Apply Filters" onPress={handleSave} loading={saving} style={{ marginTop: theme.spacing.xl }} />
+      </ScrollView>
     </ScreenContainer>
   );
 }
